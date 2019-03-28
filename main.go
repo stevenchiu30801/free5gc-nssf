@@ -10,17 +10,19 @@
 package main
 
 import (
-	"net/http"
+    "net/http"
 
+    factory "./factory"
     flog "./flog"
-	nssf "./nssf"
+    nssf "./nssf"
 )
 
 func main() {
     flog.LogInit()
-	flog.Info("Server started")
+    factory.InitConfigFactory("./conf/nssf_config.yaml")
+    flog.Info("Server started")
 
-	router := nssf.NewRouter()
+    router := nssf.NewRouter()
 
-	flog.Fatal(http.ListenAndServe(":8080", router))
+    flog.Fatal(http.ListenAndServe(":8080", router))
 }

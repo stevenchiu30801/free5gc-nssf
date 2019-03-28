@@ -45,5 +45,5 @@ func Error(format string, v ...interface{}) {
 }
 
 func Fatal(v ...interface{}) {
-    infoLogger.Fatal(v...)
+    errorLogger.Fatal(v...)
 }

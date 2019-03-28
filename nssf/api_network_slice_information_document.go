@@ -46,7 +46,9 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter) {
         json.NewDecoder(strings.NewReader(q.Get("tai"))).Decode(p.Tai)
     }
 
-    p.SupportedFeatures = q.Get("supported-features")
+    if q.Get("supported-features") != "" {
+        p.SupportedFeatures = q.Get("supported-features")
+    }
 
     return
 }
