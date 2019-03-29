@@ -11,7 +11,7 @@ package model
 
 type PlmnId struct {
 
-	Mcc string `json:"mcc"`
+    Mcc string `json:"mcc" yaml:"mcc"`
 
-	Mnc string `json:"mnc"`
+    Mnc string `json:"mnc" yaml:"mnc"`
 }

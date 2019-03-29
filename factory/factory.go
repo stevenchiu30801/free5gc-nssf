@@ -7,6 +7,7 @@
 package factory
 
 import (
+    // "fmt"
     "io/ioutil"
 
     "gopkg.in/yaml.v2"
@@ -30,6 +31,7 @@ func InitConfigFactory(f string) {
     err = yaml.Unmarshal([]byte(content), &NssfConfig)
     checkErr(err)
 
-    // d, err := yaml.Marshal(&config)
+    // d, err := yaml.Marshal(&NssfConfig)
     // checkErr(err)
+    // fmt.Printf(string(d))
 }

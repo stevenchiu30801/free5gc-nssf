@@ -6,9 +6,9 @@
 
 package factory
 
-// import (
-//     . "../model"
-// )
+import (
+    . "../model"
+)
 
 type Service string
 
@@ -17,21 +17,6 @@ const (
     NSSF_NSSELECTION = "Nnssf_NSSelection"
     NSSF_NSSAIAVAILABILITY = "Nnssf_NSSAIAvailability"
 )
-
-type PlmnId struct {
-    Mcc string `yaml:"mcc"`
-    Mnc string `taml:"mnc"`
-}
-
-type Snssai struct {
-    Sst int32 `yaml:"sst"`
-    Sd string `yaml:"sd,omitempty"`
-}
-
-type Tai struct {
-    PlmnId *PlmnId `yaml:"plmnId"`
-    Tac string `yaml:"tac"`
-}
 
 type AmfSet struct {
     NfId string `yaml:"nfId"`

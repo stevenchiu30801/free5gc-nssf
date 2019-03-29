@@ -11,7 +11,7 @@ package model
 
 type Snssai struct {
 
-	Sst int32 `json:"sst"`
+    Sst int32 `json:"sst" yaml:"sst"`
 
-	Sd string `json:"sd,omitempty"`
+    Sd string `json:"sd,omitempty" yaml:"sd,omitempty"`
 }
