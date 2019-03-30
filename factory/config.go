@@ -24,8 +24,13 @@ type AmfSet struct {
 }
 
 type TaSet struct {
-    Tai *Tai `yaml:"tai"`
+    Tac string `yaml:"tac"`
     SupportedSnssai []Snssai `yaml:"supportedSnssai"`
+}
+
+type MappingSet struct {
+    HomePlmnId *PlmnId `yaml:"homePlmnId"`
+    MappingOfSnssai []MappingOfSnssai `yaml:"mappingOfSnssai"`
 }
 
 type Info struct {
@@ -39,6 +44,7 @@ type Info struct {
 type Configuration struct {
     AmfSet []AmfSet `yaml:"amfSet"`
     TaSet []TaSet `yaml:"taSet"`
+    MappingSet []MappingSet `yaml:"mappingSet"`
 }
 
 type Config struct {

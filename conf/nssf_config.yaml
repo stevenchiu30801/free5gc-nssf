@@ -34,43 +34,72 @@ configuration:
         - sst: 2
           sd: 1
   taSet:
-    - tai:
-        plmnId:
-          mcc: 466
-          mnc: 92
-        tac: 33456
+    - tac: 33456
       supportedSnssai:
         - sst: 1
           sd: 1
         - sst: 1
           sd: 2
-    - tai:
-        plmnId:
-          mcc: 466
-          mnc: 92
-        tac: 33457
+    - tac: 33457
       supportedSnssai:
         - sst: 1
           sd: 1
         - sst: 1
           sd: 2
-    - tai:
-        plmnId:
-          mcc: 466
-          mnc: 92
-        tac: 33458
+    - tac: 33458
       supportedSnssai:
         - sst: 1
           sd: 1
         - sst: 1
           sd: 3
-    - tai:
-        plmnId:
-          mcc: 466
-          mnc: 92
-        tac: 33459
+    - tac: 33459
       supportedSnssai:
         - sst: 1
           sd: 1
         - sst: 2
           sd: 1
+  mappingSet:
+    - homePlmnId:
+        mcc: 440
+        mnc: 9
+      mappingOfSnssai:
+        - servingSnssai:
+            sst: 1
+            sd: 1
+          homeSnssai:
+            sst: 1
+            sd: 1
+        - servingSnssai:
+            sst: 1
+            sd: 2
+          homeSnssai:
+            sst: 1
+            sd: 3
+        - servingSnssai:
+            sst: 1
+            sd: 3
+          homeSnssai:
+            sst: 1
+            sd: 4
+        - servingSnssai:
+            sst: 2
+            sd: 1
+          homeSnssai:
+            sst: 2
+            sd: 2
+    - homePlmnId:
+        mcc: 310
+        mnc: 560
+      mappingOfSnssai:
+        - servingSnssai:
+            sst: 1
+            sd: 1
+          homeSnssai:
+            sst: 1
+            sd: 2
+        - servingSnssai:
+            sst: 1
+            sd: 2
+          homeSnssai:
+            sst: 1
+            sd: 3

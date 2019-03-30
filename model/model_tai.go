@@ -11,7 +11,7 @@ package model
 
 type Tai struct {
 
-    PlmnId *PlmnId `json:"plmnId" yaml:"plmnId"`
+    PlmnId *PlmnId `json:"plmnId"`
 
-    Tac string `json:"tac" yaml:"tac"`
+    Tac string `json:"tac"`
 }
