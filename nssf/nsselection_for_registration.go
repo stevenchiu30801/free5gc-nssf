@@ -14,6 +14,31 @@ import (
     . "../model"
 )
 
+// Check whether S-NSSAIs in NSSAI are supported or not
+func checkSupportedSnssai(nssai []Snssai) bool {
+    for _, snssai := range nssai {
+        // Standard S-NSSAIs are supposed to be supported
+        // If not, disable following check and be sure to add supported standard S-NSSAI(s) in configuration
+        if checkStandardSnssai(snssai) == true {
+            continue
+        }
+
+        hitSupportedNssai := false
+        for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedSnssaiInPlmn {
+            if snssai == supportedSnssai {
+                hitSupportedNssai = true
+                break
+            }
+        }
+
+        if hitSupportedNssai == false {
+            return false
+        }
+    }
+
+    return true
+}
+
 // Check whether S-NSSAI is standard or non-standard value
 // A standard S-NSSAI is only comprised of a standardized SST value and no SD
 func checkStandardSnssai(snssai Snssai) bool {
@@ -113,6 +138,16 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         // Requested NSSAI is provided
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
+        if checkSupportedSnssai(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
+            *d = ProblemDetails {
+                Title: "S-NSSAI in Requested NSSAI is not supported in PLMN",
+                Status: http.StatusForbidden,
+                Cause: "SNSSAI_NOT_SUPPORTED",
+            }
+
+            return http.StatusForbidden
+        }
+
         // Check if any Requested S-NSSAIs is present in Subscribed S-NSSAIs
         checkIfRequestAllowed := false
 
@@ -120,6 +155,8 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
             isStandardSnssai := checkStandardSnssai(requestedSnssai)
             var mappingOfRequestedSnssai Snssai
             if isStandardSnssai == false {
+                // Standard S-NSSAIs are supported to be commonly decided by all roaming partners
+                // Only non-standard S-NSSAIs are required to find mappings
                 targetMapping, found := findMappingWithServingSnssai(requestedSnssai,
                                                                      p.SliceInfoRequestForRegistration.MappingOfNssai)
 

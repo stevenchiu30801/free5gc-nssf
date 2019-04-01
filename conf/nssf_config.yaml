@@ -6,6 +6,17 @@ info:
   url: http://140.113.194.229:8080/nnssf-nsselection/v1
 
 configuration:
+  supportedSnssaiInPlmn:
+    - sst: 1
+      sd: 1
+    - sst: 1
+      sd: 2
+    - sst: 1
+      sd: 3
+    - sst: 2
+      sd: 1
+    - sst: 2
+      sd: 2
   amfSet:
     - nfId: ffa2e8d7-3275-49c7-8631-6af1df1d9d26
       supportedSnssai:
@@ -59,9 +70,10 @@ configuration:
         - sst: 2
           sd: 1
   mappingSet:
-    - homePlmnId:
+    - operatorName: NTT Docomo
+      homePlmnId:
         mcc: 440
-        mnc: 9
+        mnc: 10
       mappingOfSnssai:
         - servingSnssai:
             sst: 1
@@ -87,7 +99,8 @@ configuration:
           homeSnssai:
             sst: 2
             sd: 2
-    - homePlmnId:
+    - operatorName: AT&T Mobility
+      homePlmnId:
         mcc: 310
         mnc: 560
       mappingOfSnssai:

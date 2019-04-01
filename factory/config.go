@@ -29,6 +29,7 @@ type TaSet struct {
 }
 
 type MappingSet struct {
+    OperatorName string `yaml:"operatorName"`
     HomePlmnId *PlmnId `yaml:"homePlmnId"`
     MappingOfSnssai []MappingOfSnssai `yaml:"mappingOfSnssai"`
 }
@@ -42,6 +43,7 @@ type Info struct {
 }
 
 type Configuration struct {
+    SupportedSnssaiInPlmn []Snssai `yaml:"supportedSnssaiInPlmn"`
     AmfSet []AmfSet `yaml:"amfSet"`
     TaSet []TaSet `yaml:"taSet"`
     MappingSet []MappingSet `yaml:"mappingSet"`
