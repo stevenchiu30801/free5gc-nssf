@@ -9,9 +9,21 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type SubscribedSnssai struct {
 
 	SubscribedSnssai *Snssai `json:"subscribedSnssai"`
 
 	DefaultIndication bool `json:"defaultIndication,omitempty"`
+}
+
+func (s *SubscribedSnssai) CheckIntegrity() error {
+    if s.SubscribedSnssai == nil {
+        return errors.New("`subscribedSnssai` in query parameter should not be empty")
+    }
+
+    return nil
 }

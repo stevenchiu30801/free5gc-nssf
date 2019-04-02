@@ -27,3 +27,12 @@ type SliceInfoForRegistration struct {
 
 	RequestMapping bool `json:"requestMapping,omitempty"`
 }
+
+func (s *SliceInfoForRegistration) CheckIntegrity() error {
+    if s.AllowedNssaiCurrentAccess != nil {
+        err := s.AllowedNssaiCurrentAccess.CheckIntegrity()
+        return err
+    }
+
+    return nil
+}

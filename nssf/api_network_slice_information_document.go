@@ -18,11 +18,19 @@ import (
     . "../model"
 )
 
-// Parse NSSelectionGet query parameter
-func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter) {
+// Title in Problem Details for NSSF HTTP APIs
+const (
+    INVALID_REQUEST = "Invalid request message framing"
+    MALFORMED_REQUEST = "Malformed request syntax"
+    UNSUPPORTED_RESOURCE = "Unsupported request resources"
+)
+
+// Parse NSSelectionGet query parameter and check integrity
+func parseQueryParameter(r *http.Request) (NsselectionQueryParameter, error) {
 
     q := r.URL.Query()
 
+    var p NsselectionQueryParameter
     p.NfType = q.Get("nf-type")
     p.NfId = q.Get("nf-id")
 
@@ -33,7 +41,7 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter) {
 
     if q.Get("slice-info-request-for-pdu-session") != "" {
         p.SliceInfoRequestForPduSession = new(SliceInfoForPduSession)
-        json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-pdu-session"))).Decode(p.SliceInfoRequestForRegistration)
+        json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-pdu-session"))).Decode(p.SliceInfoRequestForPduSession)
     }
 
     if q.Get("home-plmn-id") != "" {
@@ -50,7 +58,12 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter) {
         p.SupportedFeatures = q.Get("supported-features")
     }
 
-    return
+    err := p.CheckIntegrity()
+    if err != nil {
+        return p, err
+    }
+
+    return p, nil
 }
 
 // NSSelectionGet - Retrieve the Network Slice Selection Information
@@ -64,32 +77,48 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
         d ProblemDetails
     )
 
-    p := parseQueryParameter(r)
+    // Parse query parameter and check integrity of data
+    p, err := parseQueryParameter(r)
+
+    if err != nil {
+        problemDetail := err.Error()
+        flog.Info("NSSelectionGet - %s", problemDetail)
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: MALFORMED_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+        }
+    } else {
+        if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession == nil {
+            // Network slice information is requested during the Registration procedure
+            status = nsselectionForRegistration(p, &a, &d)
+        } else if p.SliceInfoRequestForRegistration == nil && p.SliceInfoRequestForPduSession != nil {
+            // Network slice information is requested during the PDU session establishment procedure
+            status = nsselectionForPduSession(p, &a, &d)
+        } else if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession != nil {
+            problemDetail := "Slice info requests for both registration and PDU session are provided simultaneously"
+            flog.Info("NSSelectionGet - %s", problemDetail)
+            status = http.StatusBadRequest
+            d = ProblemDetails {
+                Title: INVALID_REQUEST,
+                Status: http.StatusBadRequest,
+                Detail: problemDetail,
+            }
+        } else {
+            problemDetail := "None of slice info request for registration or PDU session is provided"
+            flog.Info("NSSelectionGet - %s", problemDetail)
+            status = http.StatusBadRequest
+            d = ProblemDetails {
+                Title: INVALID_REQUEST,
+                Status: http.StatusBadRequest,
+                Detail: problemDetail,
+            }
+        }
+    }
 
     // Set response
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-    if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession == nil {
-        status = nsselectionForRegistration(p, &a, &d)
-    } else if p.SliceInfoRequestForRegistration == nil && p.SliceInfoRequestForPduSession != nil {
-        status = nsselectionForPduSession(p, &a, &d)
-    } else if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession != nil {
-        problemTitle := "Simultaneous slice info requests for both registration and PDU session"
-        flog.Info("NSSelectionGet - %s", problemTitle)
-        status = http.StatusBadRequest
-        d = ProblemDetails {
-            Title: problemTitle,
-            Status: http.StatusBadRequest,
-        }
-    } else {
-        problemTitle := "None of slice info requests for registration and PDU session"
-        flog.Info("NSSelectionGet - %s", problemTitle)
-        status = http.StatusBadRequest
-        d = ProblemDetails {
-            Title: problemTitle,
-            Status: http.StatusBadRequest,
-        }
-    }
 
     w.WriteHeader(status)
     switch status {

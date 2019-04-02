@@ -133,19 +133,21 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
     }
 }
 
-func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) int {
+func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) (status int) {
     if p.SliceInfoRequestForRegistration.RequestedNssai != nil {
         // Requested NSSAI is provided
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
         if checkSupportedSnssai(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
             *d = ProblemDetails {
-                Title: "S-NSSAI in Requested NSSAI is not supported in PLMN",
+                Title: UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
+                Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
                 Cause: "SNSSAI_NOT_SUPPORTED",
             }
 
-            return http.StatusForbidden
+            status = http.StatusForbidden
+            return
         }
 
         // Check if any Requested S-NSSAIs is present in Subscribed S-NSSAIs
@@ -214,5 +216,6 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         useDefaultSubscribedSnssai(p, a)
     }
 
-    return http.StatusOK
+    status = http.StatusOK
+    return
 }

@@ -9,9 +9,25 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type AllowedNssai struct {
 
 	AllowedSnssaiList []AllowedSnssai `json:"allowedSnssaiList"`
 
 	AccessType *AccessType `json:"accessType"`
+}
+
+func (a *AllowedNssai) CheckIntegrity() error {
+    if a.AllowedSnssaiList == nil || len(a.AllowedSnssaiList) == 0 {
+        return errors.New("`allowedSnssaiList` in query parameter should not be empty")
+    }
+
+    if a.AccessType == nil {
+        return errors.New("`accessType` in query parameter should not be empty")
+    }
+
+    return nil
 }
