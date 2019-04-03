@@ -9,9 +9,31 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type Tai struct {
 
     PlmnId *PlmnId `json:"plmnId"`
 
     Tac string `json:"tac"`
+}
+
+func (t *Tai) CheckIntegrity() error {
+    if t.PlmnId == nil {
+        return errors.New("`plmnId` in query parameter should not be empty")
+    } else {
+        err := t.PlmnId.CheckIntegrity()
+        if err != nil {
+            errMsg := "`plmnId`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if t.Tac == "" {
+        return errors.New("`tac` in query parameter should not be empty")
+    }
+
+    return nil
 }

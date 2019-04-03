@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type AllowedSnssai struct {
 
 	AllowedSnssai *Snssai `json:"allowedSnssai"`
@@ -16,4 +20,36 @@ type AllowedSnssai struct {
 	NsiInformationList []NsiInformation `json:"nsiInformationList,omitempty"`
 
 	MappedHomeSnssai *Snssai `json:"mappedHomeSnssai,omitempty"`
+}
+
+func (a *AllowedSnssai) CheckIntegrity() error {
+    if a.AllowedSnssai == nil {
+        return errors.New("`allowedSnssai` in query parameter should not be empty")
+    } else {
+        err := a.AllowedSnssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`allowedSnssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if a.NsiInformationList != nil && len(a.NsiInformationList) != 0 {
+        for i, nsiInformation := range a.NsiInformationList {
+            err := nsiInformation.CheckIntegrity()
+            if err != nil {
+                errMsg := "`nsiInformationList`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
+    }
+
+    if a.MappedHomeSnssai != nil {
+        err := a.MappedHomeSnssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`mappedHomeSnssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    return nil
 }

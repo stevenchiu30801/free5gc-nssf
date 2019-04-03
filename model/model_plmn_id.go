@@ -9,9 +9,25 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type PlmnId struct {
 
     Mcc string `json:"mcc" yaml:"mcc"`
 
     Mnc string `json:"mnc" yaml:"mnc"`
+}
+
+func (p *PlmnId) CheckIntegrity() error {
+    if p.Mcc == "" {
+        return errors.New("`mcc` in query parameter should not be empty")
+    }
+
+    if p.Mnc == "" {
+        return errors.New("`mnc` in query parameter should not be empty")
+    }
+
+    return nil
 }

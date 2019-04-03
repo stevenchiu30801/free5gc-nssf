@@ -25,10 +25,32 @@ type SliceInfoForPduSession struct {
 func (s *SliceInfoForPduSession) CheckIntegrity() error {
     if s.SNssai == nil {
         return errors.New("`sNssai` in query parameter should not be empty")
+    } else {
+        err := s.SNssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`sNssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
     }
 
     if s.RoamingIndication == nil {
         return errors.New("`roamingIndication` in query parameter should not be empty")
+    } else {
+        err := s.RoamingIndication.CheckIntegrity()
+        if err != nil {
+            errMsg := "`roamingIndication`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if *s.RoamingIndication == HOME_ROUTED_ROAMINGRoamingIndication && s.HomeSnssai == nil {
+        return errors.New("`homeSnssai` in query parameter should be included in home routed roaming scenario")
+    } else if s.HomeSnssai != nil {
+        err := s.HomeSnssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`homeSnssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
     }
 
     return nil

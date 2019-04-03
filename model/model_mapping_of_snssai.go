@@ -9,9 +9,37 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type MappingOfSnssai struct {
 
     ServingSnssai *Snssai `json:"servingSnssai" yaml:"servingSnssai"`
 
     HomeSnssai *Snssai `json:"homeSnssai" yaml:"homeSnssai"`
+}
+
+func (m *MappingOfSnssai) CheckIntegrity() error {
+    if m.ServingSnssai != nil {
+        return errors.New("`servingSnssai` in query parameter should not be empty")
+    } else {
+        err := m.ServingSnssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`servingSnssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if m.HomeSnssai != nil {
+        return errors.New("`homeSnssai` in query parameter should not be empty")
+    } else {
+        err := m.HomeSnssai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`homeSnssai`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    return nil
 }

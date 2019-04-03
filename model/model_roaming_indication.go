@@ -9,5 +9,25 @@
 
 package model
 
-type RoamingIndication struct {
+import (
+    "errors"
+)
+
+type RoamingIndication string
+
+// List of RoamingIndication
+const (
+	NON_ROAMINGRoamingIndication RoamingIndication = "NON_ROAMING"
+	LOCAL_BREAKOUTRoamingIndication RoamingIndication = "LOCAL_BREAKOUT"
+	HOME_ROUTED_ROAMINGRoamingIndication RoamingIndication = "HOME_ROUTED_ROAMING"
+)
+
+func (r *RoamingIndication) CheckIntegrity() error {
+    if *r != NON_ROAMINGRoamingIndication && *r != LOCAL_BREAKOUTRoamingIndication &&
+       *r != HOME_ROUTED_ROAMINGRoamingIndication {
+        errMsg := "'" + string(*r) + "' is unrecognized"
+        return errors.New(errMsg)
+    }
+
+    return nil
 }

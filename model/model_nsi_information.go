@@ -9,9 +9,22 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type NsiInformation struct {
 
 	NrfId string `json:"nrfId"`
 
 	NsiId string `json:"nsiId,omitempty"`
+}
+
+func (n *NsiInformation) CheckIntegrity() error {
+    if n.NrfId == "" {
+        return errors.New("`nrfId` in query parameter should not be empty")
+    }
+    // TODO: Check whether `NrfId` is valid URI or not
+
+    return nil
 }

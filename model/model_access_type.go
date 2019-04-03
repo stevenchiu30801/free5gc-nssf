@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type AccessType string
 
 // List of AccessType
@@ -16,3 +20,12 @@ const (
 	IS_3_GPP_ACCESS AccessType = "3GPP_ACCESS"
 	NON_3_GPP_ACCESS AccessType = "NON_3GPP_ACCESS"
 )
+
+func (a *AccessType) CheckIntegrity() error {
+    if *a != IS_3_GPP_ACCESS && *a != NON_3_GPP_ACCESS {
+        errMsg := "'" + string(*a) + "' is unrecognized"
+        return errors.New(errMsg)
+    }
+
+    return nil
+}

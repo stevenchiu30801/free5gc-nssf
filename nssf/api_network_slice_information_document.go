@@ -25,45 +25,51 @@ const (
     UNSUPPORTED_RESOURCE = "Unsupported request resources"
 )
 
-// Parse NSSelectionGet query parameter and check integrity
-func parseQueryParameter(r *http.Request) (NsselectionQueryParameter, error) {
+// Parse NSSelectionGet query parameter
+func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err error) {
 
     q := r.URL.Query()
 
-    var p NsselectionQueryParameter
     p.NfType = q.Get("nf-type")
     p.NfId = q.Get("nf-id")
 
     if q.Get("slice-info-request-for-registration") != "" {
         p.SliceInfoRequestForRegistration = new(SliceInfoForRegistration)
-        json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-registration"))).Decode(p.SliceInfoRequestForRegistration)
+        err = json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-registration"))).Decode(p.SliceInfoRequestForRegistration)
+        if err != nil {
+            return
+        }
     }
 
     if q.Get("slice-info-request-for-pdu-session") != "" {
         p.SliceInfoRequestForPduSession = new(SliceInfoForPduSession)
-        json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-pdu-session"))).Decode(p.SliceInfoRequestForPduSession)
+        err = json.NewDecoder(strings.NewReader(q.Get("slice-info-request-for-pdu-session"))).Decode(p.SliceInfoRequestForPduSession)
+        if err != nil {
+            return
+        }
     }
 
     if q.Get("home-plmn-id") != "" {
         p.HomePlmnId = new(PlmnId)
-        json.NewDecoder(strings.NewReader(q.Get("home-plmn-id"))).Decode(p.HomePlmnId)
+        err = json.NewDecoder(strings.NewReader(q.Get("home-plmn-id"))).Decode(p.HomePlmnId)
+        if err != nil {
+            return
+        }
     }
 
     if q.Get("tai") != "" {
         p.Tai = new(Tai)
-        json.NewDecoder(strings.NewReader(q.Get("tai"))).Decode(p.Tai)
+        err = json.NewDecoder(strings.NewReader(q.Get("tai"))).Decode(p.Tai)
+        if err != nil {
+            return
+        }
     }
 
     if q.Get("supported-features") != "" {
         p.SupportedFeatures = q.Get("supported-features")
     }
 
-    err := p.CheckIntegrity()
-    if err != nil {
-        return p, err
-    }
-
-    return p, nil
+    return
 }
 
 // NSSelectionGet - Retrieve the Network Slice Selection Information
@@ -72,14 +78,14 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     flog.Info("NSSelectionGet - Request received")
 
     var (
+        isValidRequest bool = true
         status int
         a AuthorizedNetworkSliceInfo
         d ProblemDetails
     )
 
-    // Parse query parameter and check integrity of data
+    // Parse query parameter
     p, err := parseQueryParameter(r)
-
     if err != nil {
         problemDetail := err.Error()
         flog.Info("NSSelectionGet - %s", problemDetail)
@@ -89,7 +95,24 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
             Status: http.StatusBadRequest,
             Detail: problemDetail,
         }
-    } else {
+        isValidRequest = false
+    }
+
+    // Check data integrity
+    err = p.CheckIntegrity()
+    if err != nil {
+        problemDetail := err.Error()
+        flog.Info("NSSelectionGet - %s", problemDetail)
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: INVALID_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+        }
+        isValidRequest = false
+    }
+
+    if isValidRequest == true {
         if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession == nil {
             // Network slice information is requested during the Registration procedure
             status = nsselectionForRegistration(p, &a, &d)

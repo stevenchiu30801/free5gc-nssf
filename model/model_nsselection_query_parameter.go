@@ -42,14 +42,32 @@ func (p *NsselectionQueryParameter) CheckIntegrity() error {
     if p.SliceInfoRequestForRegistration != nil {
         err := p.SliceInfoRequestForRegistration.CheckIntegrity()
         if err != nil {
-            return err
+            errMsg := "`slice-info-request-for-registration`:" + err.Error()
+            return errors.New(errMsg)
         }
     }
 
     if p.SliceInfoRequestForPduSession != nil {
         err := p.SliceInfoRequestForPduSession.CheckIntegrity()
         if err != nil {
-            return err
+            errMsg := "`slice-info-request-for-pdu-session`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if p.HomePlmnId != nil {
+        err := p.HomePlmnId.CheckIntegrity()
+        if err != nil {
+            errMsg := "`home-plmn-id`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if p.Tai != nil {
+        err := p.Tai.CheckIntegrity()
+        if err != nil {
+            errMsg := "`tai`:" + err.Error()
+            return errors.New(errMsg)
         }
     }
 

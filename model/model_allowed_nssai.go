@@ -21,12 +21,27 @@ type AllowedNssai struct {
 }
 
 func (a *AllowedNssai) CheckIntegrity() error {
+    // Deal with both nil slice and empty slice
     if a.AllowedSnssaiList == nil || len(a.AllowedSnssaiList) == 0 {
         return errors.New("`allowedSnssaiList` in query parameter should not be empty")
+    } else {
+        for i, allowedSnssai := range a.AllowedSnssaiList {
+            err := allowedSnssai.CheckIntegrity()
+            if err != nil {
+                errMsg := "`allowedSnssaiList`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
     }
 
-    if a.AccessType == nil {
+    if a.AccessType == nil || *a.AccessType == "" {
         return errors.New("`accessType` in query parameter should not be empty")
+    } else {
+        err := a.AccessType.CheckIntegrity()
+        if err != nil {
+            errMsg := "`accessType`:" + err.Error()
+            return errors.New(errMsg)
+        }
     }
 
     return nil
