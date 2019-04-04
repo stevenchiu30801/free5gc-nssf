@@ -21,7 +21,7 @@ type MappingOfSnssai struct {
 }
 
 func (m *MappingOfSnssai) CheckIntegrity() error {
-    if m.ServingSnssai != nil {
+    if m.ServingSnssai == nil {
         return errors.New("`servingSnssai` in query parameter should not be empty")
     } else {
         err := m.ServingSnssai.CheckIntegrity()
@@ -31,7 +31,7 @@ func (m *MappingOfSnssai) CheckIntegrity() error {
         }
     }
 
-    if m.HomeSnssai != nil {
+    if m.HomeSnssai == nil {
         return errors.New("`homeSnssai` in query parameter should not be empty")
     } else {
         err := m.HomeSnssai.CheckIntegrity()

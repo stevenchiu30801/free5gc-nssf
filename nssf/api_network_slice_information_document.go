@@ -30,7 +30,11 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err erro
 
     q := r.URL.Query()
 
-    p.NfType = q.Get("nf-type")
+    if q.Get("nf-type") != "" {
+        p.NfType = new(NfType)
+        *p.NfType = NfType(q.Get("nf-type"))
+    }
+
     p.NfId = q.Get("nf-id")
 
     if q.Get("slice-info-request-for-registration") != "" {

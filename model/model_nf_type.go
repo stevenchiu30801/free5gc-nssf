@@ -9,5 +9,45 @@
 
 package model
 
-type NfType struct {
+import (
+    "errors"
+)
+
+type NfType string
+
+// List of NFType
+const (
+	NRFNfType NfType = "NRF"
+	UDMNfType NfType = "UDM"
+	AMFNfType NfType = "AMF"
+	SMFNfType NfType = "SMF"
+	AUSFNfType NfType = "AUSF"
+	NEFNfType NfType = "NEF"
+	PCFNfType NfType = "PCF"
+	SMSFNfType NfType = "SMSF"
+	NSSFNfType NfType = "NSSF"
+	UDRNfType NfType = "UDR"
+	LMFNfType NfType = "LMF"
+	GMLCNfType NfType = "GMLC"
+	_5_G_EIRNfType NfType = "5G_EIR"
+	SEPPNfType NfType = "SEPP"
+	UPFNfType NfType = "UPF"
+	N3_IWFNfType NfType = "N3IWF"
+	AFNfType NfType = "AF"
+	UDSFNfType NfType = "UDSF"
+	BSFNfType NfType = "BSF"
+	CHFNfType NfType = "CHF"
+	NWDAFNfType NfType = "NWDAF"
+)
+
+func (n NfType) CheckIntegrity() error {
+    if n != NRFNfType && n != UDMNfType && n != AMFNfType && n != SMFNfType && n != AUSFNfType && n != NEFNfType &&
+       n != PCFNfType && n != SMSFNfType && n != NSSFNfType && n !=UDRNfType && n != LMFNfType && n != GMLCNfType &&
+       n != _5_G_EIRNfType && n != SEPPNfType && n != UPFNfType && n != N3_IWFNfType && n != AFNfType &&
+       n != UDSFNfType && n != BSFNfType && n != CHFNfType && n != NWDAFNfType {
+            errMsg := "'" + string(n) + "' is unrecognized"
+            return errors.New(errMsg)
+       }
+
+       return nil
 }

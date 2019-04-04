@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "errors"
+)
+
 type SliceInfoForRegistration struct {
 
 	SubscribedNssai []SubscribedSnssai `json:"subscribedNssai,omitempty"`
@@ -29,9 +33,62 @@ type SliceInfoForRegistration struct {
 }
 
 func (s *SliceInfoForRegistration) CheckIntegrity() error {
+    if s.SubscribedNssai != nil || len(s.SubscribedNssai) != 0 {
+        for i, subscribedSnssai := range s.SubscribedNssai {
+            err := subscribedSnssai.CheckIntegrity()
+            if err != nil {
+                errMsg := "`subscribedNssai`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
+    }
+
     if s.AllowedNssaiCurrentAccess != nil {
         err := s.AllowedNssaiCurrentAccess.CheckIntegrity()
-        return err
+        if err != nil {
+            errMsg := "`allowedNssaiCurrentAccess`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if s.AllowedNssaiOtherAccess != nil {
+        err := s.AllowedNssaiOtherAccess.CheckIntegrity()
+        if err != nil {
+            errMsg := "`allowedNssaiOtherAccess`:" + err.Error()
+            return errors.New(errMsg)
+        }
+    }
+
+    if s.RequestMapping == true && (s.SNssaiForMapping == nil || len(s.SNssaiForMapping) == 0) {
+        return errors.New("`sNssaiForMapping` in query parameter should be included when `requestMapping` is set to true")
+    } else if s.SNssaiForMapping != nil || len(s.SNssaiForMapping) != 0 {
+        for i, sNssaiForMapping := range s.SNssaiForMapping {
+            err := sNssaiForMapping.CheckIntegrity()
+            if err != nil {
+                errMsg := "`sNssaiForMapping`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
+    }
+
+    if s.RequestedNssai != nil || len(s.RequestedNssai) != 0 {
+        for i, requestedSnssai := range s.RequestedNssai {
+            err := requestedSnssai.CheckIntegrity()
+            if err != nil {
+                errMsg := "`requestedNssai`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
+    }
+
+    if s.MappingOfNssai != nil || len(s.MappingOfNssai) != 0 {
+        for i, mappingOfSnssai := range s.MappingOfNssai {
+            err := mappingOfSnssai.CheckIntegrity()
+            if err != nil {
+                errMsg := "`mappingOfNssai`[" + string(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
     }
 
     return nil

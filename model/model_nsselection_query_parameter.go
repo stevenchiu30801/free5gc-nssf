@@ -12,11 +12,8 @@ import (
 
 type NsselectionQueryParameter struct {
 
-    // TODO: use NfType type instead of string type
-    // NfType NfType `json:"nf-type"`
-    NfType string `json:"nf-type"`
+    NfType *NfType `json:"nf-type"`
 
-    // NfId NfInstanceId `json:"nf-id"`
     NfId string `json:"nf-id"`
 
     SliceInfoRequestForRegistration *SliceInfoForRegistration `json:"slice-info-request-for-registration, omitempty"`
@@ -31,8 +28,14 @@ type NsselectionQueryParameter struct {
 }
 
 func (p *NsselectionQueryParameter) CheckIntegrity() error {
-    if p.NfType == "" {
+    if p.NfType == nil || *p.NfType == "" {
         return errors.New("`nf-type` in query parameter should not be empty")
+    } else {
+        err := p.NfType.CheckIntegrity()
+        if err != nil {
+            errMsg := "`nf-type`:" + err.Error()
+            return errors.New(errMsg)
+        }
     }
 
     if p.NfId == "" {

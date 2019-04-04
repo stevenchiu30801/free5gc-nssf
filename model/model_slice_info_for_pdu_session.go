@@ -33,7 +33,7 @@ func (s *SliceInfoForPduSession) CheckIntegrity() error {
         }
     }
 
-    if s.RoamingIndication == nil {
+    if s.RoamingIndication == nil || *s.RoamingIndication == "" {
         return errors.New("`roamingIndication` in query parameter should not be empty")
     } else {
         err := s.RoamingIndication.CheckIntegrity()

@@ -110,11 +110,11 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                     }
 
                     var allowedSnssaiElement AllowedSnssai
-                    var allowedSnssai Snssai = *targetMapping.ServingSnssai
-                    var mappedHomeSnssai Snssai = *subscribedSnssai.SubscribedSnssai
                     // TODO: Location configuration of NSI information list
-                    allowedSnssaiElement.AllowedSnssai = &allowedSnssai
-                    allowedSnssaiElement.MappedHomeSnssai = &mappedHomeSnssai
+                    allowedSnssaiElement.AllowedSnssai = new(Snssai)
+                    *allowedSnssaiElement.AllowedSnssai = *targetMapping.ServingSnssai
+                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                    *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
 
                     // TODO: Allowed NSSAI for different Access Type
                     var accessType AccessType = IS_3_GPP_ACCESS
@@ -182,11 +182,11 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                     hitSubscription = true
 
                     var allowedSnssaiElement AllowedSnssai
-                    var allowedSnssai Snssai = requestedSnssai
-                    var mappedHomeSnssai Snssai = *subscribedSnssai.SubscribedSnssai
                     // TODO: Location configuration of NSI information list
-                    allowedSnssaiElement.AllowedSnssai = &allowedSnssai
-                    allowedSnssaiElement.MappedHomeSnssai = &mappedHomeSnssai
+                    allowedSnssaiElement.AllowedSnssai = new(Snssai)
+                    *allowedSnssaiElement.AllowedSnssai = requestedSnssai
+                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                    *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
 
                     // TODO: Allowed NSSAI for different Access Type
                     var accessType AccessType = IS_3_GPP_ACCESS
