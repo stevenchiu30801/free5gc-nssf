@@ -11,6 +11,7 @@ package model
 
 import (
     "errors"
+    "strconv"
 )
 
 type SliceInfoForRegistration struct {
@@ -37,7 +38,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, subscribedSnssai := range s.SubscribedNssai {
             err := subscribedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`subscribedNssai`[" + string(i) + "]:" + err.Error()
+                errMsg := "`subscribedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }
@@ -65,7 +66,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, sNssaiForMapping := range s.SNssaiForMapping {
             err := sNssaiForMapping.CheckIntegrity()
             if err != nil {
-                errMsg := "`sNssaiForMapping`[" + string(i) + "]:" + err.Error()
+                errMsg := "`sNssaiForMapping`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }
@@ -75,7 +76,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, requestedSnssai := range s.RequestedNssai {
             err := requestedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`requestedNssai`[" + string(i) + "]:" + err.Error()
+                errMsg := "`requestedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }
@@ -85,7 +86,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, mappingOfSnssai := range s.MappingOfNssai {
             err := mappingOfSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`mappingOfNssai`[" + string(i) + "]:" + err.Error()
+                errMsg := "`mappingOfNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }

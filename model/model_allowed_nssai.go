@@ -11,6 +11,7 @@ package model
 
 import (
     "errors"
+    "strconv"
 )
 
 type AllowedNssai struct {
@@ -28,7 +29,7 @@ func (a *AllowedNssai) CheckIntegrity() error {
         for i, allowedSnssai := range a.AllowedSnssaiList {
             err := allowedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`allowedSnssaiList`[" + string(i) + "]:" + err.Error()
+                errMsg := "`allowedSnssaiList`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }
