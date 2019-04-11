@@ -14,8 +14,19 @@ import (
     . "../model"
 )
 
-// Check whether S-NSSAIs in NSSAI are supported or not
-func checkSupportedSnssai(nssai []Snssai) bool {
+// Check whether UE's current TA is configured/supported
+func checkSupportedTa(tac string) bool {
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if taConfig.Tac == tac {
+            return true
+        }
+    }
+    flog.Warn("No TA %s in NSSF configuration", tac)
+    return false
+}
+
+// Check whether S-NSSAIs in NSSAI are supported or not in PLMN
+func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
     for _, snssai := range nssai {
         // Standard S-NSSAIs are supposed to be supported
         // If not, disable following check and be sure to add supported standard S-NSSAI(s) in configuration
@@ -35,8 +46,23 @@ func checkSupportedSnssai(nssai []Snssai) bool {
             return false
         }
     }
-
     return true
+}
+
+// Check whether S-NSSAI is supported or not in UE's current TA
+func checkSupportedSnssaiInTa(snssai Snssai, tac string) bool {
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if taConfig.Tac == tac {
+            for _, supportedSnssai := range taConfig.SupportedSnssai {
+                if snssai == supportedSnssai {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+    flog.Warn("No TA %s in NSSF configuration", tac)
+    return false
 }
 
 // Check whether S-NSSAI is standard or non-standard value
@@ -134,11 +160,20 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
 }
 
 func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) (status int) {
+    if checkSupportedTa(p.Tai.Tac) == false {
+        for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
+            a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
+        }
+
+        status = http.StatusOK
+        return
+    }
+
     if p.SliceInfoRequestForRegistration.RequestedNssai != nil {
         // Requested NSSAI is provided
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
-        if checkSupportedSnssai(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
+        if checkSupportedNssaiInPlmn(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
             *d = ProblemDetails {
                 Title: UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
@@ -154,6 +189,13 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         checkIfRequestAllowed := false
 
         for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
+            if checkSupportedSnssaiInTa(requestedSnssai, p.Tai.Tac) == false {
+                // Requested S-NSSAI does not supported in UE's current TA
+                // Add it to Rejected NSSAI in TA
+                a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
+                continue
+            }
+
             isStandardSnssai := checkStandardSnssai(requestedSnssai)
             var mappingOfRequestedSnssai Snssai
             if isStandardSnssai == false {
@@ -182,7 +224,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                     hitSubscription = true
 
                     var allowedSnssaiElement AllowedSnssai
-                    // TODO: Location configuration of NSI information list
+                    // TODO: Local configuration of NSI information list
                     allowedSnssaiElement.AllowedSnssai = new(Snssai)
                     *allowedSnssaiElement.AllowedSnssai = requestedSnssai
                     allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
