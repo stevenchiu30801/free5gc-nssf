@@ -24,7 +24,7 @@ func checkSupportedSnssai(nssai []Snssai) bool {
         }
 
         hitSupportedNssai := false
-        for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedSnssaiInPlmn {
+        for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedNssaiInPlmn {
             if snssai == supportedSnssai {
                 hitSupportedNssai = true
                 break
@@ -95,15 +95,15 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
             // Subscribed S-NSSAI is marked as default S-NSSAI
             // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
             hitHomePlmn := false
-            for _, mappingSet := range factory.NssfConfig.Configuration.MappingSet {
-                if *mappingSet.HomePlmnId == *p.HomePlmnId {
+            for _, mappingFromPlmn := range factory.NssfConfig.Configuration.MappingListFromPlmn {
+                if *mappingFromPlmn.HomePlmnId == *p.HomePlmnId {
                     hitHomePlmn = true
 
                     targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai,
-                                                                      mappingSet.MappingOfSnssai)
+                                                                      mappingFromPlmn.MappingOfSnssai)
 
                     if found == false {
-                        flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v",
+                        flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
                                   *subscribedSnssai.SubscribedSnssai,
                                   *p.HomePlmnId)
                         break

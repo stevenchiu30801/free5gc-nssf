@@ -14,21 +14,21 @@ type Service string
 
 // List of NSSF service type
 const (
-    NSSF_NSSELECTION = "Nnssf_NSSelection"
-    NSSF_NSSAIAVAILABILITY = "Nnssf_NSSAIAvailability"
+    NSSF_NSSELECTION Service = "Nnssf_NSSelection"
+    NSSF_NSSAIAVAILABILITY Service = "Nnssf_NSSAIAvailability"
 )
 
-type AmfSet struct {
+type AmfConfig struct {
     NfId string `yaml:"nfId"`
     SupportedSnssai []Snssai `yaml:"supportedSnssai"`
 }
 
-type TaSet struct {
+type TaConfig struct {
     Tac string `yaml:"tac"`
     SupportedSnssai []Snssai `yaml:"supportedSnssai"`
 }
 
-type MappingSet struct {
+type MappingFromPlmnConfig struct {
     OperatorName string `yaml:"operatorName"`
     HomePlmnId *PlmnId `yaml:"homePlmnId"`
     MappingOfSnssai []MappingOfSnssai `yaml:"mappingOfSnssai"`
@@ -43,10 +43,10 @@ type Info struct {
 }
 
 type Configuration struct {
-    SupportedSnssaiInPlmn []Snssai `yaml:"supportedSnssaiInPlmn"`
-    AmfSet []AmfSet `yaml:"amfSet"`
-    TaSet []TaSet `yaml:"taSet"`
-    MappingSet []MappingSet `yaml:"mappingSet"`
+    SupportedNssaiInPlmn []Snssai `yaml:"supportedNssaiInPlmn"`
+    AmfList []AmfConfig `yaml:"amfList"`
+    TaList []TaConfig `yaml:"taList"`
+    MappingListFromPlmn []MappingFromPlmnConfig `yaml:"mappingListFromPlmn"`
 }
 
 type Config struct {

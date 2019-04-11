@@ -6,7 +6,7 @@ info:
   url: http://140.113.194.229:8080/nnssf-nsselection/v1
 
 configuration:
-  supportedSnssaiInPlmn:
+  supportedNssaiInPlmn:
     - sst: 1
       sd: 1
     - sst: 1
@@ -17,7 +17,7 @@ configuration:
       sd: 1
     - sst: 2
       sd: 2
-  amfSet:
+  amfList:
     - nfId: ffa2e8d7-3275-49c7-8631-6af1df1d9d26
       supportedSnssai:
         - sst: 1
@@ -44,7 +44,7 @@ configuration:
           sd: 3
         - sst: 2
           sd: 1
-  taSet:
+  taList:
     - tac: 33456
       supportedSnssai:
         - sst: 1
@@ -69,7 +69,7 @@ configuration:
           sd: 1
         - sst: 2
           sd: 1
-  mappingSet:
+  mappingListFromPlmn:
     - operatorName: NTT Docomo
       homePlmnId:
         mcc: 440

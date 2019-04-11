@@ -25,6 +25,12 @@ const (
     UNSUPPORTED_RESOURCE = "Unsupported request resources"
 )
 
+// Variable related to the UE
+var (
+    isRoamer bool = false
+    ueAccessType AccessType = IS_3_GPP_ACCESS
+)
+
 // Parse NSSelectionGet query parameter
 func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err error) {
 
@@ -117,6 +123,15 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     }
 
     if isValidRequest == true {
+        // Determine whether UE is a roamer to the serving PLMN with the existence of the IE `home-plmn-id`
+        if p.HomePlmnId != nil {
+            isRoamer = true
+        }
+        // Determine Access Type of UE with the existence of the IE `tai`
+        if p.Tai == nil {
+            ueAccessType = NON_3_GPP_ACCESS
+        }
+
         if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession == nil {
             // Network slice information is requested during the Registration procedure
             status = nsselectionForRegistration(p, &a, &d)
