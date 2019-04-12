@@ -11,6 +11,7 @@ package nssf
 
 import (
     "encoding/json"
+    "errors"
     "net/http"
     "strings"
 
@@ -22,6 +23,7 @@ import (
 const (
     INVALID_REQUEST = "Invalid request message framing"
     MALFORMED_REQUEST = "Malformed request syntax"
+    UNAUTHORIZED_CONSUMER = "Unauthorized NF service consumer"
     UNSUPPORTED_RESOURCE = "Unsupported request resources"
 )
 
@@ -82,6 +84,18 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err erro
     return
 }
 
+// Check if the NF service consumer is authorized
+// TODO: Check if the NF service consumer is legal with local configuration, or possibly after querying NRF through
+//       `nf-id` e.g. Whether the V-NSSF is authorized
+func checkNfServiceConsumer(nfType NfType) error {
+    if nfType != AMF && nfType != NSSF {
+        errMsg := "`nf-type`:'" + string(nfType) + "' is not authorized to retrieve the slice selection information"
+        return errors.New(errMsg)
+    }
+
+    return nil
+}
+
 // NSSelectionGet - Retrieve the Network Slice Selection Information
 func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
 
@@ -94,11 +108,14 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
         d ProblemDetails
     )
 
+    // TODO: Record request times of the NF service consumer and response with ProblemDetails of 429 Too Many Requests
+    //       if the consumer has sent too many requests in a configured amount of time
+    // TODO: Check URI length and response with ProblemDetails of 414 URI Too Long if URI is too long
+
     // Parse query parameter
     p, err := parseQueryParameter(r)
     if err != nil {
         problemDetail := err.Error()
-        flog.Info("NSSelectionGet - %s", problemDetail)
         status = http.StatusBadRequest
         d = ProblemDetails {
             Title: MALFORMED_REQUEST,
@@ -112,11 +129,23 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     err = p.CheckIntegrity()
     if err != nil {
         problemDetail := err.Error()
-        flog.Info("NSSelectionGet - %s", problemDetail)
         status = http.StatusBadRequest
         d = ProblemDetails {
             Title: INVALID_REQUEST,
             Status: http.StatusBadRequest,
+            Detail: problemDetail,
+        }
+        isValidRequest = false
+    }
+
+    // Check permission of NF service consumer
+    err = checkNfServiceConsumer(*p.NfType)
+    if err != nil {
+        problemDetail := err.Error()
+        status = http.StatusForbidden
+        d = ProblemDetails {
+            Title: UNAUTHORIZED_CONSUMER,
+            Status: http.StatusForbidden,
             Detail: problemDetail,
         }
         isValidRequest = false
@@ -132,30 +161,12 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
             ueAccessType = NON_3_GPP_ACCESS
         }
 
-        if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession == nil {
+        if p.SliceInfoRequestForRegistration != nil {
             // Network slice information is requested during the Registration procedure
             status = nsselectionForRegistration(p, &a, &d)
-        } else if p.SliceInfoRequestForRegistration == nil && p.SliceInfoRequestForPduSession != nil {
+        } else {
             // Network slice information is requested during the PDU session establishment procedure
             status = nsselectionForPduSession(p, &a, &d)
-        } else if p.SliceInfoRequestForRegistration != nil && p.SliceInfoRequestForPduSession != nil {
-            problemDetail := "Slice info requests for both registration and PDU session are provided simultaneously"
-            flog.Info("NSSelectionGet - %s", problemDetail)
-            status = http.StatusBadRequest
-            d = ProblemDetails {
-                Title: INVALID_REQUEST,
-                Status: http.StatusBadRequest,
-                Detail: problemDetail,
-            }
-        } else {
-            problemDetail := "None of slice info request for registration or PDU session is provided"
-            flog.Info("NSSelectionGet - %s", problemDetail)
-            status = http.StatusBadRequest
-            d = ProblemDetails {
-                Title: INVALID_REQUEST,
-                Status: http.StatusBadRequest,
-                Detail: problemDetail,
-            }
         }
     }
 
@@ -169,9 +180,11 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
             flog.Info("NSSelectionGet - Response code 200 OK")
         case http.StatusBadRequest:
             json.NewEncoder(w).Encode(&d)
+            flog.Info("NSSelectionGet - %s", d.Detail)
             flog.Info("NSSelectionGet - Response code 400 Bad Request")
         case http.StatusForbidden:
             json.NewEncoder(w).Encode(&d)
+            flog.Info("NSSelectionGet - %s", d.Detail)
             flog.Info("NSSelectionGet - Response code 403 Forbidden")
         default:
             flog.Warn("NSSelectionGet - Unknown response code")

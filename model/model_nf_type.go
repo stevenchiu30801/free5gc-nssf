@@ -17,34 +17,33 @@ type NfType string
 
 // List of NFType
 const (
-	NRFNfType NfType = "NRF"
-	UDMNfType NfType = "UDM"
-	AMFNfType NfType = "AMF"
-	SMFNfType NfType = "SMF"
-	AUSFNfType NfType = "AUSF"
-	NEFNfType NfType = "NEF"
-	PCFNfType NfType = "PCF"
-	SMSFNfType NfType = "SMSF"
-	NSSFNfType NfType = "NSSF"
-	UDRNfType NfType = "UDR"
-	LMFNfType NfType = "LMF"
-	GMLCNfType NfType = "GMLC"
-	_5_G_EIRNfType NfType = "5G_EIR"
-	SEPPNfType NfType = "SEPP"
-	UPFNfType NfType = "UPF"
-	N3_IWFNfType NfType = "N3IWF"
-	AFNfType NfType = "AF"
-	UDSFNfType NfType = "UDSF"
-	BSFNfType NfType = "BSF"
-	CHFNfType NfType = "CHF"
-	NWDAFNfType NfType = "NWDAF"
+	NRF NfType = "NRF"
+	UDM NfType = "UDM"
+	AMF NfType = "AMF"
+	SMF NfType = "SMF"
+	AUSF NfType = "AUSF"
+	NEF NfType = "NEF"
+	PCF NfType = "PCF"
+	SMSF NfType = "SMSF"
+	NSSF NfType = "NSSF"
+	UDR NfType = "UDR"
+	LMF NfType = "LMF"
+	GMLC NfType = "GMLC"
+	_5_G_EIR NfType = "5G_EIR"
+	SEPP NfType = "SEPP"
+	UPF NfType = "UPF"
+	N3_IWF NfType = "N3IWF"
+	AF NfType = "AF"
+	UDSF NfType = "UDSF"
+	BSF NfType = "BSF"
+	CHF NfType = "CHF"
+	NWDAF NfType = "NWDAF"
 )
 
 func (n NfType) CheckIntegrity() error {
-    if n != NRFNfType && n != UDMNfType && n != AMFNfType && n != SMFNfType && n != AUSFNfType && n != NEFNfType &&
-       n != PCFNfType && n != SMSFNfType && n != NSSFNfType && n !=UDRNfType && n != LMFNfType && n != GMLCNfType &&
-       n != _5_G_EIRNfType && n != SEPPNfType && n != UPFNfType && n != N3_IWFNfType && n != AFNfType &&
-       n != UDSFNfType && n != BSFNfType && n != CHFNfType && n != NWDAFNfType {
+    if n != NRF && n != UDM && n != AMF && n != SMF && n != AUSF && n != NEF && n != PCF && n != SMSF && n != NSSF &&
+       n != UDR && n != LMF && n != GMLC && n != _5_G_EIR && n != SEPP && n != UPF && n != N3_IWF && n != AF &&
+       n != UDSF && n != BSF && n != CHF && n != NWDAF {
             errMsg := "'" + string(n) + "' is unrecognized"
             return errors.New(errMsg)
        }

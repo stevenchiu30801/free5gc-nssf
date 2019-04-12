@@ -174,6 +174,9 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
         if checkSupportedNssaiInPlmn(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
+            // Return ProblemDetails indicating S-NSSAI is not supported
+            // TODO: Based on TS 23.501 V15.2.0, if the Requested NSSAI includes an S-NSSAI that is not valid in the
+            //       Serving PLMN, the NSSF may derive the Configured NSSAI for Serving PLMN
             *d = ProblemDetails {
                 Title: UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
@@ -226,6 +229,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                     var allowedSnssaiElement AllowedSnssai
                     // TODO: Local configuration of NSI information list
                     allowedSnssaiElement.AllowedSnssai = new(Snssai)
+
                     *allowedSnssaiElement.AllowedSnssai = requestedSnssai
                     allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
                     *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai

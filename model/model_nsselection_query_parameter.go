@@ -43,19 +43,23 @@ func (p *NsselectionQueryParameter) CheckIntegrity() error {
     }
 
     if p.SliceInfoRequestForRegistration != nil {
+        if p.SliceInfoRequestForPduSession != nil {
+            return errors.New("Slice info requests for both registration and PDU session are provided simultaneously")
+        }
+
         err := p.SliceInfoRequestForRegistration.CheckIntegrity()
         if err != nil {
             errMsg := "`slice-info-request-for-registration`:" + err.Error()
             return errors.New(errMsg)
         }
-    }
-
-    if p.SliceInfoRequestForPduSession != nil {
+    } else if p.SliceInfoRequestForPduSession != nil {
         err := p.SliceInfoRequestForPduSession.CheckIntegrity()
         if err != nil {
             errMsg := "`slice-info-request-for-pdu-session`:" + err.Error()
             return errors.New(errMsg)
         }
+    } else {
+        return errors.New("None of slice info request for registration or PDU session is provided")
     }
 
     if p.HomePlmnId != nil {
