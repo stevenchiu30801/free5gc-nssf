@@ -40,6 +40,7 @@ type Info struct {
     Title string `yaml:"title,omitempty"`
     Description string `yaml:"description,omitempty"`
     Url string `yaml:"url"`
+    ServingPlmnId *PlmnId `yaml:"servingPlmnId"`
 }
 
 type Configuration struct {

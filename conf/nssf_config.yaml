@@ -4,6 +4,9 @@ info:
   title: NSSF NS Selection
   description: NSSF Network Slice Selection Service
   url: http://140.113.194.229:8080/nnssf-nsselection/v1
+  servingPlmnId:
+    mcc: 466
+    mnc: 92
 
 configuration:
   supportedNssaiInPlmn:

@@ -29,8 +29,8 @@ const (
 
 // Variable related to the UE
 var (
+    // Indicating whether the subscriber is a roamer to the serving PLMN
     isRoamer bool = false
-    ueAccessType AccessType = IS_3_GPP_ACCESS
 )
 
 // Parse NSSelectionGet query parameter
@@ -155,10 +155,6 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
         // Determine whether UE is a roamer to the serving PLMN with the existence of the IE `home-plmn-id`
         if p.HomePlmnId != nil {
             isRoamer = true
-        }
-        // Determine Access Type of UE with the existence of the IE `tai`
-        if p.Tai == nil {
-            ueAccessType = NON_3_GPP_ACCESS
         }
 
         if p.SliceInfoRequestForRegistration != nil {

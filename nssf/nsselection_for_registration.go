@@ -14,14 +14,30 @@ import (
     . "../model"
 )
 
-// Check whether UE's current TA is configured/supported
-func checkSupportedTa(tac string) bool {
-    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
-        if taConfig.Tac == tac {
+// Check whether UE's Home PLMN is configured/supported
+func checkSupportedHplmn(homePlmnId PlmnId) bool {
+    for _, mappingFromPlmn := range factory.NssfConfig.Configuration.MappingListFromPlmn {
+        if *mappingFromPlmn.HomePlmnId == homePlmnId {
             return true
         }
     }
-    flog.Warn("No TA %s in NSSF configuration", tac)
+    flog.Warn("No Home PLMN %+v in NSSF configuration", homePlmnId)
+    return false
+}
+
+// Check whether UE's current TA is configured/supported
+func checkSupportedTa(tai Tai) bool {
+    if *tai.PlmnId != *factory.NssfConfig.Info.ServingPlmnId {
+        flog.Warn("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
+        return false
+    }
+
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if taConfig.Tac == tai.Tac {
+            return true
+        }
+    }
+    flog.Warn("No TA {Tac: %s} in NSSF configuration", tai.Tac)
     return false
 }
 
@@ -135,12 +151,18 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                         break
                     }
 
+                    if checkSupportedSnssaiInTa(*targetMapping.ServingSnssai, p.Tai.Tac) == false {
+                        continue
+                    }
+
                     var allowedSnssaiElement AllowedSnssai
                     // TODO: Location configuration of NSI information list
                     allowedSnssaiElement.AllowedSnssai = new(Snssai)
                     *allowedSnssaiElement.AllowedSnssai = *targetMapping.ServingSnssai
-                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
-                    *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+                    if isRoamer == true {
+                        allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                        *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+                    }
 
                     // TODO: Allowed NSSAI for different Access Type
                     var accessType AccessType = IS_3_GPP_ACCESS
@@ -160,13 +182,28 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
 }
 
 func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) (status int) {
-    if checkSupportedTa(p.Tai.Tac) == false {
-        for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
-            a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
-        }
+    if isRoamer == true {
+        // Check whether UE's Home PLMN is supported when UE is a roamer
+        if checkSupportedHplmn(*p.HomePlmnId) == false {
+            for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
+                a.RejectedNssaiInPlmn = append(a.RejectedNssaiInPlmn, requestedSnssai)
+            }
 
-        status = http.StatusOK
-        return
+            status = http.StatusOK
+            return
+        }
+    }
+
+    if p.Tai != nil {
+        // Check whether UE's current TA is supported when UE provides TAI
+        if checkSupportedTa(*p.Tai) == false {
+            for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
+                a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
+            }
+
+            status = http.StatusOK
+            return
+        }
     }
 
     if p.SliceInfoRequestForRegistration.RequestedNssai != nil {
@@ -199,9 +236,8 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                 continue
             }
 
-            isStandardSnssai := checkStandardSnssai(requestedSnssai)
             var mappingOfRequestedSnssai Snssai
-            if isStandardSnssai == false {
+            if isRoamer == true && checkStandardSnssai(requestedSnssai) == false {
                 // Standard S-NSSAIs are supported to be commonly decided by all roaming partners
                 // Only non-standard S-NSSAIs are required to find mappings
                 targetMapping, found := findMappingWithServingSnssai(requestedSnssai,
@@ -229,10 +265,11 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                     var allowedSnssaiElement AllowedSnssai
                     // TODO: Local configuration of NSI information list
                     allowedSnssaiElement.AllowedSnssai = new(Snssai)
-
                     *allowedSnssaiElement.AllowedSnssai = requestedSnssai
-                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
-                    *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+                    if isRoamer == true {
+                        allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                        *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+                    }
 
                     // TODO: Allowed NSSAI for different Access Type
                     var accessType AccessType = IS_3_GPP_ACCESS
