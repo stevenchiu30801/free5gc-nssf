@@ -37,7 +37,7 @@ func checkSupportedTa(tai Tai) bool {
             return true
         }
     }
-    flog.Warn("No TA {Tac: %s} in NSSF configuration", tai.Tac)
+    flog.Warn("No TA {Tac:%s} in NSSF configuration", tai.Tac)
     return false
 }
 
@@ -90,6 +90,16 @@ func checkStandardSnssai(snssai Snssai) bool {
     return false
 }
 
+// Find S-NSSAI mappings of the given Home PLMN ID from configuration
+func findMappingOfPlmnFromConfig(homePlmnId PlmnId) ([]MappingOfSnssai, bool) {
+    for _, mappingFromPlmn := range factory.NssfConfig.Configuration.MappingListFromPlmn {
+        if *mappingFromPlmn.HomePlmnId == homePlmnId {
+            return mappingFromPlmn.MappingOfSnssai, true
+        }
+    }
+    return nil, false
+}
+
 // Find target S-NSSAI mapping with serving S-NSSAIs from mapping of S-NSSAI(s)
 func findMappingWithServingSnssai(snssai Snssai, mappings []MappingOfSnssai) (MappingOfSnssai, bool) {
     for _, mapping := range mappings {
@@ -135,48 +145,50 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
     for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
         if subscribedSnssai.DefaultIndication == true {
             // Subscribed S-NSSAI is marked as default S-NSSAI
-            // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
-            hitHomePlmn := false
-            for _, mappingFromPlmn := range factory.NssfConfig.Configuration.MappingListFromPlmn {
-                if *mappingFromPlmn.HomePlmnId == *p.HomePlmnId {
-                    hitHomePlmn = true
 
-                    targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai,
-                                                                      mappingFromPlmn.MappingOfSnssai)
+            var mappingOfSubscribedSnssai Snssai
+            if isRoamer == true && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
+                // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
+                mappingOfSnssai, found := findMappingOfPlmnFromConfig(*p.HomePlmnId)
 
-                    if found == false {
-                        flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
-                                  *subscribedSnssai.SubscribedSnssai,
-                                  *p.HomePlmnId)
-                        break
-                    }
-
-                    if checkSupportedSnssaiInTa(*targetMapping.ServingSnssai, p.Tai.Tac) == false {
-                        continue
-                    }
-
-                    var allowedSnssaiElement AllowedSnssai
-                    // TODO: Location configuration of NSI information list
-                    allowedSnssaiElement.AllowedSnssai = new(Snssai)
-                    *allowedSnssaiElement.AllowedSnssai = *targetMapping.ServingSnssai
-                    if isRoamer == true {
-                        allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
-                        *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
-                    }
-
-                    // TODO: Allowed NSSAI for different Access Type
-                    var accessType AccessType = IS_3_GPP_ACCESS
-
-                    addAllowedSnssai(allowedSnssaiElement, accessType, a)
-
+                if found == false {
+                    flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
                     break
                 }
+
+                targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai,
+                                                                  mappingOfSnssai)
+
+                if found == false {
+                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                              *subscribedSnssai.SubscribedSnssai,
+                              *p.HomePlmnId)
+                    continue
+                } else {
+                    mappingOfSubscribedSnssai = *targetMapping.ServingSnssai
+                }
+            } else {
+                mappingOfSubscribedSnssai = *subscribedSnssai.SubscribedSnssai
             }
 
-            if hitHomePlmn == false {
-                flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            if p.Tai != nil && checkSupportedSnssaiInTa(mappingOfSubscribedSnssai, p.Tai.Tac) == false {
                 continue
             }
+
+            var allowedSnssaiElement AllowedSnssai
+            // TODO: Location configuration of NSI information list
+            allowedSnssaiElement.AllowedSnssai = new(Snssai)
+            *allowedSnssaiElement.AllowedSnssai = mappingOfSubscribedSnssai
+            if isRoamer == true {
+                allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+            }
+
+            // TODO: Allowed NSSAI for different Access Type
+            var accessType AccessType = IS_3_GPP_ACCESS
+
+            addAllowedSnssai(allowedSnssaiElement, accessType, a)
+
         }
     }
 }
