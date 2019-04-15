@@ -69,7 +69,7 @@ func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
 func checkSupportedSnssaiInTa(snssai Snssai, tac string) bool {
     for _, taConfig := range factory.NssfConfig.Configuration.TaList {
         if taConfig.Tac == tac {
-            for _, supportedSnssai := range taConfig.SupportedSnssai {
+            for _, supportedSnssai := range taConfig.SupportedNssai {
                 if snssai == supportedSnssai {
                     return true
                 }
@@ -229,7 +229,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         checkIfRequestAllowed := false
 
         for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
-            if checkSupportedSnssaiInTa(requestedSnssai, p.Tai.Tac) == false {
+            if p.Tai != nil && checkSupportedSnssaiInTa(requestedSnssai, p.Tai.Tac) == false {
                 // Requested S-NSSAI does not supported in UE's current TA
                 // Add it to Rejected NSSAI in TA
                 a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
