@@ -27,12 +27,6 @@ const (
     UNSUPPORTED_RESOURCE = "Unsupported request resources"
 )
 
-// Variable related to the UE
-var (
-    // Indicating whether the subscriber is a roamer to the serving PLMN
-    isRoamer bool = false
-)
-
 // Parse NSSelectionGet query parameter
 func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err error) {
 
@@ -152,11 +146,6 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     }
 
     if isValidRequest == true {
-        // Determine whether UE is a roamer to the serving PLMN with the existence of the IE `home-plmn-id`
-        if p.HomePlmnId != nil {
-            isRoamer = true
-        }
-
         if p.SliceInfoRequestForRegistration != nil {
             // Network slice information is requested during the Registration procedure
             status = nsselectionForRegistration(p, &a, &d)

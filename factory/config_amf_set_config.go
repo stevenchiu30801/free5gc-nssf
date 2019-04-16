@@ -17,7 +17,7 @@ type AmfSetConfig struct {
 
     AmfSetId string `yaml:"amfSetId"`
 
-    AmfId []string `yaml:"amfId,omitempty"`
+    AmfList []string `yaml:"amfList,omitempty"`
 
     SupportedNssai []Snssai `yaml:"supportedNssai"`
 }
