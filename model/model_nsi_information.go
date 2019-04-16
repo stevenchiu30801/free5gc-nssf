@@ -15,9 +15,9 @@ import (
 
 type NsiInformation struct {
 
-	NrfId string `json:"nrfId"`
+    NrfId string `json:"nrfId" yaml:"nrfId"`
 
-	NsiId string `json:"nsiId,omitempty"`
+    NsiId string `json:"nsiId,omitempty" yaml:"nsiId,omitempty"`
 }
 
 func (n *NsiInformation) CheckIntegrity() error {

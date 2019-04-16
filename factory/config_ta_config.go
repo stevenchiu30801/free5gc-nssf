@@ -14,13 +14,27 @@ import (
 )
 
 type TaConfig struct {
+
     Tac string `yaml:"tac"`
+
+    AccessType *AccessType `yaml:"accessType"`
+
     SupportedNssai []Snssai `yaml:"supportedNssai"`
 }
 
 func (t *TaConfig) checkIntegrity() error {
     if t.Tac == "" {
         return errors.New("`tac` in configuration should not be empty")
+    }
+
+    if t.AccessType == nil || *t.AccessType == AccessType("") {
+        return errors.New("`accessType` in configuration should not be empty")
+    } else {
+        err := t.AccessType.CheckIntegrity()
+        if err != nil {
+            errMsg := "`accessType`:" + err.Error()
+            return errors.New(errMsg)
+        }
     }
 
     if t.SupportedNssai == nil || len(t.SupportedNssai) == 0 {

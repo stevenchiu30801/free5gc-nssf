@@ -17,7 +17,9 @@ type Configuration struct {
 
     SupportedNssaiInPlmn []Snssai `yaml:"supportedNssaiInPlmn"`
 
-    AmfList []AmfConfig `yaml:"amfList"`
+    NsiList []NsiConfig `yaml:"nsiList,omitempty"`
+
+    AmfSetList []AmfSetConfig `yaml:"amfSetList"`
 
     TaList []TaConfig `yaml:"taList"`
 
@@ -37,13 +39,23 @@ func (c *Configuration) checkIntegrity() error {
         }
     }
 
-    if c.AmfList == nil || len(c.AmfList) == 0 {
-        return errors.New("`amfList` in configuration should not be empty")
-    } else {
-        for i, amfConfig := range c.AmfList {
-            err := amfConfig.checkIntegrity()
+    if c.NsiList != nil && len(c.NsiList) != 0 {
+        for i, nsiConfig := range c.NsiList {
+            err := nsiConfig.checkIntegrity()
             if err != nil {
-                errMsg := "`amfList`[" + strconv.Itoa(i) + "]:" + err.Error()
+                errMsg := "`nsiList`[" + strconv.Itoa(i) + "]:" + err.Error()
+                return errors.New(errMsg)
+            }
+        }
+    }
+
+    if c.AmfSetList == nil || len(c.AmfSetList) == 0 {
+        return errors.New("`amfSetList` in configuration should not be empty")
+    } else {
+        for i, amfSetConfig := range c.AmfSetList {
+            err := amfSetConfig.checkIntegrity()
+            if err != nil {
+                errMsg := "`amfSetList`[" + strconv.Itoa(i) + "]:" + err.Error()
                 return errors.New(errMsg)
             }
         }

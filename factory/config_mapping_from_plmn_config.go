@@ -14,8 +14,11 @@ import (
 )
 
 type MappingFromPlmnConfig struct {
+
     OperatorName string `yaml:"operatorName,omitempty"`
+
     HomePlmnId *PlmnId `yaml:"homePlmnId"`
+
     MappingOfSnssai []MappingOfSnssai `yaml:"mappingOfSnssai"`
 }
 

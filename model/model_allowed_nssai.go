@@ -35,7 +35,7 @@ func (a *AllowedNssai) CheckIntegrity() error {
         }
     }
 
-    if a.AccessType == nil || *a.AccessType == "" {
+    if a.AccessType == nil || *a.AccessType == AccessType("") {
         return errors.New("`accessType` in query parameter should not be empty")
     } else {
         err := a.AccessType.CheckIntegrity()
