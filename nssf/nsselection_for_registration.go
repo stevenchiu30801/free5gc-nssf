@@ -120,6 +120,17 @@ func getNsiInformationListFromConfig(snssai Snssai) []NsiInformation {
     return nil
 }
 
+// Get Access Type of the given TAI from configuraion
+func getAccessTypeFromConfig(tai Tai) AccessType {
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if taConfig.Tac == tai.Tac {
+            return *taConfig.AccessType
+        }
+    }
+    flog.Warn("No TA {Tac:%s} in NSSF configuration", tai.Tac)
+    return IS_3_GPP_ACCESS
+}
+
 // Find target S-NSSAI mapping with serving S-NSSAIs from mapping of S-NSSAI(s)
 func findMappingWithServingSnssai(snssai Snssai, mappings []MappingOfSnssai) (MappingOfSnssai, bool) {
     for _, mapping := range mappings {
@@ -252,8 +263,11 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
             }
 
-            // TODO: Allowed NSSAI for different Access Type
+            // Default Access Type is set to 3GPP Access if no TAI is provided
             var accessType AccessType = IS_3_GPP_ACCESS
+            if p.Tai != nil {
+                accessType = getAccessTypeFromConfig(*p.Tai)
+            }
 
             addAllowedSnssai(allowedSnssaiElement, accessType, a)
 
@@ -357,8 +371,11 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                         *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
                     }
 
-                    // TODO: Allowed NSSAI for different Access Type
+                    // Default Access Type is set to 3GPP Access if no TAI is provided
                     var accessType AccessType = IS_3_GPP_ACCESS
+                    if p.Tai != nil {
+                        accessType = getAccessTypeFromConfig(*p.Tai)
+                    }
 
                     addAllowedSnssai(allowedSnssaiElement, accessType, a)
 
