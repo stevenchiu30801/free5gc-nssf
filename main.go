@@ -18,8 +18,8 @@ import (
 )
 
 func main() {
-    flog.LogInit()
     factory.InitConfigFactory("./conf/nssf_config.yaml")
+    flog.InitLog(string(*factory.NssfConfig.Info.Service))
     flog.Info("Server started")
 
     router := nssf.NewRouter()

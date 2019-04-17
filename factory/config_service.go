@@ -14,8 +14,8 @@ type Service string
 
 // List of NSSF service type
 const (
-    NSSF_NSSELECTION Service = "Nnssf_NSSelection"
-    NSSF_NSSAIAVAILABILITY Service = "Nnssf_NSSAIAvailability"
+    NSSF_NSSELECTION Service = "Nnssf-NSSelection"
+    NSSF_NSSAIAVAILABILITY Service = "Nnssf-NSSAIAvailability"
 )
 
 func (s *Service) checkIntegrity() error {

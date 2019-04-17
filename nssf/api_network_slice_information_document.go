@@ -93,7 +93,7 @@ func checkNfServiceConsumer(nfType NfType) error {
 // NSSelectionGet - Retrieve the Network Slice Selection Information
 func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
 
-    flog.Info("NSSelectionGet - Request received")
+    flog.Info("Request received")
 
     var (
         isValidRequest bool = true
@@ -162,16 +162,16 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     switch status {
         case http.StatusOK:
             json.NewEncoder(w).Encode(&a)
-            flog.Info("NSSelectionGet - Response code 200 OK")
+            flog.Info("Response code 200 OK")
         case http.StatusBadRequest:
             json.NewEncoder(w).Encode(&d)
-            flog.Info("NSSelectionGet - %s", d.Detail)
-            flog.Info("NSSelectionGet - Response code 400 Bad Request")
+            flog.Info(d.Detail)
+            flog.Info("Response code 400 Bad Request")
         case http.StatusForbidden:
             json.NewEncoder(w).Encode(&d)
-            flog.Info("NSSelectionGet - %s", d.Detail)
-            flog.Info("NSSelectionGet - Response code 403 Forbidden")
+            flog.Info(d.Detail)
+            flog.Info("Response code 403 Forbidden")
         default:
-            flog.Warn("NSSelectionGet - Unknown response code")
+            flog.Warn("Unknown response code")
     }
 }

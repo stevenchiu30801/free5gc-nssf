@@ -1,5 +1,5 @@
 info:
-  service: Nnssf_NSSelection
+  service: Nnssf-NSSelection
   version: 1.0.0
   title: NSSF NS Selection
   description: NSSF Network Slice Selection Service
