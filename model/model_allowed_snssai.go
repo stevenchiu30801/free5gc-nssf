@@ -10,8 +10,7 @@
 package model
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 )
 
 type AllowedSnssai struct {
@@ -25,12 +24,11 @@ type AllowedSnssai struct {
 
 func (a *AllowedSnssai) CheckIntegrity() error {
     if a.AllowedSnssai == nil {
-        return errors.New("`allowedSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`allowedSnssai` in query parameter should not be empty")
     } else {
         err := a.AllowedSnssai.CheckIntegrity()
         if err != nil {
-            errMsg := "`allowedSnssai`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`allowedSnssai`:%s", err.Error())
         }
     }
 
@@ -38,8 +36,7 @@ func (a *AllowedSnssai) CheckIntegrity() error {
         for i, nsiInformation := range a.NsiInformationList {
             err := nsiInformation.CheckIntegrity()
             if err != nil {
-                errMsg := "`nsiInformationList`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`nsiInformationList`[%d]:%s", i, err.Error())
             }
         }
     }
@@ -47,8 +44,7 @@ func (a *AllowedSnssai) CheckIntegrity() error {
     if a.MappedHomeSnssai != nil {
         err := a.MappedHomeSnssai.CheckIntegrity()
         if err != nil {
-            errMsg := "`mappedHomeSnssai`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`mappedHomeSnssai`:%s", err.Error())
         }
     }
 

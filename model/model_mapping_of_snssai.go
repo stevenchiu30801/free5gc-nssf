@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type MappingOfSnssai struct {
@@ -22,22 +22,20 @@ type MappingOfSnssai struct {
 
 func (m *MappingOfSnssai) CheckIntegrity() error {
     if m.ServingSnssai == nil {
-        return errors.New("`servingSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`servingSnssai` in query parameter should not be empty")
     } else {
         err := m.ServingSnssai.CheckIntegrity()
         if err != nil {
-            errMsg := "`servingSnssai`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`servingSnssai`:%s", err.Error())
         }
     }
 
     if m.HomeSnssai == nil {
-        return errors.New("`homeSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`homeSnssai` in query parameter should not be empty")
     } else {
         err := m.HomeSnssai.CheckIntegrity()
         if err != nil {
-            errMsg := "`homeSnssai`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`homeSnssai`:%s", err.Error())
         }
     }
 

@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type NsiInformation struct {
@@ -22,7 +22,7 @@ type NsiInformation struct {
 
 func (n *NsiInformation) CheckIntegrity() error {
     if n.NrfId == "" {
-        return errors.New("`nrfId` in query parameter should not be empty")
+        return fmt.Errorf("`nrfId` in query parameter should not be empty")
     }
     // TODO: Check whether `NrfId` is valid URI or not
 

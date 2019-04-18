@@ -7,8 +7,7 @@
 package factory
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 
     . "../model"
 )
@@ -28,13 +27,12 @@ type Configuration struct {
 
 func (c *Configuration) checkIntegrity() error {
     if c.SupportedNssaiInPlmn == nil || len(c.SupportedNssaiInPlmn) == 0 {
-        return errors.New("`supportedNssaiInPlmn` in configuration should not be empty")
+        return fmt.Errorf("`supportedNssaiInPlmn` in configuration should not be empty")
     } else {
         for i, supportedSnssaiInPlmn := range c.SupportedNssaiInPlmn {
             err := supportedSnssaiInPlmn.CheckIntegrity()
             if err != nil {
-                errMsg := "`supportedNssaiInPlmn`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`supportedNssaiInPlmn`[%d]:%s", i, err.Error())
             }
         }
     }
@@ -43,44 +41,40 @@ func (c *Configuration) checkIntegrity() error {
         for i, nsiConfig := range c.NsiList {
             err := nsiConfig.checkIntegrity()
             if err != nil {
-                errMsg := "`nsiList`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`nsiList`[%d]:%s", i, err.Error())
             }
         }
     }
 
     if c.AmfSetList == nil || len(c.AmfSetList) == 0 {
-        return errors.New("`amfSetList` in configuration should not be empty")
+        return fmt.Errorf("`amfSetList` in configuration should not be empty")
     } else {
         for i, amfSetConfig := range c.AmfSetList {
             err := amfSetConfig.checkIntegrity()
             if err != nil {
-                errMsg := "`amfSetList`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`amfSetList`[%d]:%s", i, err.Error())
             }
         }
     }
 
     if c.TaList == nil || len(c.TaList) == 0 {
-        return errors.New("`taList` in configuration should not be empty")
+        return fmt.Errorf("`taList` in configuration should not be empty")
     } else {
         for i, taConfig := range c.TaList {
             err := taConfig.checkIntegrity()
             if err != nil {
-                errMsg := "`taList`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`taList`[%d]:%s", i, err.Error())
             }
         }
     }
 
     if c.MappingListFromPlmn == nil || len(c.MappingListFromPlmn) == 0 {
-        return errors.New("`mappingListFromPlmn` in configuration should not be empty")
+        return fmt.Errorf("`mappingListFromPlmn` in configuration should not be empty")
     } else {
         for i, mappingFromPlmnConfig := range c.MappingListFromPlmn {
             err := mappingFromPlmnConfig.checkIntegrity()
             if err != nil {
-                errMsg := "`mappingListFromPlmn`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`mappingListFromPlmn`[%d]:%s", i, err.Error())
             }
         }
     }

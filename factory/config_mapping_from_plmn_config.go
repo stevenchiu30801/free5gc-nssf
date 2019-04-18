@@ -7,8 +7,7 @@
 package factory
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 
     . "../model"
 )
@@ -24,23 +23,21 @@ type MappingFromPlmnConfig struct {
 
 func (m *MappingFromPlmnConfig) checkIntegrity() error {
     if m.HomePlmnId == nil {
-        return errors.New("`homePlmnId` in configuration should not be empty")
+        return fmt.Errorf("`homePlmnId` in configuration should not be empty")
     } else {
         err := m.HomePlmnId.CheckIntegrity()
         if err != nil {
-            errMsg := "`homePlmnId`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`homePlmnId`:%s", err.Error())
         }
     }
 
     if m.MappingOfSnssai == nil || len(m.MappingOfSnssai) == 0 {
-        return errors.New("`mappingOfSnssai` in configuration should not empty")
+        return fmt.Errorf("`mappingOfSnssai` in configuration should not empty")
     } else {
         for i, mappingOfSnssai := range m.MappingOfSnssai {
             err := mappingOfSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`mappingOfSnssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`mappingOfSnssai`[%d]:%s", i, err.Error())
             }
         }
     }

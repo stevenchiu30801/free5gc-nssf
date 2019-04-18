@@ -7,8 +7,7 @@
 package factory
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 
     . "../model"
 )
@@ -24,17 +23,16 @@ type AmfSetConfig struct {
 
 func (a *AmfSetConfig) checkIntegrity() error {
     if a.AmfSetId == "" {
-        return errors.New("`amfSetId` in configuration should not be empty")
+        return fmt.Errorf("`amfSetId` in configuration should not be empty")
     }
 
     if a.SupportedNssai == nil || len(a.SupportedNssai) == 0 {
-        return errors.New("`supportedNssai` in configuration should not be empty")
+        return fmt.Errorf("`supportedNssai` in configuration should not be empty")
     } else {
         for i, supportedSnssai := range a.SupportedNssai {
             err := supportedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`supportedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`supportedNssai`[%d]:%s", i, err.Error())
             }
         }
     }

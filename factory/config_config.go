@@ -7,7 +7,7 @@
 package factory
 
 import (
-    "errors"
+    "fmt"
 )
 
 type Config struct {
@@ -17,24 +17,22 @@ type Config struct {
     Configuration *Configuration `yaml:"configuration"`
 }
 
-func (c *Config) checkIntegrity() error {
+func (c *Config) CheckIntegrity() error {
     if c.Info == nil {
-        return errors.New("`info` in configuration should not be empty")
+        return fmt.Errorf("`info` in configuration should not be empty")
     } else {
         err := c.Info.checkIntegrity()
         if err != nil {
-            errMsg := "`info`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`info`:%s", err.Error())
         }
     }
 
     if c.Configuration == nil {
-        return errors.New("`configuration` in configuration should not be empty")
+        return fmt.Errorf("`configuration` in configuration should not be empty")
     } else {
         err := c.Configuration.checkIntegrity()
         if err != nil {
-            errMsg := "`configuration`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`configuration`:%s", err.Error())
         }
     }
 

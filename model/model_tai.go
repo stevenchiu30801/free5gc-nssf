@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type Tai struct {
@@ -22,17 +22,16 @@ type Tai struct {
 
 func (t *Tai) CheckIntegrity() error {
     if t.PlmnId == nil {
-        return errors.New("`plmnId` in query parameter should not be empty")
+        return fmt.Errorf("`plmnId` in query parameter should not be empty")
     } else {
         err := t.PlmnId.CheckIntegrity()
         if err != nil {
-            errMsg := "`plmnId`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`plmnId`:%s", err.Error())
         }
     }
 
     if t.Tac == "" {
-        return errors.New("`tac` in query parameter should not be empty")
+        return fmt.Errorf("`tac` in query parameter should not be empty")
     }
 
     return nil

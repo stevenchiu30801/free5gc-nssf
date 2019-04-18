@@ -11,7 +11,7 @@ package nssf
 
 import (
     "encoding/json"
-    "errors"
+    "fmt"
     "net/http"
     "strings"
 
@@ -83,8 +83,7 @@ func parseQueryParameter(r *http.Request) (p NsselectionQueryParameter, err erro
 //       `nf-id` e.g. Whether the V-NSSF is authorized
 func checkNfServiceConsumer(nfType NfType) error {
     if nfType != AMF && nfType != NSSF {
-        errMsg := "`nf-type`:'" + string(nfType) + "' is not authorized to retrieve the slice selection information"
-        return errors.New(errMsg)
+        return fmt.Errorf("`nf-type`:'%s' is not authorized to retrieve the slice selection information", string(nfType))
     }
 
     return nil

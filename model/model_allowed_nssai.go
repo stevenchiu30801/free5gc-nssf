@@ -10,8 +10,7 @@
 package model
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 )
 
 type AllowedNssai struct {
@@ -24,24 +23,22 @@ type AllowedNssai struct {
 func (a *AllowedNssai) CheckIntegrity() error {
     // Deal with both nil slice and empty slice
     if a.AllowedSnssaiList == nil || len(a.AllowedSnssaiList) == 0 {
-        return errors.New("`allowedSnssaiList` in query parameter should not be empty")
+        return fmt.Errorf("`allowedSnssaiList` in query parameter should not be empty")
     } else {
         for i, allowedSnssai := range a.AllowedSnssaiList {
             err := allowedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`allowedSnssaiList`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`allowedSnssaiList`[%d]:%s", i, err.Error())
             }
         }
     }
 
     if a.AccessType == nil || *a.AccessType == AccessType("") {
-        return errors.New("`accessType` in query parameter should not be empty")
+        return fmt.Errorf("`accessType` in query parameter should not be empty")
     } else {
         err := a.AccessType.CheckIntegrity()
         if err != nil {
-            errMsg := "`accessType`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`accessType`:%s", err.Error())
         }
     }
 

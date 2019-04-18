@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type PlmnId struct {
@@ -22,11 +22,11 @@ type PlmnId struct {
 
 func (p *PlmnId) CheckIntegrity() error {
     if p.Mcc == "" {
-        return errors.New("`mcc` in query parameter should not be empty")
+        return fmt.Errorf("`mcc` in query parameter should not be empty")
     }
 
     if p.Mnc == "" {
-        return errors.New("`mnc` in query parameter should not be empty")
+        return fmt.Errorf("`mnc` in query parameter should not be empty")
     }
 
     return nil

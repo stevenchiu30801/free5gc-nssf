@@ -7,7 +7,7 @@
 package factory
 
 import (
-    "errors"
+    "fmt"
 )
 
 type Service string
@@ -20,8 +20,7 @@ const (
 
 func (s *Service) checkIntegrity() error {
     if *s != NSSF_NSSELECTION && *s != NSSF_NSSAIAVAILABILITY {
-        errMsg := "'" + string(*s) + "' is unrecognized"
-        return errors.New(errMsg)
+        return fmt.Errorf("'%s' is unrecognized", string(*s))
     }
 
     return nil

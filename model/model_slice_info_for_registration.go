@@ -10,8 +10,7 @@
 package model
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 )
 
 type SliceInfoForRegistration struct {
@@ -38,8 +37,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, subscribedSnssai := range s.SubscribedNssai {
             err := subscribedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`subscribedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`subscribedNssai`[%d]:%s", i, err.Error())
             }
         }
     }
@@ -47,27 +45,24 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
     if s.AllowedNssaiCurrentAccess != nil {
         err := s.AllowedNssaiCurrentAccess.CheckIntegrity()
         if err != nil {
-            errMsg := "`allowedNssaiCurrentAccess`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`allowedNssaiCurrentAccess`:%s", err.Error())
         }
     }
 
     if s.AllowedNssaiOtherAccess != nil {
         err := s.AllowedNssaiOtherAccess.CheckIntegrity()
         if err != nil {
-            errMsg := "`allowedNssaiOtherAccess`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`allowedNssaiOtherAccess`:%s", err.Error())
         }
     }
 
     if s.RequestMapping == true && (s.SNssaiForMapping == nil || len(s.SNssaiForMapping) == 0) {
-        return errors.New("`sNssaiForMapping` in query parameter should be included when `requestMapping` is set to true")
+        return fmt.Errorf("`sNssaiForMapping` in query parameter should be included when `requestMapping` is set to true")
     } else if s.SNssaiForMapping != nil || len(s.SNssaiForMapping) != 0 {
         for i, sNssaiForMapping := range s.SNssaiForMapping {
             err := sNssaiForMapping.CheckIntegrity()
             if err != nil {
-                errMsg := "`sNssaiForMapping`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`sNssaiForMapping`[%d]:%s", i, err.Error())
             }
         }
     }
@@ -76,8 +71,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, requestedSnssai := range s.RequestedNssai {
             err := requestedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`requestedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`requestedNssai`[%d]:%s", i, err.Error())
             }
         }
     }
@@ -86,8 +80,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
         for i, mappingOfSnssai := range s.MappingOfNssai {
             err := mappingOfSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`mappingOfNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`mappingOfNssai`[%d]:%s", i, err.Error())
             }
         }
     }

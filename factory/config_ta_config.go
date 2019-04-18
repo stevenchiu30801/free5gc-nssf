@@ -7,8 +7,7 @@
 package factory
 
 import (
-    "errors"
-    "strconv"
+    "fmt"
 
     . "../model"
 )
@@ -24,27 +23,25 @@ type TaConfig struct {
 
 func (t *TaConfig) checkIntegrity() error {
     if t.Tac == "" {
-        return errors.New("`tac` in configuration should not be empty")
+        return fmt.Errorf("`tac` in configuration should not be empty")
     }
 
     if t.AccessType == nil || *t.AccessType == AccessType("") {
-        return errors.New("`accessType` in configuration should not be empty")
+        return fmt.Errorf("`accessType` in configuration should not be empty")
     } else {
         err := t.AccessType.CheckIntegrity()
         if err != nil {
-            errMsg := "`accessType`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`accessType`:%s", err.Error())
         }
     }
 
     if t.SupportedNssai == nil || len(t.SupportedNssai) == 0 {
-        return errors.New("`supportedNssai` in configuration should not be empty")
+        return fmt.Errorf("`supportedNssai` in configuration should not be empty")
     } else {
         for i, supportedSnssai := range t.SupportedNssai {
             err := supportedSnssai.CheckIntegrity()
             if err != nil {
-                errMsg := "`supportedNssai`[" + strconv.Itoa(i) + "]:" + err.Error()
-                return errors.New(errMsg)
+                return fmt.Errorf("`supportedNssai`[%d]:%s", i, err.Error())
             }
         }
     }

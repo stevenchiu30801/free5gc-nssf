@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type AccessType string
@@ -23,8 +23,7 @@ const (
 
 func (a *AccessType) CheckIntegrity() error {
     if *a != IS_3_GPP_ACCESS && *a != NON_3_GPP_ACCESS {
-        errMsg := "'" + string(*a) + "' is unrecognized"
-        return errors.New(errMsg)
+        return fmt.Errorf("'%s' is unrecognized", string(*a))
     }
 
     return nil

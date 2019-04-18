@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type SubscribedSnssai struct {
@@ -22,12 +22,11 @@ type SubscribedSnssai struct {
 
 func (s *SubscribedSnssai) CheckIntegrity() error {
     if s.SubscribedSnssai == nil {
-        return errors.New("`subscribedSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`subscribedSnssai` in query parameter should not be empty")
     } else {
         err := s.SubscribedSnssai.CheckIntegrity()
         if err != nil {
-            errMsg := "`subscribedSnssai`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`subscribedSnssai`:%s", err.Error())
         }
     }
 

@@ -7,7 +7,7 @@
 package factory
 
 import (
-    "errors"
+    "fmt"
 
     . "../model"
 )
@@ -29,26 +29,24 @@ type Info struct {
 
 func (i *Info) checkIntegrity() error {
     if i.Service == nil || *i.Service == Service("") {
-        return errors.New("`service` in configuration should not be empty")
+        return fmt.Errorf("`service` in configuration should not be empty")
     } else {
         err := i.Service.checkIntegrity()
         if err != nil {
-            errMsg := "`service`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`service`:%s", err.Error())
         }
     }
 
     if i.Url == "" {
-        return errors.New("`url` in configuration should not be empty")
+        return fmt.Errorf("`url` in configuration should not be empty")
     }
 
     if i.ServingPlmnId == nil {
-        return errors.New("`servingPlmnId` in configuration should not be empty")
+        return fmt.Errorf("`servingPlmnId` in configuration should not be empty")
     } else {
         err := i.ServingPlmnId.CheckIntegrity()
         if err != nil {
-            errMsg := "`servingPlmnId`:" + err.Error()
-            return errors.New(errMsg)
+            return fmt.Errorf("`servingPlmnId`:%s", err.Error())
         }
     }
 

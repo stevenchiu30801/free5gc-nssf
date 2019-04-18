@@ -31,7 +31,7 @@ func InitConfigFactory(f string) {
     err = yaml.Unmarshal([]byte(content), &NssfConfig)
     checkErr(err)
 
-    err = NssfConfig.checkIntegrity()
+    err = NssfConfig.CheckIntegrity()
     checkErr(err)
 
     // d, err := yaml.Marshal(&NssfConfig)

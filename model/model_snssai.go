@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type Snssai struct {
@@ -22,7 +22,7 @@ type Snssai struct {
 
 func (s *Snssai) CheckIntegrity() error {
     if s.Sst == 0 {
-        return errors.New("`sst` in query parameter should not be empty")
+        return fmt.Errorf("`sst` in query parameter should not be empty")
     }
 
     return nil

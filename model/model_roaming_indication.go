@@ -10,7 +10,7 @@
 package model
 
 import (
-    "errors"
+    "fmt"
 )
 
 type RoamingIndication string
@@ -25,8 +25,7 @@ const (
 func (r *RoamingIndication) CheckIntegrity() error {
     if *r != NON_ROAMINGRoamingIndication && *r != LOCAL_BREAKOUTRoamingIndication &&
        *r != HOME_ROUTED_ROAMINGRoamingIndication {
-        errMsg := "'" + string(*r) + "' is unrecognized"
-        return errors.New(errMsg)
+        return fmt.Errorf("'%s' is unrecognized", string(*r))
     }
 
     return nil
