@@ -7,8 +7,8 @@
 package flog
 
 import (
+    "fmt"
 	"log"
-    "strconv"
     "os"
 )
 
@@ -33,12 +33,20 @@ const (
     errorColor = HiRed
 )
 
+// Default service name shown in log if loggers are not initizalized
+const defaultServiceName string = "DefaultFlog"
+
 func getEscapeCode(style int, color int) string {
-    return "\033[" + strconv.Itoa(style) + ";" + strconv.Itoa(color) + "m"
+    return fmt.Sprintf("%s[%d;%dm", Escape, style, color)
+}
+
+func reset() string {
+    return fmt.Sprintf("%s[%dm", Escape, NoEffect)
 }
 
 func InitLog(service string) {
     serviceName = service
+
     debugLogger = log.New(os.Stdout, getEscapeCode(logStyle, debugColor), log.Ldate|log.Ltime)
     infoLogger = log.New(os.Stdout, getEscapeCode(logStyle, infoColor), log.Ldate|log.Ltime)
     warnLogger = log.New(os.Stdout, getEscapeCode(logStyle, warnColor), log.Ldate|log.Ltime)
@@ -46,22 +54,34 @@ func InitLog(service string) {
 }
 
 func Debug(format string, v ...interface{}) {
-    format = "- " + serviceName + " - DEBUG - " + format
+    if debugLogger == nil {
+        InitLog(defaultServiceName)
+    }
+    format = "- " + serviceName + " - DEBUG - " + format + reset()
     debugLogger.Printf(format, v...)
 }
 
 func Info(format string, v ...interface{}) {
-    format = "- " + serviceName + " - INFO - " + format
+    if infoLogger == nil {
+        InitLog(defaultServiceName)
+    }
+    format = "- " + serviceName + " - INFO - " + format + reset()
     infoLogger.Printf(format, v...)
 }
 
 func Warn(format string, v ...interface{}) {
-    format = "- " + serviceName + " - WARN - " + format
+    if warnLogger == nil {
+        InitLog(defaultServiceName)
+    }
+    format = "- " + serviceName + " - WARN - " + format + reset()
     warnLogger.Printf(format, v...)
 }
 
 func Error(format string, v ...interface{}) {
-    format = "- " + serviceName + " - ERROR - " + format
+    if errorLogger == nil {
+        InitLog(defaultServiceName)
+    }
+    format = "- " + serviceName + " - ERROR - " + format + reset()
     errorLogger.Printf(format, v...)
 }
 

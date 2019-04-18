@@ -6,6 +6,9 @@
 
 package flog
 
+// Escape character
+const Escape string = "\033"
+
 // Text style
 const (
     NoEffect int = iota
