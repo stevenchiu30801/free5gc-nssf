@@ -28,7 +28,7 @@ func checkSupportedHplmn(homePlmnId PlmnId) bool {
 // Check whether UE's current TA is configured/supported
 func checkSupportedTa(tai Tai) bool {
     if *tai.PlmnId != *factory.NssfConfig.Info.ServingPlmnId {
-        flog.Warn("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
+        flog.Info("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
         return false
     }
 
@@ -157,7 +157,11 @@ func addAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
     for i := range a.AllowedNssaiList {
         if *a.AllowedNssaiList[i].AccessType == accessType {
             hitAllowedNssai = true
-            a.AllowedNssaiList[i].AllowedSnssaiList = append(a.AllowedNssaiList[i].AllowedSnssaiList, allowedSnssai)
+            if len(a.AllowedNssaiList[i].AllowedSnssaiList) == 8 {
+                flog.Info("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
+            } else {
+                a.AllowedNssaiList[i].AllowedSnssaiList = append(a.AllowedNssaiList[i].AllowedSnssaiList, allowedSnssai)
+            }
             break
         }
     }
