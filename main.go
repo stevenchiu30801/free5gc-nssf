@@ -19,7 +19,7 @@ import (
 
 func main() {
     factory.InitConfigFactory("./conf/nssf_config.yaml")
-    flog.InitLog(string(*factory.NssfConfig.Info.Service))
+    flog.InitLog(string(*factory.NssfConfig.Info.Service), true)
     flog.Info("Server started")
 
     router := nssf.NewRouter()
