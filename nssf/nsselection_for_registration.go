@@ -212,6 +212,8 @@ func addAmfInformation(a *AuthorizedNetworkSliceInfo) {
                 a.CandidateAmfList = append(a.CandidateAmfList, amfSetConfig.AmfList...)
             } else {
                 a.TargetAmfSet = amfSetConfig.AmfSetId
+                // The API URI of the NRF may be included if target AMF Set is included
+                a.NrfAmfSet = amfSetConfig.NrfAmfSet
             }
             hitAmfSet = true
             break

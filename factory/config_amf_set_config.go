@@ -18,6 +18,8 @@ type AmfSetConfig struct {
 
     AmfList []string `yaml:"amfList,omitempty"`
 
+    NrfAmfSet string `yaml:"nrfAmfSet,omitempty"`
+
     SupportedNssai []Snssai `yaml:"supportedNssai"`
 }
 
