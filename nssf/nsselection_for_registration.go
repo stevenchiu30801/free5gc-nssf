@@ -177,6 +177,10 @@ func addAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
 
 // Add AMF information to Authorized Network Slice Info
 func addAmfInformation(a *AuthorizedNetworkSliceInfo) {
+    if a.AllowedNssaiList == nil || len(a.AllowedNssaiList) == 0 {
+        return
+    }
+
     // Check if any AMF can serve the UE
     // That is, whether NSSAI of all Allowed S-NSSAIs is a subset of NSSAI supported by AMF
     // Simply use the first applicable AMF set
@@ -277,6 +281,8 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
 
         }
     }
+
+    addAmfInformation(a)
 }
 
 // Network slice selection for registration

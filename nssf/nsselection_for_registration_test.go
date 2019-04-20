@@ -237,6 +237,10 @@ func setupUnsupportedSnssai(p *NsselectionQueryParameter) {
     })
 }
 
+func removeRequestedNssai(p *NsselectionQueryParameter) {
+    p.SliceInfoRequestForRegistration.RequestedNssai = []Snssai{}
+}
+
 func TestTemplate(t *testing.T) {
     t.Skip()
 
@@ -290,7 +294,7 @@ func TestNonRoaming(t *testing.T) {
             },
         },
         {
-            name: "Two Rejected S-NSSAIs in PLMN and TA and one Allowed S-NSSAI",
+            name: "Two Rejected S-NSSAIs in PLMN and TA and One Allowed S-NSSAI",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 AllowedNssaiList: []AllowedNssai {
@@ -309,7 +313,7 @@ func TestNonRoaming(t *testing.T) {
                                 },
                             },
                         },
-                        AccessType: func() *AccessType {a := IS_3_GPP_ACCESS; return &a}(),
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
                 CandidateAmfList: []string {
@@ -328,6 +332,37 @@ func TestNonRoaming(t *testing.T) {
                         Sst: 1,
                         Sd: "3",
                     },
+                },
+            },
+        },
+        {
+            name: "Requested NSSAI Not Provided",
+            modifyQueryParameter: removeRequestedNssai,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "1",
+                                    },
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+                CandidateAmfList: []string {
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
                 },
             },
         },
@@ -435,7 +470,7 @@ func TestRoaming(t *testing.T) {
             },
         },
         {
-            name: "Two Rejected S-NSSAIs in PLMN and TA and one Allowed S-NSSAI",
+            name: "Two Rejected S-NSSAIs in PLMN and TA and One Allowed S-NSSAI",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 AllowedNssaiList: []AllowedNssai {
@@ -458,7 +493,7 @@ func TestRoaming(t *testing.T) {
                                 },
                             },
                         },
-                        AccessType: func() *AccessType {a := IS_3_GPP_ACCESS; return &a}(),
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
                 CandidateAmfList: []string {
@@ -477,6 +512,41 @@ func TestRoaming(t *testing.T) {
                         Sst: 1,
                         Sd: "3",
                     },
+                },
+            },
+        },
+        {
+            name: "Requested NSSAI Not Provided",
+            modifyQueryParameter: removeRequestedNssai,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "1",
+                                    },
+                                },
+                                MappedHomeSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+                CandidateAmfList: []string {
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
                 },
             },
         },
