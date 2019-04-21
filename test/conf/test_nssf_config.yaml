@@ -73,30 +73,38 @@ configuration:
       accessType: 3GPP_ACCESS
       supportedNssai:
         - sst: 1
+        - sst: 1
           sd: 1
         - sst: 1
           sd: 2
+        - sst: 2
     - tac: 33457
       accessType: 3GPP_ACCESS
       supportedNssai:
         - sst: 1
+        - sst: 1
           sd: 1
         - sst: 1
           sd: 2
+        - sst: 2
     - tac: 33458
       accessType: 3GPP_ACCESS
       supportedNssai:
         - sst: 1
+        - sst: 1
           sd: 1
         - sst: 1
           sd: 3
+        - sst: 2
     - tac: 33459
       accessType: 3GPP_ACCESS
       supportedNssai:
         - sst: 1
+        - sst: 1
           sd: 1
         - sst: 2
           sd: 1
+        - sst: 2
   mappingListFromPlmn:
     - operatorName: NTT Docomo
       homePlmnId:

@@ -287,6 +287,29 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
     addAmfInformation(a)
 }
 
+// Use S-NSSAI(s) in Requested NSSAI as Default Configured NSSAI
+func useDefaultConfiguredSnssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo) {
+    for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
+        // Check whether the Default Configured S-NSSAI is standard, which could be commonly decided by all roaming partners
+        if checkStandardSnssai(requestedSnssai) == false {
+            flog.Info("S-NSSAI %+v in Requested NSSAI which based on Default Configured NSSAI is not standard", requestedSnssai)
+            continue
+        }
+
+        // Check whether the Default Configured S-NSSAI is subscribed
+        for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
+            if requestedSnssai == *subscribedSnssai.SubscribedSnssai {
+                var configuredSnssai ConfiguredSnssai
+                configuredSnssai.ConfiguredSnssai = new(Snssai)
+                *configuredSnssai.ConfiguredSnssai = requestedSnssai
+
+                a.ConfiguredNssai = append(a.ConfiguredNssai, configuredSnssai)
+                break
+            }
+        }
+    }
+}
+
 // Network slice selection for registration
 // The function is executed when the IE, `slice-info-request-for-registration`, is provided in query parameters
 func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) (status int) {
@@ -414,6 +437,10 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
         // No Requested NSSAI is provided
         // Subscribed S-NSSAIs marked as default are used
         useDefaultSubscribedSnssai(p, a)
+    }
+
+    if p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd == true {
+        useDefaultConfiguredSnssai(p, a)
     }
 
     status = http.StatusOK

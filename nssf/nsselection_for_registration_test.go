@@ -40,6 +40,11 @@ func generateNonRoamingQueryParameter() NsselectionQueryParameter {
                 "subscribedNssai": [
                     {
                         "subscribedSnssai": {
+                            "sst": 1
+                        }
+                    },
+                    {
+                        "subscribedSnssai": {
                             "sst": 1,
                             "sd": "1"
                         },
@@ -109,6 +114,11 @@ func generateRoamingQueryParameter() NsselectionQueryParameter {
             "nf-id": "469de254-2fe5-4ca0-8381-af3f500af77c",
             "slice-info-request-for-registration": {
                 "subscribedNssai": [
+                    {
+                        "subscribedSnssai": {
+                            "sst": 1
+                        }
+                    },
                     {
                         "subscribedSnssai": {
                             "sst": 1,
@@ -235,6 +245,19 @@ func setupUnsupportedSnssai(p *NsselectionQueryParameter) {
         Sst: 9,
         Sd: "9",
     })
+}
+
+func setupDefaultConfiguredSnssai(p *NsselectionQueryParameter) {
+    p.SliceInfoRequestForRegistration.RequestedNssai = []Snssai {
+        {
+            Sst: 1,
+        },
+        {
+            Sst: 2,
+        },
+    }
+
+    p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd = true
 }
 
 func removeRequestedNssai(p *NsselectionQueryParameter) {
@@ -418,7 +441,7 @@ func TestAddAmfInformation(t *testing.T) {
     }
 }
 
-func TestNonRoaming(t *testing.T) {
+func TestNsselectionCommon(t *testing.T) {
     initConfigFactory(configFile)
     // flog.MuteLog()
 
@@ -462,7 +485,88 @@ func TestNonRoaming(t *testing.T) {
             },
         },
         {
-            name: "Requested with Two Rejected in Both PLMN and TA and One Allowed",
+            name: "Default Configured S-NSSAI",
+            modifyQueryParameter: setupDefaultConfiguredSnssai,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+                ConfiguredNssai: []ConfiguredSnssai {
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                        },
+                    },
+                },
+                RejectedNssaiInPlmn: []Snssai {
+                    {
+                        Sst: 2,
+                    },
+                },
+            },
+        },
+    }
+
+    for _, subtest := range subtests {
+        t.Run(subtest.name, func(t *testing.T) {
+            var (
+                status int
+                a AuthorizedNetworkSliceInfo
+                d ProblemDetails
+            )
+
+            p := generateNonRoamingQueryParameter()
+
+            if subtest.modifyQueryParameter != nil {
+                subtest.modifyQueryParameter(&p)
+            }
+
+            status = nsselectionForRegistration(p, &a, &d)
+
+            if status != subtest.expectStatus {
+                t.Errorf("Incorrect status code: expected %d, got %d", subtest.expectStatus, status)
+            }
+
+            if status == http.StatusOK {
+                if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
+                    e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
+                    r, _ := json.Marshal(&a)
+                    t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
+                }
+            } else {
+                if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
+                    e, _ := json.Marshal(subtest.expectProblemDetails)
+                    r, _ := json.Marshal(&d)
+                    t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
+                }
+            }
+        })
+    }
+}
+
+func TestNsselectionNonRoaming(t *testing.T) {
+    initConfigFactory(configFile)
+    // flog.MuteLog()
+
+    subtests := []struct {
+        name string
+        modifyQueryParameter func(*NsselectionQueryParameter)
+        expectStatus int
+        expectAuthorizedNetworkSliceInfo *AuthorizedNetworkSliceInfo
+        expectProblemDetails *ProblemDetails
+    }{
+        {
+            name: "Requested with Two Rejected in PLMN and TA and One Allowed",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 AllowedNssaiList: []AllowedNssai {
@@ -573,7 +677,7 @@ func TestNonRoaming(t *testing.T) {
     }
 }
 
-func TestRoaming(t *testing.T) {
+func TestNsselectionRoaming(t *testing.T) {
     initConfigFactory(configFile)
     // flog.MuteLog()
 
@@ -606,39 +710,7 @@ func TestRoaming(t *testing.T) {
             },
         },
         {
-            name: "Unsupported TA",
-            modifyQueryParameter: setupUnsupportedTai,
-            expectStatus: http.StatusOK,
-            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
-                RejectedNssaiInTa: []Snssai {
-                    {
-                        Sst: 1,
-                        Sd: "1",
-                    },
-                    {
-                        Sst: 1,
-                        Sd: "2",
-                    },
-                    {
-                        Sst: 1,
-                        Sd: "3",
-                    },
-                },
-            },
-        },
-        {
-            name: "Unsupported S-NSSAI",
-            modifyQueryParameter: setupUnsupportedSnssai,
-            expectStatus: http.StatusForbidden,
-            expectProblemDetails: &ProblemDetails {
-                Title: UNSUPPORTED_RESOURCE,
-                Status: http.StatusForbidden,
-                Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
-                Cause: "SNSSAI_NOT_SUPPORTED",
-            },
-        },
-        {
-            name: "Requested with Two Rejected in Both PLMN and TA and One Allowed",
+            name: "Requested with Two Rejected in PLMN and TA and One Allowed",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 AllowedNssaiList: []AllowedNssai {
