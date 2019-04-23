@@ -201,7 +201,8 @@ func generateRoamingQueryParameter() NsselectionQueryParameter {
                             "sd": "4"
                         }
                     }
-                ]
+                ],
+                "requestMapping": false
             },
             "home-plmn-id": {
                 "mcc": "440",
@@ -223,14 +224,14 @@ func generateRoamingQueryParameter() NsselectionQueryParameter {
     return p
 }
 
-func setupUnsupportedHomePlmnId(p *NsselectionQueryParameter) {
+func setUnsupportedHomePlmnId(p *NsselectionQueryParameter) {
     *p.HomePlmnId = PlmnId {
         Mcc: "123",
         Mnc: "456",
     }
 }
 
-func setupUnsupportedTai(p *NsselectionQueryParameter) {
+func setUnsupportedTai(p *NsselectionQueryParameter) {
     *p.Tai = Tai {
         PlmnId: &PlmnId {
             Mcc: "466",
@@ -240,14 +241,14 @@ func setupUnsupportedTai(p *NsselectionQueryParameter) {
     }
 }
 
-func setupUnsupportedSnssai(p *NsselectionQueryParameter) {
+func setUnsupportedSnssai(p *NsselectionQueryParameter) {
     p.SliceInfoRequestForRegistration.RequestedNssai = append(p.SliceInfoRequestForRegistration.RequestedNssai, Snssai {
         Sst: 9,
         Sd: "9",
     })
 }
 
-func setupDefaultConfiguredSnssai(p *NsselectionQueryParameter) {
+func setDefaultConfiguredSnssai(p *NsselectionQueryParameter) {
     p.SliceInfoRequestForRegistration.RequestedNssai = []Snssai {
         {
             Sst: 1,
@@ -258,6 +259,17 @@ func setupDefaultConfiguredSnssai(p *NsselectionQueryParameter) {
     }
 
     p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd = true
+}
+
+func setRequestMapping(p *NsselectionQueryParameter) {
+    p.SliceInfoRequestForRegistration.SNssaiForMapping = []Snssai {
+        {
+            Sst: 1,
+            Sd: "3",
+        },
+    }
+
+    p.SliceInfoRequestForRegistration.RequestMapping = true
 }
 
 func removeRequestedNssai(p *NsselectionQueryParameter) {
@@ -454,7 +466,7 @@ func TestNsselectionCommon(t *testing.T) {
     }{
         {
             name: "Unsupported TA",
-            modifyQueryParameter: setupUnsupportedTai,
+            modifyQueryParameter: setUnsupportedTai,
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 RejectedNssaiInTa: []Snssai {
@@ -475,7 +487,7 @@ func TestNsselectionCommon(t *testing.T) {
         },
         {
             name: "Unsupported S-NSSAI",
-            modifyQueryParameter: setupUnsupportedSnssai,
+            modifyQueryParameter: setUnsupportedSnssai,
             expectStatus: http.StatusForbidden,
             expectProblemDetails: &ProblemDetails {
                 Title: UNSUPPORTED_RESOURCE,
@@ -486,7 +498,7 @@ func TestNsselectionCommon(t *testing.T) {
         },
         {
             name: "Default Configured S-NSSAI",
-            modifyQueryParameter: setupDefaultConfiguredSnssai,
+            modifyQueryParameter: setDefaultConfiguredSnssai,
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 AllowedNssaiList: []AllowedNssai {
@@ -690,7 +702,7 @@ func TestNsselectionRoaming(t *testing.T) {
     }{
         {
             name: "Unsupported HPLMN",
-            modifyQueryParameter: setupUnsupportedHomePlmnId,
+            modifyQueryParameter: setUnsupportedHomePlmnId,
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
                 RejectedNssaiInPlmn: []Snssai {
@@ -787,6 +799,40 @@ func TestNsselectionRoaming(t *testing.T) {
                     "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                },
+            },
+        },
+        {
+            name: "Request Mapping",
+            modifyQueryParameter: setRequestMapping,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                                MappedHomeSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                            },
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "2",
+                                },
+                                MappedHomeSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "3",
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
                 },
             },
         },

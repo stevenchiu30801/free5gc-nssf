@@ -274,6 +274,8 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
             }
 
             // Default Access Type is set to 3GPP Access if no TAI is provided
+            // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
+            //       UE's Access Type could not be identified
             var accessType AccessType = IS_3_GPP_ACCESS
             if p.Tai != nil {
                 accessType = getAccessTypeFromConfig(*p.Tai)
@@ -331,6 +333,94 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
             for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
                 a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
             }
+
+            status = http.StatusOK
+            return
+        }
+    }
+
+    if p.SliceInfoRequestForRegistration.RequestMapping == true {
+        // Based on TS 29.531 v15.2.0, when `requestMapping` is set to true, the NSSF shall return the VPLMN specific
+        // mapped S-NSSAI values for the S-NSSAI values in `subscribedNssai`. But also `sNssaiForMapping` shall be
+        // provided if `requestMapping` is set to true. In the implementation, the NSSF would return mapped S-NSSAIs
+        // for S-NSSAIs in both `sNssaiForMapping` and `subscribedSnssai` if present
+
+        if p.HomePlmnId == nil {
+            *d = ProblemDetails {
+                Title: INVALID_REQUEST,
+                Status: http.StatusBadRequest,
+                Detail: "`home-plmn-id` should be provided when requesting VPLMN specific mapped S-NSSAI values",
+            }
+
+            status = http.StatusBadRequest
+            return
+        }
+
+        mappingOfSnssai := getMappingOfPlmnFromConfig(*p.HomePlmnId)
+
+        if mappingOfSnssai != nil {
+            // Find mappings for S-NSSAIs in `subscribedSnssai`
+            for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
+                targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
+
+                if found == false {
+                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                              *subscribedSnssai.SubscribedSnssai,
+                              *p.HomePlmnId)
+                    continue
+                } else {
+                    // Add mappings to Allowed NSSAI list
+                    var allowedSnssaiElement AllowedSnssai
+                    allowedSnssaiElement.AllowedSnssai = new(Snssai)
+                    *allowedSnssaiElement.AllowedSnssai = *targetMapping.ServingSnssai
+                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                    *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+
+                    // Default Access Type is set to 3GPP Access if no TAI is provided
+                    // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
+                    //       UE's Access Type could not be identified
+                    var accessType AccessType = IS_3_GPP_ACCESS
+                    if p.Tai != nil {
+                        accessType = getAccessTypeFromConfig(*p.Tai)
+                    }
+
+                    addAllowedSnssai(allowedSnssaiElement, accessType, a)
+                }
+            }
+
+            // Find mappings for S-NSSAIs in `sNssaiForMapping`
+            for _, snssai := range p.SliceInfoRequestForRegistration.SNssaiForMapping {
+                targetMapping, found := findMappingWithHomeSnssai(snssai, mappingOfSnssai)
+
+                if found == false {
+                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                              snssai,
+                              *p.HomePlmnId)
+                    continue
+                } else {
+                    // Add mappings to Allowed NSSAI list
+                    var allowedSnssaiElement AllowedSnssai
+                    allowedSnssaiElement.AllowedSnssai = new(Snssai)
+                    *allowedSnssaiElement.AllowedSnssai = *targetMapping.ServingSnssai
+                    allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
+                    *allowedSnssaiElement.MappedHomeSnssai = snssai
+
+                    // Default Access Type is set to 3GPP Access if no TAI is provided
+                    // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
+                    //       UE's Access Type could not be identified
+                    var accessType AccessType = IS_3_GPP_ACCESS
+                    if p.Tai != nil {
+                        accessType = getAccessTypeFromConfig(*p.Tai)
+                    }
+
+                    addAllowedSnssai(allowedSnssaiElement, accessType, a)
+                }
+            }
+
+            status = http.StatusOK
+            return
+        } else {
+            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
 
             status = http.StatusOK
             return
@@ -407,6 +497,8 @@ func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetwor
                     }
 
                     // Default Access Type is set to 3GPP Access if no TAI is provided
+                    // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
+                    //       UE's Access Type could not be identified
                     var accessType AccessType = IS_3_GPP_ACCESS
                     if p.Tai != nil {
                         accessType = getAccessTypeFromConfig(*p.Tai)
