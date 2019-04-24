@@ -50,3 +50,20 @@ func (a *AllowedSnssai) CheckIntegrity() error {
 
     return nil
 }
+
+type ByAllowedSnssai []AllowedSnssai
+
+func (a ByAllowedSnssai) Len() int {
+    return len(a)
+}
+
+func (a ByAllowedSnssai) Swap(i, j int) {
+    a[i], a[j] = a[j], a[i]
+}
+
+func (a ByAllowedSnssai) Less(i, j int) bool {
+    if a[i].AllowedSnssai.Sst == a[j].AllowedSnssai.Sst {
+        return a[i].AllowedSnssai.Sd < a[j].AllowedSnssai.Sd
+    }
+    return a[i].AllowedSnssai.Sst < a[j].AllowedSnssai.Sst
+}

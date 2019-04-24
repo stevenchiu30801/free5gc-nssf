@@ -27,3 +27,20 @@ func (s *Snssai) CheckIntegrity() error {
 
     return nil
 }
+
+type BySst []Snssai
+
+func (s BySst) Len() int {
+    return len(s)
+}
+
+func (s BySst) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+
+func (s BySst) Less(i, j int) bool {
+    if s[i].Sst == s[j].Sst {
+        return s[i].Sd < s[j].Sd
+    }
+    return s[i].Sst < s[j].Sst
+}

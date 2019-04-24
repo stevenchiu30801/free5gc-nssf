@@ -39,3 +39,20 @@ func (c *ConfiguredSnssai) CheckIntegrity() error {
 
     return nil
 }
+
+type ByConfiguredSnssai []ConfiguredSnssai
+
+func (c ByConfiguredSnssai) Len() int {
+    return len(c)
+}
+
+func (c ByConfiguredSnssai) Swap(i, j int) {
+    c[i], c[j] = c[j], c[i]
+}
+
+func (c ByConfiguredSnssai) Less(i, j int) bool {
+    if c[i].ConfiguredSnssai.Sst == c[j].ConfiguredSnssai.Sst {
+        return c[i].ConfiguredSnssai.Sd < c[j].ConfiguredSnssai.Sd
+    }
+    return c[i].ConfiguredSnssai.Sst < c[j].ConfiguredSnssai.Sst
+}

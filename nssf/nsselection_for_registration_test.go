@@ -17,11 +17,12 @@ import (
     "gopkg.in/yaml.v2"
 
     factory "../factory"
-    // flog "../flog"
+    flog "../flog"
     . "../model"
 )
 
 const configFile string = "../test/conf/test_nssf_config.yaml"
+const muteLog bool = false
 
 func initConfigFactory(f string) {
     content, _ := ioutil.ReadFile(f)
@@ -287,7 +288,9 @@ func TestTemplate(t *testing.T) {
 
 func TestAddAmfInformation(t *testing.T) {
     initConfigFactory(configFile)
-    // flog.MuteLog()
+    if muteLog == true {
+        flog.MuteLog()
+    }
 
     subtests := []struct {
         name string
@@ -362,9 +365,9 @@ func TestAddAmfInformation(t *testing.T) {
                     },
                 },
                 CandidateAmfList: []string {
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                 },
             },
         },
@@ -442,8 +445,10 @@ func TestAddAmfInformation(t *testing.T) {
     for _, subtest := range subtests {
         t.Run(subtest.name, func(t *testing.T) {
             a := *subtest.authorizedNetworkSliceInfo
+
             addAmfInformation(&a)
 
+            a.Sort()
             if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) != true {
                 e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                 r, _ := json.Marshal(&a)
@@ -455,7 +460,9 @@ func TestAddAmfInformation(t *testing.T) {
 
 func TestNsselectionCommon(t *testing.T) {
     initConfigFactory(configFile)
-    // flog.MuteLog()
+    if muteLog == true {
+        flog.MuteLog()
+    }
 
     subtests := []struct {
         name string
@@ -550,6 +557,7 @@ func TestNsselectionCommon(t *testing.T) {
             }
 
             if status == http.StatusOK {
+                a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                     r, _ := json.Marshal(&a)
@@ -568,7 +576,9 @@ func TestNsselectionCommon(t *testing.T) {
 
 func TestNsselectionNonRoaming(t *testing.T) {
     initConfigFactory(configFile)
-    // flog.MuteLog()
+    if muteLog == true {
+        flog.MuteLog()
+    }
 
     subtests := []struct {
         name string
@@ -601,9 +611,9 @@ func TestNsselectionNonRoaming(t *testing.T) {
                     },
                 },
                 CandidateAmfList: []string {
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                 },
                 RejectedNssaiInPlmn: []Snssai {
                     {
@@ -644,9 +654,9 @@ func TestNsselectionNonRoaming(t *testing.T) {
                     },
                 },
                 CandidateAmfList: []string {
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                 },
             },
         },
@@ -673,6 +683,7 @@ func TestNsselectionNonRoaming(t *testing.T) {
             }
 
             if status == http.StatusOK {
+                a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                     r, _ := json.Marshal(&a)
@@ -691,7 +702,9 @@ func TestNsselectionNonRoaming(t *testing.T) {
 
 func TestNsselectionRoaming(t *testing.T) {
     initConfigFactory(configFile)
-    // flog.MuteLog()
+    if muteLog == true {
+        flog.MuteLog()
+    }
 
     subtests := []struct {
         name string
@@ -749,9 +762,9 @@ func TestNsselectionRoaming(t *testing.T) {
                     },
                 },
                 CandidateAmfList: []string {
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                 },
                 RejectedNssaiInPlmn: []Snssai {
                     {
@@ -796,9 +809,9 @@ func TestNsselectionRoaming(t *testing.T) {
                     },
                 },
                 CandidateAmfList: []string {
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
                 },
             },
         },
@@ -859,6 +872,7 @@ func TestNsselectionRoaming(t *testing.T) {
             }
 
             if status == http.StatusOK {
+                a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                     r, _ := json.Marshal(&a)

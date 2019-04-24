@@ -11,6 +11,7 @@ package model
 
 import (
     "fmt"
+    "sort"
 )
 
 type AllowedNssai struct {
@@ -43,4 +44,31 @@ func (a *AllowedNssai) CheckIntegrity() error {
     }
 
     return nil
+}
+
+type ByAccessType []AllowedNssai
+
+func (a ByAccessType) Len() int {
+    return len(a)
+}
+
+func (a ByAccessType) Swap(i, j int) {
+    a[i], a[j] = a[j], a[i]
+}
+
+func (a ByAccessType) Less(i, j int) bool {
+    // Only 3GPP Access and Non 3GPP Access could be in Allowed NSSAI list
+    // Sort it into 3GPP Access first and Non 3GPP Access last
+    if *a[i].AccessType == IS_3_GPP_ACCESS {
+        return true
+    }
+    return false
+}
+
+func (a *ByAccessType) Sort() {
+    for i := range *a {
+        sort.Sort(ByAllowedSnssai((*a)[i].AllowedSnssaiList))
+    }
+
+    sort.Sort(*a)
 }

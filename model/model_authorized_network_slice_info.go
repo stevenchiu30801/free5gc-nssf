@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "sort"
+)
+
 type AuthorizedNetworkSliceInfo struct {
 
 	AllowedNssaiList []AllowedNssai `json:"allowedNssaiList,omitempty"`
@@ -28,4 +32,14 @@ type AuthorizedNetworkSliceInfo struct {
 	SupportedFeatures string `json:"supportedFeatures,omitempty"`
 
 	NrfAmfSet string `json:"nrfAmfSet,omitempty"`
+}
+
+func (a *AuthorizedNetworkSliceInfo) Sort() {
+    var byAccessType ByAccessType = a.AllowedNssaiList
+    byAccessType.Sort()
+
+    sort.Sort(ByConfiguredSnssai(a.ConfiguredNssai))
+    sort.Strings(a.CandidateAmfList)
+    sort.Sort(BySst(a.RejectedNssaiInPlmn))
+    sort.Sort(BySst(a.RejectedNssaiInTa))
 }
