@@ -39,6 +39,16 @@ func checkSupportedTa(tai Tai) bool {
     return false
 }
 
+// Check whether the given S-NSSAI is supported or not in PLMN
+func checkSupportedSnssaiInPlmn(snssai Snssai) bool {
+    for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedNssaiInPlmn {
+        if snssai == supportedSnssai {
+            return true
+        }
+    }
+    return false
+}
+
 // Check whether S-NSSAIs in NSSAI are supported or not in PLMN
 func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
     for _, snssai := range nssai {

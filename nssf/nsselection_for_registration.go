@@ -102,7 +102,9 @@ func useDefaultConfiguredSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
 
 // Network slice selection for registration
 // The function is executed when the IE, `slice-info-request-for-registration`, is provided in query parameters
-func nsselectionForRegistration(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo, d *ProblemDetails) (status int) {
+func nsselectionForRegistration(p NsselectionQueryParameter,
+                                a *AuthorizedNetworkSliceInfo,
+                                d *ProblemDetails) (status int) {
     if p.HomePlmnId != nil {
         // Check whether UE's Home PLMN is supported when UE is a roamer
         if checkSupportedHplmn(*p.HomePlmnId) == false {

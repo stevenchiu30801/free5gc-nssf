@@ -41,7 +41,7 @@ func (s *SliceInfoForPduSession) CheckIntegrity() error {
         }
     }
 
-    if *s.RoamingIndication == HOME_ROUTED_ROAMINGRoamingIndication && s.HomeSnssai == nil {
+    if *s.RoamingIndication == HOME_ROUTED_ROAMING && s.HomeSnssai == nil {
         return fmt.Errorf("`homeSnssai` in query parameter should be included in home routed roaming scenario")
     } else if s.HomeSnssai != nil {
         err := s.HomeSnssai.CheckIntegrity()
