@@ -18,204 +18,203 @@ import (
     factory "../factory"
     flog "../flog"
     . "../model"
+    test "../test"
 )
 
-const (
-    nsselectionForRegistrationConfig string = "../test/conf/test_nssf_config.yaml"
-    nsselectionForRegistrationMuteLog bool = false
-)
-
-func generateNonRoamingQueryParameter() NsselectionQueryParameter {
-    const jsonQuery = `
-        {
-            "nf-type": "AMF",
-            "nf-id": "469de254-2fe5-4ca0-8381-af3f500af77c",
-            "slice-info-request-for-registration": {
-                "subscribedNssai": [
-                    {
-                        "subscribedSnssai": {
-                            "sst": 1
-                        }
-                    },
-                    {
-                        "subscribedSnssai": {
-                            "sst": 1,
-                            "sd": "1"
-                        },
-                        "defaultIndication": true
-                    },
-                    {
-                        "subscribedSnssai": {
-                            "sst": 1,
-                            "sd": "3"
-                        },
-                        "defaultIndication": false
-                    }
-                ],
-                "allowedNssaiCurrentAccess": {
-                    "allowedSnssaiList": [
+var nsselectionForRegistrationTestingParameter = test.TestingParameter {
+    ConfigFile: "../test/conf/test_nssf_config.yaml",
+    MuteLogInd: false,
+    GenerateNonRoamingQueryParameter: func() NsselectionQueryParameter {
+        const jsonQuery = `
+            {
+                "nf-type": "AMF",
+                "nf-id": "469de254-2fe5-4ca0-8381-af3f500af77c",
+                "slice-info-request-for-registration": {
+                    "subscribedNssai": [
                         {
-                            "allowedSnssai": {
+                            "subscribedSnssai": {
+                                "sst": 1
+                            }
+                        },
+                        {
+                            "subscribedSnssai": {
                                 "sst": 1,
                                 "sd": "1"
                             },
-                            "nsiInformationList": [
-                                {
-                                    "nrfId": "http://140.113.194.229:8080/nnrf-nfm/v1/nf-instances",
-                                    "nsiId": "1"
-                                }
-                            ]
+                            "defaultIndication": true
+                        },
+                        {
+                            "subscribedSnssai": {
+                                "sst": 1,
+                                "sd": "3"
+                            },
+                            "defaultIndication": false
                         }
                     ],
-                    "accessType": "3GPP_ACCESS"
-                },
-                "requestedNssai": [
-                    {
-                        "sst": 1,
-                        "sd": "1"
+                    "allowedNssaiCurrentAccess": {
+                        "allowedSnssaiList": [
+                            {
+                                "allowedSnssai": {
+                                    "sst": 1,
+                                    "sd": "1"
+                                },
+                                "nsiInformationList": [
+                                    {
+                                        "nrfId": "http://free5gc-nrf:8080/nnrf-nfm/v1/nf-instances",
+                                        "nsiId": "1"
+                                    }
+                                ]
+                            }
+                        ],
+                        "accessType": "3GPP_ACCESS"
                     },
-                    {
-                        "sst": 1,
-                        "sd": "2"
-                    },
-                    {
-                        "sst": 1,
-                        "sd": "3"
-                    }
-                ],
-                "defaultConfiguredSnssaiInd": false
-            },
-            "tai": {
-                "plmnId": {
-                    "mcc": "466",
-                    "mnc": "92"
-                },
-                "tac": "33456"
-            }
-        }
-    `
-
-    var p NsselectionQueryParameter
-    json.NewDecoder(strings.NewReader(jsonQuery)).Decode(&p)
-
-    return p
-}
-
-func generateRoamingQueryParameter() NsselectionQueryParameter {
-    const jsonQuery = `
-        {
-            "nf-type": "AMF",
-            "nf-id": "469de254-2fe5-4ca0-8381-af3f500af77c",
-            "slice-info-request-for-registration": {
-                "subscribedNssai": [
-                    {
-                        "subscribedSnssai": {
-                            "sst": 1
-                        }
-                    },
-                    {
-                        "subscribedSnssai": {
+                    "requestedNssai": [
+                        {
                             "sst": 1,
                             "sd": "1"
                         },
-                        "defaultIndication": true
-                    },
-                    {
-                        "subscribedSnssai": {
+                        {
                             "sst": 1,
                             "sd": "2"
                         },
-                        "defaultIndication": false
-                    }
-                ],
-                "allowedNssaiCurrentAccess": {
-                    "allowedSnssaiList": [
                         {
-                            "allowedSnssai": {
+                            "sst": 1,
+                            "sd": "3"
+                        }
+                    ],
+                    "defaultConfiguredSnssaiInd": false
+                },
+                "tai": {
+                    "plmnId": {
+                        "mcc": "466",
+                        "mnc": "92"
+                    },
+                    "tac": "33456"
+                }
+            }
+    `
+
+        var p NsselectionQueryParameter
+        json.NewDecoder(strings.NewReader(jsonQuery)).Decode(&p)
+
+        return p
+    },
+    GenerateRoamingQueryParameter: func() NsselectionQueryParameter {
+        const jsonQuery = `
+            {
+                "nf-type": "AMF",
+                "nf-id": "469de254-2fe5-4ca0-8381-af3f500af77c",
+                "slice-info-request-for-registration": {
+                    "subscribedNssai": [
+                        {
+                            "subscribedSnssai": {
+                                "sst": 1
+                            }
+                        },
+                        {
+                            "subscribedSnssai": {
                                 "sst": 1,
                                 "sd": "1"
                             },
-                            "nsiInformationList": [
-                                {
-                                    "nrfId": "http://140.113.194.229:8080/nnrf-nfm/v1/nf-instances",
-                                    "nsiId": "1"
+                            "defaultIndication": true
+                        },
+                        {
+                            "subscribedSnssai": {
+                                "sst": 1,
+                                "sd": "2"
+                            },
+                            "defaultIndication": false
+                        }
+                    ],
+                    "allowedNssaiCurrentAccess": {
+                        "allowedSnssaiList": [
+                            {
+                                "allowedSnssai": {
+                                    "sst": 1,
+                                    "sd": "1"
+                                },
+                                "nsiInformationList": [
+                                    {
+                                        "nrfId": "http://free5gc-nrf:8080/nnrf-nfm/v1/nf-instances",
+                                        "nsiId": "1"
+                                    }
+                                ],
+                                "mappedHomeSnssai": {
+                                    "sst": 1,
+                                    "sd": "1"
                                 }
-                            ],
-                            "mappedHomeSnssai": {
+                            }
+                        ],
+                        "accessType": "3GPP_ACCESS"
+                    },
+                    "requestedNssai": [
+                        {
+                            "sst": 1,
+                            "sd": "1"
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "2"
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "3"
+                        }
+                    ],
+                    "defaultConfiguredSnssaiInd": false,
+                    "mappingofNssai": [
+                        {
+                            "servingSnssai": {
+                                "sst": 1,
+                                "sd": "1"
+                            },
+                            "homeSnssai": {
                                 "sst": 1,
                                 "sd": "1"
                             }
+                        },
+                        {
+                            "servingSnssai":{
+                                "sst": 1,
+                                "sd": "2"
+                            },
+                            "homeSnssai": {
+                                "sst": 1,
+                                "sd": "3"
+                            }
+                        },
+                        {
+                            "servingSnssai":{
+                                "sst": 1,
+                                "sd": "3"
+                            },
+                            "homeSnssai": {
+                                "sst": 1,
+                                "sd": "4"
+                            }
                         }
                     ],
-                    "accessType": "3GPP_ACCESS"
+                    "requestMapping": false
                 },
-                "requestedNssai": [
-                    {
-                        "sst": 1,
-                        "sd": "1"
-                    },
-                    {
-                        "sst": 1,
-                        "sd": "2"
-                    },
-                    {
-                        "sst": 1,
-                        "sd": "3"
-                    }
-                ],
-                "defaultConfiguredSnssaiInd": false,
-                "mappingofNssai": [
-                    {
-                        "servingSnssai": {
-                            "sst": 1,
-                            "sd": "1"
-                        },
-                        "homeSnssai": {
-                            "sst": 1,
-                            "sd": "1"
-                        }
-                    },
-                    {
-                        "servingSnssai":{
-                            "sst": 1,
-                            "sd": "2"
-                        },
-                        "homeSnssai": {
-                            "sst": 1,
-                            "sd": "3"
-                        }
-                    },
-                    {
-                        "servingSnssai":{
-                            "sst": 1,
-                            "sd": "3"
-                        },
-                        "homeSnssai": {
-                            "sst": 1,
-                            "sd": "4"
-                        }
-                    }
-                ],
-                "requestMapping": false
-            },
-            "home-plmn-id": {
-                "mcc": "440",
-                "mnc": "10"
-            },
-            "tai": {
-                "plmnId": {
-                    "mcc": "466",
-                    "mnc": "92"
+                "home-plmn-id": {
+                    "mcc": "440",
+                    "mnc": "10"
                 },
-                "tac": "33456"
+                "tai": {
+                    "plmnId": {
+                        "mcc": "466",
+                        "mnc": "92"
+                    },
+                    "tac": "33456"
+                }
             }
-        }
-    `
+        `
 
-    var p NsselectionQueryParameter
-    json.NewDecoder(strings.NewReader(jsonQuery)).Decode(&p)
+        var p NsselectionQueryParameter
+        json.NewDecoder(strings.NewReader(jsonQuery)).Decode(&p)
 
-    return p
+        return p
+    },
 }
 
 func setUnsupportedHomePlmnId(p *NsselectionQueryParameter) {
@@ -273,15 +272,15 @@ func removeRequestedNssai(p *NsselectionQueryParameter) {
 func TestNsselectionForRegistrationTemplate(t *testing.T) {
     t.Skip()
 
-    factory.InitConfigFactory(nsselectionForRegistrationConfig)
+    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
 
     d, _ := yaml.Marshal(&factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
-func TestNsselectionCommon(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationConfig)
-    if nsselectionForRegistrationMuteLog == true {
+func TestNsselectionForRegistrationGeneral(t *testing.T) {
+    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
+    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
         flog.MuteLog()
     }
 
@@ -365,7 +364,7 @@ func TestNsselectionCommon(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := generateNonRoamingQueryParameter()
+            p := nsselectionForRegistrationTestingParameter.GenerateNonRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -395,9 +394,9 @@ func TestNsselectionCommon(t *testing.T) {
     }
 }
 
-func TestNsselectionNonRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationConfig)
-    if nsselectionForRegistrationMuteLog == true {
+func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
+    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
+    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
         flog.MuteLog()
     }
 
@@ -422,7 +421,7 @@ func TestNsselectionNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -465,7 +464,7 @@ func TestNsselectionNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -491,7 +490,7 @@ func TestNsselectionNonRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := generateNonRoamingQueryParameter()
+            p := nsselectionForRegistrationTestingParameter.GenerateNonRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -521,9 +520,9 @@ func TestNsselectionNonRoaming(t *testing.T) {
     }
 }
 
-func TestNsselectionRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationConfig)
-    if nsselectionForRegistrationMuteLog == true {
+func TestNsselectionForRegistrationRoaming(t *testing.T) {
+    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
+    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
         flog.MuteLog()
     }
 
@@ -569,7 +568,7 @@ func TestNsselectionRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -616,7 +615,7 @@ func TestNsselectionRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -680,7 +679,7 @@ func TestNsselectionRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := generateRoamingQueryParameter()
+            p := nsselectionForRegistrationTestingParameter.GenerateRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)

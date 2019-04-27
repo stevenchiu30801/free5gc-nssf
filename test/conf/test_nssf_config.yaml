@@ -3,7 +3,7 @@ info:
   version: 1.0.0
   title: NSSF NS Selection
   description: NSSF Network Slice Selection Service
-  url: http://140.113.194.229:8080/nnssf-nsselection/v1
+  url: http://free5gc-nssf:8080/nnssf-nsselection/v1
   servingPlmnId:
     mcc: 466
     mnc: 92
@@ -25,25 +25,25 @@ configuration:
         sst: 1
         sd: 1
       nsiInformationList:
-        - nrfId: http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances
           nsiId: 1
     - snssai:
         sst: 1
         sd: 2
       nsiInformationList:
-        - nrfId: http://140.113.194.229:8082/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf:8082/nnrf-nfm/v1/nf-instances
           nsiId: 2
-        - nrfId: http://140.113.194.229:8083/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf:8083/nnrf-nfm/v1/nf-instances
     - snssai:
         sst: 1
         sd: 3
       nsiInformationList:
-        - nrfId: http://140.113.194.229:8084/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf:8084/nnrf-nfm/v1/nf-instances
     - snssai:
         sst: 2
         sd: 1
       nsiInformationList:
-        - nrfId: http://140.113.194.229:8085/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf:8085/nnrf-nfm/v1/nf-instances
           nsiId: 3
   amfSetList:
     - amfSetId: 1
@@ -51,7 +51,7 @@ configuration:
         - ffa2e8d7-3275-49c7-8631-6af1df1d9d26
         - 0e8831c3-6286-4689-ab27-1e2161e15cb1
         - a1fba9ba-2e39-4e22-9c74-f749da571d0d
-      nrfAmfSet: http://140.113.194.229:8081/nnrf-nfm/v1/nf-instances
+      nrfAmfSet: http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances
       supportedNssai:
         - sst: 1
           sd: 1
@@ -60,7 +60,7 @@ configuration:
         - sst: 2
           sd: 1
     - amfSetId: 2
-      nrfAmfSet: http://140.113.194.229:8084/nnrf-nfm/v1/nf-instances
+      nrfAmfSet: http://free5gc-nrf:8084/nnrf-nfm/v1/nf-instances
       supportedNssai:
         - sst: 1
           sd: 1
