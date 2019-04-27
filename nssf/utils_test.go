@@ -56,7 +56,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -68,7 +68,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8085/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8085/nnrf-nfm/v1/nf-instances",
                                         NsiId: "3",
                                     },
                                 },
@@ -89,7 +89,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -101,7 +101,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8085/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8085/nnrf-nfm/v1/nf-instances",
                                         NsiId: "3",
                                     },
                                 },
@@ -130,7 +130,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -142,7 +142,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8084/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances",
                                     },
                                 },
                             },
@@ -162,7 +162,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8081/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
                                         NsiId: "1",
                                     },
                                 },
@@ -174,7 +174,7 @@ func TestAddAmfInformation(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf:8084/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances",
                                     },
                                 },
                             },
@@ -183,7 +183,7 @@ func TestAddAmfInformation(t *testing.T) {
                     },
                 },
                 TargetAmfSet: "2",
-                NrfAmfSet: "http://free5gc-nrf:8084/nnrf-nfm/v1/nf-instances",
+                NrfAmfSet: "http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances",
             },
         },
     }

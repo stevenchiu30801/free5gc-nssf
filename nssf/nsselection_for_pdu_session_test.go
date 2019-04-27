@@ -139,13 +139,13 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8082/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
                         NsiId: "2",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
                     },
                 },
             },
@@ -209,13 +209,13 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8082/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
                         NsiId: "2",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
                     },
                 },
 
@@ -228,13 +228,13 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8082/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
                         NsiId: "2",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
                     },
                 },
 
