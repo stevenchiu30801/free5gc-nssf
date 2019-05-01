@@ -430,6 +430,25 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
+                ConfiguredNssai: []ConfiguredSnssai {
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "3",
+                        },
+                    },
+                },
                 CandidateAmfList: []string {
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
@@ -471,6 +490,25 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                             },
                         },
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+                ConfiguredNssai: []ConfiguredSnssai {
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "3",
+                        },
                     },
                 },
                 CandidateAmfList: []string {
@@ -581,6 +619,23 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
+                ConfiguredNssai: []ConfiguredSnssai {
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
+                        MappedHomeSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
+                    },
+                },
                 CandidateAmfList: []string {
                     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
                     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
@@ -626,6 +681,23 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                             },
                         },
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+                ConfiguredNssai: []ConfiguredSnssai {
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                        },
+                    },
+                    {
+                        ConfiguredSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
+                        MappedHomeSnssai: &Snssai {
+                            Sst: 1,
+                            Sd: "1",
+                        },
                     },
                 },
                 CandidateAmfList: []string {

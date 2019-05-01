@@ -13,24 +13,26 @@ import (
     . "../model"
 )
 
-// Use Subscribed S-NSSAI(s) which are marked as default S-NSSAI(s)
+// Set Allowed NSSAI with Subscribed S-NSSAI(s) which are marked as default S-NSSAI(s)
 func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo) {
+    var mappingOfSnssai []MappingOfSnssai
+    if p.HomePlmnId != nil {
+        // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
+        mappingOfSnssai = getMappingOfPlmnFromConfig(*p.HomePlmnId)
+
+        if mappingOfSnssai == nil {
+            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            return
+        }
+    }
+
     for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
         if subscribedSnssai.DefaultIndication == true {
             // Subscribed S-NSSAI is marked as default S-NSSAI
 
             var mappingOfSubscribedSnssai Snssai
             if p.HomePlmnId != nil && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
-                // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
-                mappingOfSnssai := getMappingOfPlmnFromConfig(*p.HomePlmnId)
-
-                if mappingOfSnssai == nil {
-                    flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
-                    break
-                }
-
-                targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai,
-                                                                  mappingOfSnssai)
+                targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
                 if found == false {
                     flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
@@ -56,7 +58,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 allowedSnssaiElement.NsiInformationList = append(allowedSnssaiElement.NsiInformationList,
                                                                  nsiInformationList...)
             }
-            if p.HomePlmnId != nil {
+            if p.HomePlmnId != nil && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
                 allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
                 *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
             }
@@ -77,8 +79,8 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
     addAmfInformation(a)
 }
 
-// Use S-NSSAI(s) in Requested NSSAI as Default Configured NSSAI
-func useDefaultConfiguredSnssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo) {
+// Set Configured NSSAI with S-NSSAI(s) in Requested NSSAI which are marked as Default Configured NSSAI
+func useDefaultConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo) {
     for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
         // Check whether the Default Configured S-NSSAI is standard, which could be commonly decided by all roaming partners
         if checkStandardSnssai(requestedSnssai) == false {
@@ -96,6 +98,50 @@ func useDefaultConfiguredSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 a.ConfiguredNssai = append(a.ConfiguredNssai, configuredSnssai)
                 break
             }
+        }
+    }
+}
+
+// Set Configured NSSAI with Subscribed S-NSSAI(s)
+func setConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceInfo) {
+    var mappingOfSnssai []MappingOfSnssai
+    if p.HomePlmnId != nil {
+        // Find mapping of Subscribed S-NSSAI of UE's HPLMN to S-NSSAI in Serving PLMN from NSSF configuration
+        mappingOfSnssai = getMappingOfPlmnFromConfig(*p.HomePlmnId)
+
+        if mappingOfSnssai == nil {
+            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            return
+        }
+    }
+
+    for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
+        var mappingOfSubscribedSnssai Snssai
+        if p.HomePlmnId != nil && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
+            targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
+
+            if found == false {
+                flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                          *subscribedSnssai.SubscribedSnssai,
+                          *p.HomePlmnId)
+                continue
+            } else {
+                mappingOfSubscribedSnssai = *targetMapping.ServingSnssai
+            }
+        } else {
+            mappingOfSubscribedSnssai = *subscribedSnssai.SubscribedSnssai
+        }
+
+        if checkSupportedSnssaiInPlmn(mappingOfSubscribedSnssai) == true {
+            var configuredSnssai ConfiguredSnssai
+            configuredSnssai.ConfiguredSnssai = new(Snssai)
+            *configuredSnssai.ConfiguredSnssai = mappingOfSubscribedSnssai
+            if p.HomePlmnId != nil && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
+                configuredSnssai.MappedHomeSnssai = new(Snssai)
+                *configuredSnssai.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
+            }
+
+            a.ConfiguredNssai = append(a.ConfiguredNssai, configuredSnssai)
         }
     }
 }
@@ -151,6 +197,10 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         if mappingOfSnssai != nil {
             // Find mappings for S-NSSAIs in `subscribedSnssai`
             for _, subscribedSnssai := range p.SliceInfoRequestForRegistration.SubscribedNssai {
+                if checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == true {
+                    continue
+                }
+
                 targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
                 if found == false {
@@ -180,6 +230,10 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
 
             // Find mappings for S-NSSAIs in `sNssaiForMapping`
             for _, snssai := range p.SliceInfoRequestForRegistration.SNssaiForMapping {
+                if checkStandardSnssai(snssai) == true {
+                    continue
+                }
+
                 targetMapping, found := findMappingWithHomeSnssai(snssai, mappingOfSnssai)
 
                 if found == false {
@@ -217,7 +271,8 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         }
     }
 
-    if p.SliceInfoRequestForRegistration.RequestedNssai != nil {
+    checkInvalidRequestedNssai := false
+    if p.SliceInfoRequestForRegistration.RequestedNssai != nil && len(p.SliceInfoRequestForRegistration.RequestedNssai) != 0 {
         // Requested NSSAI is provided
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
@@ -257,6 +312,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                 if found == false {
                     // No mapping of Requested S-NSSAI to HPLMN S-NSSAI is provided by UE
                     // TODO: Search for local configuration if there is no provided mapping from UE
+                    checkInvalidRequestedNssai = true
                     a.RejectedNssaiInPlmn = append(a.RejectedNssaiInPlmn, requestedSnssai)
                     continue
                 } else {
@@ -281,7 +337,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                         allowedSnssaiElement.NsiInformationList = append(allowedSnssaiElement.NsiInformationList,
                                                                          nsiInformationList...)
                     }
-                    if p.HomePlmnId != nil {
+                    if p.HomePlmnId != nil && checkStandardSnssai(requestedSnssai) == false {
                         allowedSnssaiElement.MappedHomeSnssai = new(Snssai)
                         *allowedSnssaiElement.MappedHomeSnssai = *subscribedSnssai.SubscribedSnssai
                     }
@@ -304,6 +360,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
             if hitSubscription == false {
                 // Requested S-NSSAI does not match any Subscribed S-NSSAI
                 // Add it to Rejected NSSAI in PLMN
+                checkInvalidRequestedNssai = true
                 a.RejectedNssaiInPlmn = append(a.RejectedNssaiInPlmn, requestedSnssai)
             }
         }
@@ -318,11 +375,18 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
     } else {
         // No Requested NSSAI is provided
         // Subscribed S-NSSAIs marked as default are used
+        checkInvalidRequestedNssai = true
         useDefaultSubscribedSnssai(p, a)
     }
 
     if p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd == true {
-        useDefaultConfiguredSnssai(p, a)
+        // Default Configured NSSAI Indication is received from AMF
+        // Determine the Configured NSSAI based on the Default Configured NSSAI
+        useDefaultConfiguredNssai(p, a)
+    } else if checkInvalidRequestedNssai == true {
+        // No Requested NSSAI is provided or the Requested NSSAI includes an S-NSSAI that is not valid
+        // Determine the Configured NSSAI based on the subscription
+        setConfiguredNssai(p, a)
     }
 
     status = http.StatusOK
