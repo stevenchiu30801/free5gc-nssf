@@ -103,7 +103,7 @@ func setHomeRoutedRoaming(p *NsselectionQueryParameter) {
 func checkAuthorizedNetworkSliceInfo(target AuthorizedNetworkSliceInfo, expectList []AuthorizedNetworkSliceInfo) bool {
     target.Sort()
     for _, expectElement := range expectList {
-        if reflect.DeepEqual(target, expectElement) == false {
+        if reflect.DeepEqual(target, expectElement) == true {
             return true
         }
     }
@@ -139,13 +139,14 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
-                        NsiId: "2",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
             },
@@ -209,13 +210,14 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
-                        NsiId: "2",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
 
@@ -228,13 +230,14 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8082/nnrf-nfm/v1/nf-instances",
-                        NsiId: "2",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf.nctu.me:8083/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NsiId: "12",
                     },
                 },
 

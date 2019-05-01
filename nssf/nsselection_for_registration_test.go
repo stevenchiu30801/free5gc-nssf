@@ -254,6 +254,18 @@ func setDefaultConfiguredSnssai(p *NsselectionQueryParameter) {
     p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd = true
 }
 
+func setAllRequestedSnssaiValid(p *NsselectionQueryParameter) {
+    p.SliceInfoRequestForRegistration.RequestedNssai = []Snssai {
+        {
+            Sst: 1,
+        },
+        {
+            Sst: 1,
+            Sd: "1",
+        },
+    }
+}
+
 func setRequestMapping(p *NsselectionQueryParameter) {
     p.SliceInfoRequestForRegistration.SNssaiForMapping = []Snssai {
         {
@@ -335,6 +347,12 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
                                 AllowedSnssai: &Snssai {
                                     Sst: 1,
                                 },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "10",
+                                    },
+                                },
                             },
                         },
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
@@ -408,6 +426,43 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
         expectProblemDetails *ProblemDetails
     }{
         {
+            name: "Requested with All Allowed",
+            modifyQueryParameter: setAllRequestedSnssaiValid,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "10",
+                                    },
+                                },
+                            },
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
+                                    },
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+            },
+        },
+        {
             name: "Requested with Two Rejected in PLMN and TA and One Allowed",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
@@ -421,8 +476,8 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
-                                        NsiId: "1",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
                                     },
                                 },
                             },
@@ -483,8 +538,8 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
-                                        NsiId: "1",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
                                     },
                                 },
                             },
@@ -593,6 +648,47 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
             },
         },
         {
+            name: "Requested with All Allowed",
+            modifyQueryParameter: setAllRequestedSnssaiValid,
+            expectStatus: http.StatusOK,
+            expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
+                AllowedNssaiList: []AllowedNssai {
+                    {
+                        AllowedSnssaiList: []AllowedSnssai {
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "10",
+                                    },
+                                },
+                            },
+                            {
+                                AllowedSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                                NsiInformationList: []NsiInformation {
+                                    {
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
+                                    },
+                                },
+                                MappedHomeSnssai: &Snssai {
+                                    Sst: 1,
+                                    Sd: "1",
+                                },
+                            },
+                        },
+                        AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
+                    },
+                },
+            },
+        },
+        {
             name: "Requested with Two Rejected in PLMN and TA and One Allowed",
             expectStatus: http.StatusOK,
             expectAuthorizedNetworkSliceInfo: &AuthorizedNetworkSliceInfo {
@@ -606,8 +702,8 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
-                                        NsiId: "1",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
                                     },
                                 },
                                 MappedHomeSnssai: &Snssai {
@@ -670,8 +766,8 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances",
-                                        NsiId: "1",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NsiId: "11",
                                     },
                                 },
                                 MappedHomeSnssai: &Snssai {
