@@ -19,14 +19,14 @@ func checkSupportedHplmn(homePlmnId PlmnId) bool {
             return true
         }
     }
-    flog.Warn("No Home PLMN %+v in NSSF configuration", homePlmnId)
+    flog.Warnf("No Home PLMN %+v in NSSF configuration", homePlmnId)
     return false
 }
 
 // Check whether UE's current TA is configured/supported
 func checkSupportedTa(tai Tai) bool {
     if *tai.PlmnId != *factory.NssfConfig.Info.ServingPlmnId {
-        flog.Info("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
+        flog.Infof("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
         return false
     }
 
@@ -35,7 +35,7 @@ func checkSupportedTa(tai Tai) bool {
             return true
         }
     }
-    flog.Warn("No TA {Tac:%s} in NSSF configuration", tai.Tac)
+    flog.Warnf("No TA {Tac:%s} in NSSF configuration", tai.Tac)
     return false
 }
 
@@ -89,7 +89,7 @@ func checkSupportedSnssaiInTa(snssai Snssai, tac string) bool {
             return false
         }
     }
-    flog.Warn("No TA %s in NSSF configuration", tac)
+    flog.Warnf("No TA %s in NSSF configuration", tac)
     return false
 }
 
@@ -139,7 +139,7 @@ func getAccessTypeFromConfig(tai Tai) AccessType {
             return *taConfig.AccessType
         }
     }
-    flog.Warn("No TA {Tac:%s} in NSSF configuration", tai.Tac)
+    flog.Warnf("No TA {Tac:%s} in NSSF configuration", tai.Tac)
     return IS_3_GPP_ACCESS
 }
 
@@ -170,7 +170,7 @@ func addAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
         if *a.AllowedNssaiList[i].AccessType == accessType {
             hitAllowedNssai = true
             if len(a.AllowedNssaiList[i].AllowedSnssaiList) == 8 {
-                flog.Info("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
+                flog.Infof("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
             } else {
                 a.AllowedNssaiList[i].AllowedSnssaiList = append(a.AllowedNssaiList[i].AllowedSnssaiList, allowedSnssai)
             }
@@ -233,6 +233,6 @@ func addAmfInformation(a *AuthorizedNetworkSliceInfo) {
     }
 
     if hitAmfSet == false {
-        flog.Warn("No AMF Set in configuration can serve the UE")
+        flog.Warnf("No AMF Set in configuration can serve the UE")
     }
 }

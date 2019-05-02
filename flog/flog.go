@@ -69,7 +69,7 @@ func MuteLog() {
     mute = true
 }
 
-func Debug(format string, v ...interface{}) {
+func Debugf(format string, v ...interface{}) {
     if mute == true {
         return
     }
@@ -80,7 +80,7 @@ func Debug(format string, v ...interface{}) {
     debugLogger.Printf(format, v...)
 }
 
-func Info(format string, v ...interface{}) {
+func Infof(format string, v ...interface{}) {
     if mute == true {
         return
     }
@@ -91,7 +91,7 @@ func Info(format string, v ...interface{}) {
     infoLogger.Printf(format, v...)
 }
 
-func Warn(format string, v ...interface{}) {
+func Warnf(format string, v ...interface{}) {
     if mute == true {
         return
     }
@@ -102,7 +102,7 @@ func Warn(format string, v ...interface{}) {
     warnLogger.Printf(format, v...)
 }
 
-func Error(format string, v ...interface{}) {
+func Errorf(format string, v ...interface{}) {
     if mute == true {
         return
     }

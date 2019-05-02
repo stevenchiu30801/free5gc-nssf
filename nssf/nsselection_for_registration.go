@@ -21,7 +21,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
         mappingOfSnssai = getMappingOfPlmnFromConfig(*p.HomePlmnId)
 
         if mappingOfSnssai == nil {
-            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            flog.Warnf("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
             return
         }
     }
@@ -35,7 +35,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
                 if found == false {
-                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                    flog.Warnf("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
                               *subscribedSnssai.SubscribedSnssai,
                               *p.HomePlmnId)
                     continue
@@ -84,7 +84,7 @@ func useDefaultConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetwork
     for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
         // Check whether the Default Configured S-NSSAI is standard, which could be commonly decided by all roaming partners
         if checkStandardSnssai(requestedSnssai) == false {
-            flog.Info("S-NSSAI %+v in Requested NSSAI which based on Default Configured NSSAI is not standard", requestedSnssai)
+            flog.Infof("S-NSSAI %+v in Requested NSSAI which based on Default Configured NSSAI is not standard", requestedSnssai)
             continue
         }
 
@@ -110,7 +110,7 @@ func setConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceIn
         mappingOfSnssai = getMappingOfPlmnFromConfig(*p.HomePlmnId)
 
         if mappingOfSnssai == nil {
-            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            flog.Warnf("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
             return
         }
     }
@@ -121,7 +121,7 @@ func setConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceIn
             targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
             if found == false {
-                flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                flog.Warnf("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
                           *subscribedSnssai.SubscribedSnssai,
                           *p.HomePlmnId)
                 continue
@@ -204,7 +204,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                 targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
                 if found == false {
-                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                    flog.Warnf("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
                               *subscribedSnssai.SubscribedSnssai,
                               *p.HomePlmnId)
                     continue
@@ -237,7 +237,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                 targetMapping, found := findMappingWithHomeSnssai(snssai, mappingOfSnssai)
 
                 if found == false {
-                    flog.Warn("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
+                    flog.Warnf("No mapping of Subscribed S-NSSAI %+v in PLMN %+v in NSSF configuration",
                               snssai,
                               *p.HomePlmnId)
                     continue
@@ -264,7 +264,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
             status = http.StatusOK
             return
         } else {
-            flog.Warn("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
+            flog.Warnf("No S-NSSAI mapping of UE's HPLMN %+v in NSSF configuration", *p.HomePlmnId)
 
             status = http.StatusOK
             return
