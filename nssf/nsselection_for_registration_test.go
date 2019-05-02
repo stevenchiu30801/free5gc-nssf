@@ -22,8 +22,8 @@ import (
 )
 
 var nsselectionForRegistrationTestingParameter = test.TestingParameter {
-    ConfigFile: "../test/conf/test_nssf_config.yaml",
-    MuteLogInd: false,
+    ConfigFile: test.ConfigFileFromArgs,
+    MuteLogInd: test.MuteLogIndFromArgs,
     GenerateNonRoamingQueryParameter: func() NsselectionQueryParameter {
         const jsonQuery = `
             {
@@ -284,6 +284,7 @@ func removeRequestedNssai(p *NsselectionQueryParameter) {
 func TestNsselectionForRegistrationTemplate(t *testing.T) {
     t.Skip()
 
+    // Tests may have different configuration files
     factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
 
     d, _ := yaml.Marshal(&factory.NssfConfig.Info)

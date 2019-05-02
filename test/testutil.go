@@ -7,7 +7,14 @@
 package test
 
 import (
+    "flag"
+
     . "../model"
+)
+
+var (
+    ConfigFileFromArgs string
+    MuteLogIndFromArgs bool
 )
 
 type TestingParameter struct {
@@ -19,4 +26,10 @@ type TestingParameter struct {
     GenerateNonRoamingQueryParameter func() NsselectionQueryParameter
 
     GenerateRoamingQueryParameter func() NsselectionQueryParameter
+}
+
+func init() {
+    flag.StringVar(&ConfigFileFromArgs, "config-file", "../test/conf/test_nssf_config.yaml", "Configuration file")
+    flag.BoolVar(&MuteLogIndFromArgs, "mute-log", false, "Mute log indication")
+    flag.Parse()
 }
