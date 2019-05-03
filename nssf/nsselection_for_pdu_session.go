@@ -65,10 +65,17 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
 
     if p.HomePlmnId != nil {
         if *p.SliceInfoRequestForPduSession.RoamingIndication == NON_ROAMING {
+            problemDetail := "`home-plmn-id` is provided, which contradicts `roamingIndication`:'NON_ROAMING'"
             *d = ProblemDetails {
                 Title: INVALID_REQUEST,
                 Status: http.StatusBadRequest,
-                Detail: "`home-plmn-id` is provided, which contradicts `roamingIndication`:'NON_ROAMING'",
+                Detail: problemDetail,
+                InvalidParams: []InvalidParam {
+                    {
+                        Param: "home-plmn-id",
+                        Reason: problemDetail,
+                    },
+                },
             }
 
             status = http.StatusBadRequest
@@ -76,11 +83,18 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         }
     } else {
         if *p.SliceInfoRequestForPduSession.RoamingIndication != NON_ROAMING {
+            problemDetail := fmt.Sprintf("`home-plmn-id` is not provided, which contradicts `roamingIndication`:'%s'",
+                                         string(*p.SliceInfoRequestForPduSession.RoamingIndication))
             *d = ProblemDetails {
                 Title: INVALID_REQUEST,
                 Status: http.StatusBadRequest,
-                Detail: fmt.Sprintf("`home-plmn-id` is not provided, which contradicts `roamingIndication`:'%s'",
-                                    string(*p.SliceInfoRequestForPduSession.RoamingIndication)),
+                Detail: problemDetail,
+                InvalidParams: []InvalidParam {
+                    {
+                        Param: "home-plmn-id",
+                        Reason: problemDetail,
+                    },
+                },
             }
 
             status = http.StatusBadRequest
