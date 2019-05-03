@@ -61,4 +61,45 @@ var routes = Routes{
 		"/nnssf-nsselection/v1/network-slice-information",
 		NSSelectionGet,
 	},
+	{
+		"Index",
+		"GET",
+		"/nnssf-nssaiavailability/v1/",
+		Index,
+	},
+
+	{
+		"NSSAIAvailabilityDelete",
+		strings.ToUpper("Delete"),
+		"/nnssf-nssaiavailability/v1/nssai-availability/{nfId}",
+		NSSAIAvailabilityDelete,
+	},
+
+	{
+		"NSSAIAvailabilityPatch",
+		strings.ToUpper("Patch"),
+		"/nnssf-nssaiavailability/v1/nssai-availability/{nfId}",
+		NSSAIAvailabilityPatch,
+	},
+
+	{
+		"NSSAIAvailabilityPut",
+		strings.ToUpper("Put"),
+		"/nnssf-nssaiavailability/v1/nssai-availability/{nfId}",
+		NSSAIAvailabilityPut,
+	},
+
+	{
+		"NSSAIAvailabilityUnsubscribe",
+		strings.ToUpper("Delete"),
+		"/nnssf-nssaiavailability/v1/nssai-availability/subscriptions/{subscriptionId}",
+		NSSAIAvailabilityUnsubscribe,
+	},
+
+	{
+		"NSSAIAvailabilityPost",
+		strings.ToUpper("Post"),
+		"/nnssf-nssaiavailability/v1/nssai-availability/subscriptions",
+		NSSAIAvailabilityPost,
+	},
 }
