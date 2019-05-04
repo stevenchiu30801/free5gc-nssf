@@ -14,31 +14,18 @@ import (
 
 type Info struct {
 
-    Service *Service `yaml:"service"`
-
     Version string `yaml:"version,omitempty"`
-
-    Title string `yaml:"title,omitempty"`
 
     Description string `yaml:"description,omitempty"`
 
-    Url string `yaml:"url"`
+    Host string `yaml:"host"`
 
     ServingPlmnId *PlmnId `yaml:"servingPlmnId"`
 }
 
 func (i *Info) checkIntegrity() error {
-    if i.Service == nil || *i.Service == Service("") {
-        return fmt.Errorf("`service` in configuration should not be empty")
-    } else {
-        err := i.Service.checkIntegrity()
-        if err != nil {
-            return fmt.Errorf("`service`:%s", err.Error())
-        }
-    }
-
-    if i.Url == "" {
-        return fmt.Errorf("`url` in configuration should not be empty")
+    if i.Host == "" {
+        return fmt.Errorf("`host` in configuration should not be empty")
     }
 
     if i.ServingPlmnId == nil {

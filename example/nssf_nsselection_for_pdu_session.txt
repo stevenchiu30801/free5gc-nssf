@@ -1,0 +1,1 @@
+free5gc-nssf.nctu.me:8080/nnssf-nsselection/v1/network-slice-information?nf-type=AMF&nf-id=469de254-2fe5-4ca0-8381-af3f500af77c&slice-info-request-for-pdu-session={"sNssai":{"sst":1,"sd":"2"},"roamingIndication":"HOME_ROUTED_ROAMING","homeSnssai":{"sst":1,"sd":"3"}}&home-plmn-id={"mcc":"440","mnc":"10"}&tai={"plmnId":{"mcc":"466","mnc":"92"},"tac":"33456"}&supported-features

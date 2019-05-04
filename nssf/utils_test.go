@@ -35,7 +35,7 @@ func TestPluginTemplate(t *testing.T) {
 func TestAddAmfInformation(t *testing.T) {
     factory.InitConfigFactory(utilsConfig)
     if utilsMuteLog == true {
-        flog.MuteLog()
+        flog.Nsselection.MuteLog()
     }
 
     subtests := []struct {

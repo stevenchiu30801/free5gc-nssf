@@ -19,7 +19,7 @@ var NssfConfig Config
 
 func checkErr(err error) {
     if err != nil {
-        flog.Fatal(err)
+        flog.System.Fatal(err)
     }
 }
 

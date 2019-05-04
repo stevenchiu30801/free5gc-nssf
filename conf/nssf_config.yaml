@@ -1,9 +1,7 @@
 info:
-  service: Nnssf-NSSelection
   version: 1.0.0
-  title: NSSF NS Selection
-  description: NSSF Network Slice Selection Service
-  url: http://free5gc-nssf.nctu.me:8080/nnssf-nsselection/v1
+  description: NSSF initial local configuration
+  host: free5gc-nssf.nctu.me:8080
   servingPlmnId:
     mcc: 466
     mnc: 92

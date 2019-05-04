@@ -61,6 +61,7 @@ var routes = Routes{
 		"/nnssf-nsselection/v1/network-slice-information",
 		NSSelectionGet,
 	},
+
 	{
 		"Index",
 		"GET",

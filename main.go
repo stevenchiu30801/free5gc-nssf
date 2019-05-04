@@ -19,10 +19,9 @@ import (
 
 func main() {
     factory.InitConfigFactory("./conf/nssf_config.yaml")
-    flog.InitLog(string(*factory.NssfConfig.Info.Service), true)
-    flog.Infof("Server started")
+    flog.System.Infof("Server started")
 
     router := nssf.NewRouter()
 
-    flog.Fatal(http.ListenAndServe(":8080", router))
+    flog.System.Fatal(http.ListenAndServe(":8080", router))
 }

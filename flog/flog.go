@@ -18,13 +18,28 @@ import (
 //       Or using go-logging (https://github.com/op/go-logging).
 
 // Service logger
-var (
+type ServiceLogger struct {
     serviceName string
     debugLogger *log.Logger
     infoLogger *log.Logger
     warnLogger *log.Logger
     errorLogger *log.Logger
-    mute bool = false
+    mute bool
+}
+
+// Service logger type
+var (
+    Default ServiceLogger
+    System ServiceLogger
+    Nsselection ServiceLogger
+    Nssaiavailability ServiceLogger
+)
+
+// Service name
+const (
+    SYSTEM_SERVICE string = "Nnssf-System"
+    NSSELECTION_SERVICE string = "Nnssf-Nsselection"
+    NSSAIAVAILABILITY_SERVICE string = "Nnssf-Nssaiavailability"
 )
 
 // Log style and color
@@ -37,7 +52,7 @@ const (
 )
 
 // Default log style if loggers are not initizalized
-const defaultServiceName string = "DefaultFlog"
+const defaultServiceName string = "Nnssf-Default"
 const defaultLogWithColor bool = false
 
 func getEscapeCode(style int, color int) string {
@@ -48,74 +63,94 @@ func reset() string {
     return fmt.Sprintf("%s[%dm", Escape, NoEffect)
 }
 
-func InitLog(service string, colorInd bool) {
-    serviceName = service
-    mute = false
+func init() {
+    Default.InitLogger(defaultServiceName, defaultLogWithColor)
+    System.InitLogger(SYSTEM_SERVICE, true)
+    Nsselection.InitLogger(NSSELECTION_SERVICE, true)
+    Nssaiavailability.InitLogger(NSSAIAVAILABILITY_SERVICE, true)
+}
+
+func (s *ServiceLogger) InitLogger(service string, colorInd bool) {
+    if service == "" {
+        s.serviceName = defaultServiceName
+    } else {
+        s.serviceName = service
+    }
+    s.mute = false
 
     if colorInd == true {
-        debugLogger = log.New(os.Stdout, getEscapeCode(logStyle, debugColor), log.Ldate|log.Ltime)
-        infoLogger = log.New(os.Stdout, getEscapeCode(logStyle, infoColor), log.Ldate|log.Ltime)
-        warnLogger = log.New(os.Stdout, getEscapeCode(logStyle, warnColor), log.Ldate|log.Ltime)
-        errorLogger = log.New(os.Stdout, getEscapeCode(logStyle, errorColor), log.Ldate|log.Ltime)
+        s.debugLogger = log.New(os.Stdout, getEscapeCode(logStyle, debugColor), log.Ldate|log.Ltime)
+        s.infoLogger = log.New(os.Stdout, getEscapeCode(logStyle, infoColor), log.Ldate|log.Ltime)
+        s.warnLogger = log.New(os.Stdout, getEscapeCode(logStyle, warnColor), log.Ldate|log.Ltime)
+        s.errorLogger = log.New(os.Stdout, getEscapeCode(logStyle, errorColor), log.Ldate|log.Ltime)
     } else {
-        debugLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        infoLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        warnLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        errorLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+        s.debugLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+        s.infoLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+        s.warnLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+        s.errorLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
     }
 }
 
 func MuteLog() {
-    mute = true
+    Default.MuteLog()
+}
+
+func (s *ServiceLogger) MuteLog() {
+    s.mute = true
 }
 
 func Debugf(format string, v ...interface{}) {
-    if mute == true {
+    Default.Debugf(format, v...)
+}
+
+func (s *ServiceLogger) Debugf(format string, v ...interface{}) {
+    if s.mute == true {
         return
     }
-    if debugLogger == nil {
-        InitLog(defaultServiceName, defaultLogWithColor)
-    }
-    format = "- " + serviceName + " - DEBUG - " + format + reset()
-    debugLogger.Printf(format, v...)
+    format = "- " + s.serviceName + " - DEBUG - " + format + reset()
+    s.debugLogger.Printf(format, v...)
 }
 
 func Infof(format string, v ...interface{}) {
-    if mute == true {
+    Default.Infof(format, v...)
+}
+
+func (s *ServiceLogger) Infof(format string, v ...interface{}) {
+    if s.mute == true {
         return
     }
-    if infoLogger == nil {
-        InitLog(defaultServiceName, defaultLogWithColor)
-    }
-    format = "- " + serviceName + " - INFO - " + format + reset()
-    infoLogger.Printf(format, v...)
+    format = "- " + s.serviceName + " - INFO - " + format + reset()
+    s.infoLogger.Printf(format, v...)
 }
 
 func Warnf(format string, v ...interface{}) {
-    if mute == true {
+    Default.Warnf(format, v...)
+}
+
+func (s *ServiceLogger) Warnf(format string, v ...interface{}) {
+    if s.mute == true {
         return
     }
-    if warnLogger == nil {
-        InitLog(defaultServiceName, defaultLogWithColor)
-    }
-    format = "- " + serviceName + " - WARN - " + format + reset()
-    warnLogger.Printf(format, v...)
+    format = "- " + s.serviceName + " - WARN - " + format + reset()
+    s.warnLogger.Printf(format, v...)
 }
 
 func Errorf(format string, v ...interface{}) {
-    if mute == true {
+    Default.Errorf(format, v...)
+}
+
+func (s *ServiceLogger) Errorf(format string, v ...interface{}) {
+    if s.mute == true {
         return
     }
-    if errorLogger == nil {
-        InitLog(defaultServiceName, defaultLogWithColor)
-    }
-    format = "- " + serviceName + " - ERROR - " + format + reset()
-    errorLogger.Printf(format, v...)
+    format = "- " + s.serviceName + " - ERROR - " + format + reset()
+    s.errorLogger.Printf(format, v...)
 }
 
 func Fatal(v ...interface{}) {
-    if errorLogger == nil {
-        InitLog(defaultServiceName, false)
-    }
-    errorLogger.Fatal(v...)
+    Default.Fatal(v...)
+}
+
+func (s *ServiceLogger) Fatal(v ...interface{}) {
+    s.errorLogger.Fatal(v...)
 }
