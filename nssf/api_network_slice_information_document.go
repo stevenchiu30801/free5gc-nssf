@@ -92,7 +92,7 @@ func checkNfServiceConsumer(nfType NfType) error {
 // NSSelectionGet - Retrieve the Network Slice Selection Information
 func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
 
-    flog.Nsselection.Infof("Request received")
+    flog.Nsselection.Infof("Request received - NSSelectionGet")
 
     var (
         isValidRequest bool = true

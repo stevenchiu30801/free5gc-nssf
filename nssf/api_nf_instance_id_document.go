@@ -10,7 +10,12 @@
 package nssf
 
 import (
+    "encoding/json"
 	"net/http"
+    "strings"
+
+    flog "../flog"
+    . "../model"
 )
 
 // NSSAIAvailabilityDelete - Deletes an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
@@ -25,8 +30,79 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// NSSAIAvailabilityPut - Updates/replaces the NSSF with the S-NSSAIs the NF service consumer (e.g AMF)supports per TA
+// NSSAIAvailabilityPut - Updates/replaces the NSSF with the S-NSSAIs the NF service consumer (e.g AMF) supports per TA
 func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
+
+    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityPut")
+
+    var (
+        isValidRequest bool = true
+        nfId string
+        status int
+        n NssaiAvailabilityInfo
+        d ProblemDetails
+    )
+
+    // Parse nfId from URL path
+    s := strings.Split(r.URL.Path, "/")
+    nfId = s[len(s) - 1]
+    flog.Nssaiavailability.Infof(nfId)
+
+    // Parse request body
+    err := json.NewDecoder(r.Body).Decode(&n)
+    if err != nil {
+        problemDetail := err.Error()
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: MALFORMED_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+        }
+        isValidRequest = false
+    }
+
+    // Check data integrity
+    err = n.CheckIntegrity()
+    if err != nil {
+        problemDetail := err.Error()
+        s := strings.Split(problemDetail, "`")
+        invalidParam := s[len(s) - 2]
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: INVALID_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+            InvalidParams: []InvalidParam {
+                {
+                    Param: invalidParam,
+                    Reason: problemDetail,
+                },
+            },
+        }
+        isValidRequest = false
+    }
+
+    if isValidRequest == true {
+        status = http.StatusOK
+    }
+
+    // Set response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+
+	w.WriteHeader(status)
+    switch status {
+        case http.StatusOK:
+            json.NewEncoder(w).Encode(&n)
+            flog.Nssaiavailability.Infof("Response code 200 OK")
+        case http.StatusBadRequest:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 400 Bad Request")
+        case http.StatusForbidden:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 403 Forbidden")
+        default:
+            flog.Nssaiavailability.Warnf("Unknown response code")
+    }
 }

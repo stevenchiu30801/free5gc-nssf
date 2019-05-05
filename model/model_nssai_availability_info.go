@@ -9,9 +9,28 @@
 
 package model
 
+import (
+    "fmt"
+)
+
 type NssaiAvailabilityInfo struct {
 
 	SupportedNssaiAvailabilityData []SupportedNssaiAvailabilityData `json:"supportedNssaiAvailabilityData"`
 
 	SupportedFeatures string `json:"supportedFeatures,omitempty"`
+}
+
+func (n *NssaiAvailabilityInfo) CheckIntegrity() error {
+    if n.SupportedNssaiAvailabilityData == nil || len(n.SupportedNssaiAvailabilityData) == 0 {
+        return fmt.Errorf("`supportedNssaiAvailabilityData` in request body should not be empty")
+    } else {
+        for i, supportedNssaiAvailabilityData := range n.SupportedNssaiAvailabilityData {
+            err := supportedNssaiAvailabilityData.CheckIntegrity()
+            if err != nil {
+                return fmt.Errorf("`supportedNssaiAvailabilityData`[%d]:%s", i, err.Error())
+            }
+        }
+    }
+
+    return nil
 }
