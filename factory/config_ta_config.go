@@ -14,16 +14,19 @@ import (
 
 type TaConfig struct {
 
-    Tac string `yaml:"tac"`
+    Tai *Tai `yaml:"tai"`
 
     AccessType *AccessType `yaml:"accessType"`
-
-    SupportedNssai []Snssai `yaml:"supportedNssai"`
 }
 
 func (t *TaConfig) checkIntegrity() error {
-    if t.Tac == "" {
+    if t.Tai == nil {
         return fmt.Errorf("`tac` in configuration should not be empty")
+    } else {
+        err := t.Tai.CheckIntegrity()
+        if err != nil {
+            return fmt.Errorf("`tai`:%s", err.Error())
+        }
     }
 
     if t.AccessType == nil || *t.AccessType == AccessType("") {
@@ -32,17 +35,6 @@ func (t *TaConfig) checkIntegrity() error {
         err := t.AccessType.CheckIntegrity()
         if err != nil {
             return fmt.Errorf("`accessType`:%s", err.Error())
-        }
-    }
-
-    if t.SupportedNssai == nil || len(t.SupportedNssai) == 0 {
-        return fmt.Errorf("`supportedNssai` in configuration should not be empty")
-    } else {
-        for i, supportedSnssai := range t.SupportedNssai {
-            err := supportedSnssai.CheckIntegrity()
-            if err != nil {
-                return fmt.Errorf("`supportedNssai`[%d]:%s", i, err.Error())
-            }
         }
     }
 

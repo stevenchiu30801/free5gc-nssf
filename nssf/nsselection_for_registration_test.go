@@ -505,11 +505,11 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                         },
                     },
                 },
-                CandidateAmfList: []string {
-                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
-                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
-                },
+                // CandidateAmfList: []string {
+                //     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                //     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                //     "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                // },
                 RejectedNssaiInPlmn: []Snssai {
                     {
                         Sst: 1,
@@ -567,11 +567,11 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                         },
                     },
                 },
-                CandidateAmfList: []string {
-                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
-                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
-                },
+                // CandidateAmfList: []string {
+                //     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                //     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                //     "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                // },
             },
         },
     }
@@ -733,11 +733,11 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                         },
                     },
                 },
-                CandidateAmfList: []string {
-                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
-                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
-                },
+                // CandidateAmfList: []string {
+                //     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                //     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                //     "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                // },
                 RejectedNssaiInPlmn: []Snssai {
                     {
                         Sst: 1,
@@ -797,11 +797,11 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                         },
                     },
                 },
-                CandidateAmfList: []string {
-                    "0e8831c3-6286-4689-ab27-1e2161e15cb1",
-                    "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
-                    "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
-                },
+                // CandidateAmfList: []string {
+                //     "0e8831c3-6286-4689-ab27-1e2161e15cb1",
+                //     "a1fba9ba-2e39-4e22-9c74-f749da571d0d",
+                //     "ffa2e8d7-3275-49c7-8631-6af1df1d9d26",
+                // },
             },
         },
         {

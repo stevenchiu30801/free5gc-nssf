@@ -12,20 +12,16 @@ import (
     . "../model"
 )
 
-type AmfSetConfig struct {
+type AmfConfig struct {
 
-    AmfSetId string `yaml:"amfSetId"`
-
-    AmfList []string `yaml:"amfList,omitempty"`
-
-    NrfAmfSet string `yaml:"nrfAmfSet,omitempty"`
+    NfId string `yaml:"nfId"`
 
     SupportedNssaiAvailabilityData []SupportedNssaiAvailabilityData `yaml:"supportedNssaiAvailabilityData"`
 }
 
-func (a *AmfSetConfig) checkIntegrity() error {
-    if a.AmfSetId == "" {
-        return fmt.Errorf("`amfSetId` in configuration should not be empty")
+func (a *AmfConfig) checkIntegrity() error {
+    if a.NfId == "" {
+        return fmt.Errorf("`nfId` in configuration should not be empty")
     }
 
     if a.SupportedNssaiAvailabilityData == nil || len(a.SupportedNssaiAvailabilityData) == 0 {

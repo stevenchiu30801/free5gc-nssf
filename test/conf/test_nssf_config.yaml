@@ -62,59 +62,131 @@ configuration:
         - 0e8831c3-6286-4689-ab27-1e2161e15cb1
         - a1fba9ba-2e39-4e22-9c74-f749da571d0d
       nrfAmfSet: http://free5gc-nrf.nctu.me:8081/nnrf-nfm/v1/nf-instances
-      supportedNssai:
-        - sst: 1
-          sd: 1
-        - sst: 1
-          sd: 2
-        - sst: 2
-          sd: 1
+      supportedNssaiAvailabilityData:
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33456
+          supportedSnssaiList:
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 2
+            - sst: 2
+              sd: 1
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33457
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 2
     - amfSetId: 2
       nrfAmfSet: http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances
-      supportedNssai:
-        - sst: 1
-          sd: 1
-        - sst: 1
-          sd: 3
-        - sst: 2
-          sd: 1
+      supportedNssaiAvailabilityData:
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33456
+          supportedSnssaiList:
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 3
+            - sst: 2
+              sd: 1
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33458
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 2
+  amfList:
+    - nfId: 469de254-2fe5-4ca0-8381-af3f500af77c
+      supportedNssaiAvailabilityData:
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33456
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 2
+            - sst: 2
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33457
+          supportedSnssaiList:
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 2
+    - nfId: fbe604a8-27b2-417e-bd7c-8a7be2691f8d
+      supportedNssaiAvailabilityData:
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33458
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 3
+            - sst: 2
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33459
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 2
+              sd: 1
+            - sst: 2
   taList:
-    - tac: 33456
+    - tai:
+        plmnId:
+          mcc: 466
+          mnc: 92
+        tac: 33456
       accessType: 3GPP_ACCESS
-      supportedNssai:
-        - sst: 1
-        - sst: 1
-          sd: 1
-        - sst: 1
-          sd: 2
-        - sst: 2
-    - tac: 33457
+    - tai:
+        plmnId:
+          mcc: 466
+          mnc: 92
+        tac: 33457
       accessType: 3GPP_ACCESS
-      supportedNssai:
-        - sst: 1
-        - sst: 1
-          sd: 1
-        - sst: 1
-          sd: 2
-        - sst: 2
-    - tac: 33458
+    - tai:
+        plmnId:
+          mcc: 466
+          mnc: 92
+        tac: 33458
       accessType: 3GPP_ACCESS
-      supportedNssai:
-        - sst: 1
-        - sst: 1
-          sd: 1
-        - sst: 1
-          sd: 3
-        - sst: 2
-    - tac: 33459
+    - tai:
+        plmnId:
+          mcc: 466
+          mnc: 92
+        tac: 33459
       accessType: 3GPP_ACCESS
-      supportedNssai:
-        - sst: 1
-        - sst: 1
-          sd: 1
-        - sst: 2
-          sd: 1
-        - sst: 2
   mappingListFromPlmn:
     - operatorName: NTT Docomo
       homePlmnId:

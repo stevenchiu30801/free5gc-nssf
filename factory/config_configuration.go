@@ -20,6 +20,8 @@ type Configuration struct {
 
     AmfSetList []AmfSetConfig `yaml:"amfSetList"`
 
+    AmfList []AmfConfig `yaml:"amfList"`
+
     TaList []TaConfig `yaml:"taList"`
 
     MappingListFromPlmn []MappingFromPlmnConfig `yaml:"mappingListFromPlmn"`
@@ -53,6 +55,17 @@ func (c *Configuration) checkIntegrity() error {
             err := amfSetConfig.checkIntegrity()
             if err != nil {
                 return fmt.Errorf("`amfSetList`[%d]:%s", i, err.Error())
+            }
+        }
+    }
+
+    if c.AmfList == nil || len(c.AmfList) == 0 {
+        return fmt.Errorf("`amfList` in configuration should not be empty")
+    } else {
+        for i, amfConfig := range c.AmfList {
+            err := amfConfig.checkIntegrity()
+            if err != nil {
+                return fmt.Errorf("`amfList`[%d]:%s", i, err.Error())
             }
         }
     }

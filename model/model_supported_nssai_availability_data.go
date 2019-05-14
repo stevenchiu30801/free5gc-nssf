@@ -15,9 +15,9 @@ import (
 
 type SupportedNssaiAvailabilityData struct {
 
-	Tai *Tai `json:"tai"`
+    Tai *Tai `json:"tai" yaml:"tai"`
 
-	SupportedSnssaiList []Snssai `json:"supportedSnssaiList"`
+    SupportedSnssaiList []Snssai `json:"supportedSnssaiList" yaml:"supportedSnssaiList"`
 }
 
 func (s *SupportedNssaiAvailabilityData) CheckIntegrity() error {

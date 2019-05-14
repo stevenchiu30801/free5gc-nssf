@@ -46,7 +46,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 mappingOfSubscribedSnssai = *subscribedSnssai.SubscribedSnssai
             }
 
-            if p.Tai != nil && checkSupportedSnssaiInTa(mappingOfSubscribedSnssai, p.Tai.Tac) == false {
+            if p.Tai != nil && checkSupportedSnssaiInTa(mappingOfSubscribedSnssai, p.NfId, *p.Tai) == false {
                 continue
             }
 
@@ -76,7 +76,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
         }
     }
 
-    addAmfInformation(a)
+    // addAmfInformation(a)
 }
 
 // Set Configured NSSAI with S-NSSAI(s) in Requested NSSAI which are marked as Default Configured NSSAI
@@ -303,7 +303,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         checkIfRequestAllowed := false
 
         for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
-            if p.Tai != nil && checkSupportedSnssaiInTa(requestedSnssai, p.Tai.Tac) == false {
+            if p.Tai != nil && checkSupportedSnssaiInTa(requestedSnssai, p.NfId, *p.Tai) == false {
                 // Requested S-NSSAI does not supported in UE's current TA
                 // Add it to Rejected NSSAI in TA
                 a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
@@ -374,7 +374,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         }
 
         if checkIfRequestAllowed == true {
-            addAmfInformation(a)
+            // addAmfInformation(a)
         } else {
             // No S-NSSAI from Requested NSSAI is present in Subscribed S-NSSAIs
             // Subscribed S-NSSAIs marked as default are used
