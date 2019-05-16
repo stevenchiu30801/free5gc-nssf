@@ -17,6 +17,8 @@ type TaConfig struct {
     Tai *Tai `yaml:"tai"`
 
     AccessType *AccessType `yaml:"accessType"`
+
+    SupportedSnssaiList []Snssai `yaml:"supportedSnssaiList,omitempty"`
 }
 
 func (t *TaConfig) checkIntegrity() error {
@@ -35,6 +37,15 @@ func (t *TaConfig) checkIntegrity() error {
         err := t.AccessType.CheckIntegrity()
         if err != nil {
             return fmt.Errorf("`accessType`:%s", err.Error())
+        }
+    }
+
+    if t.SupportedSnssaiList != nil && len(t.SupportedSnssaiList) != 0 {
+        for i, snssai := range t.SupportedSnssaiList {
+            err := snssai.CheckIntegrity()
+            if err != nil {
+                return fmt.Errorf("`supportedSnssaiList`[%d]:%s", i, err.Error())
+            }
         }
     }
 

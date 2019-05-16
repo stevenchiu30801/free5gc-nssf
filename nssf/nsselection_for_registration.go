@@ -46,7 +46,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
                 mappingOfSubscribedSnssai = *subscribedSnssai.SubscribedSnssai
             }
 
-            if p.Tai != nil && checkSupportedSnssaiInTa(mappingOfSubscribedSnssai, p.NfId, *p.Tai) == false {
+            if p.Tai != nil && checkSupportedSnssaiInTa(mappingOfSubscribedSnssai, *p.Tai) == false {
                 continue
             }
 
@@ -75,8 +75,6 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
 
         }
     }
-
-    // addAmfInformation(a)
 }
 
 // Set Configured NSSAI with S-NSSAI(s) in Requested NSSAI which are marked as Default Configured NSSAI
@@ -303,7 +301,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         checkIfRequestAllowed := false
 
         for _, requestedSnssai := range p.SliceInfoRequestForRegistration.RequestedNssai {
-            if p.Tai != nil && checkSupportedSnssaiInTa(requestedSnssai, p.NfId, *p.Tai) == false {
+            if p.Tai != nil && checkSupportedSnssaiInTa(requestedSnssai, *p.Tai) == false {
                 // Requested S-NSSAI does not supported in UE's current TA
                 // Add it to Rejected NSSAI in TA
                 a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, requestedSnssai)
@@ -373,9 +371,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
             }
         }
 
-        if checkIfRequestAllowed == true {
-            // addAmfInformation(a)
-        } else {
+        if checkIfRequestAllowed != true {
             // No S-NSSAI from Requested NSSAI is present in Subscribed S-NSSAIs
             // Subscribed S-NSSAIs marked as default are used
             useDefaultSubscribedSnssai(p, a)
@@ -385,6 +381,10 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         // Subscribed S-NSSAIs marked as default are used
         checkInvalidRequestedNssai = true
         useDefaultSubscribedSnssai(p, a)
+    }
+
+    if checkAllowedNssaiInAmfTa(a.AllowedNssaiList, p.NfId, *p.Tai) == false {
+        addAmfInformation(*p.Tai, a)
     }
 
     if p.SliceInfoRequestForRegistration.DefaultConfiguredSnssaiInd == true {

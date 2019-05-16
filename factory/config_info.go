@@ -20,7 +20,7 @@ type Info struct {
 
     Host string `yaml:"host"`
 
-    ServingPlmnId *PlmnId `yaml:"servingPlmnId"`
+    ServingPlmnIdList []PlmnId `yaml:"servingPlmnIdList"`
 }
 
 func (i *Info) checkIntegrity() error {
@@ -28,12 +28,14 @@ func (i *Info) checkIntegrity() error {
         return fmt.Errorf("`host` in configuration should not be empty")
     }
 
-    if i.ServingPlmnId == nil {
-        return fmt.Errorf("`servingPlmnId` in configuration should not be empty")
+    if i.ServingPlmnIdList == nil || len(i.ServingPlmnIdList) == 0 {
+        return fmt.Errorf("`servingPlmnIdList` in configuration should not be empty")
     } else {
-        err := i.ServingPlmnId.CheckIntegrity()
-        if err != nil {
-            return fmt.Errorf("`servingPlmnId`:%s", err.Error())
+        for i, plmnId := range i.ServingPlmnIdList {
+            err := plmnId.CheckIntegrity()
+            if err != nil {
+                return fmt.Errorf("`servingPlmnIdList`[%d]:%s", i, err.Error())
+            }
         }
     }
 

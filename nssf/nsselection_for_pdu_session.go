@@ -102,7 +102,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         }
     }
 
-    if p.Tai != nil && checkSupportedSnssaiInTa(*p.SliceInfoRequestForPduSession.SNssai, p.NfId, *p.Tai) == false {
+    if p.Tai != nil && checkSupportedSnssaiInTa(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai) == false {
         // Requested S-NSSAI does not supported in UE's current TA
         // Add it to Rejected NSSAI in TA
         a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, *p.SliceInfoRequestForPduSession.SNssai)

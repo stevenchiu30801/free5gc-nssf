@@ -41,12 +41,6 @@ func checkSupportedHplmn(homePlmnId PlmnId) bool {
 
 // Check whether UE's current TA is configured/supported
 func checkSupportedTa(tai Tai) bool {
-    // TODO: Check supported TA under given AMF
-    if *tai.PlmnId != *factory.NssfConfig.Info.ServingPlmnId {
-        flog.Nsselection.Infof("Invalid PLMN ID %+v provided in TAI", *tai.PlmnId)
-        return false
-    }
-
     for _, taConfig := range factory.NssfConfig.Configuration.TaList {
         if reflect.DeepEqual(*taConfig.Tai, tai) == true {
             return true
@@ -95,24 +89,40 @@ func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
     return true
 }
 
+// Check whether S-NSSAI is supported or not at UE's current TA
+func checkSupportedSnssaiInTa(snssai Snssai, tai Tai) bool {
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if reflect.DeepEqual(*taConfig.Tai, tai) == true {
+            for _, supportedSnssai := range taConfig.SupportedSnssaiList {
+                if supportedSnssai == snssai {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+    return false
+}
+
 // Check whether S-NSSAI is in SupportedNssaiAvailabilityData under the given TAI
 func checkSupportedNssaiAvailabilityData(snssai Snssai, tai Tai, s []SupportedNssaiAvailabilityData) bool {
     for _, supportedNssaiAvailabilityData := range s {
         if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true &&
-           Contain(snssai, supportedNssaiAvailabilityData.SupportedSnssaiList) == true {
+           checkSnssaiInNssai(snssai, supportedNssaiAvailabilityData.SupportedSnssaiList) == true {
             return true
         }
     }
     return false
 }
 
-// Check whether S-NSSAI is supported or not in UE's current TA
-func checkSupportedSnssaiInTa(snssai Snssai, nfId string, tai Tai) bool {
-    for _, amfSetConfig := range factory.NssfConfig.Configuration.AmfSetList {
-        if amfSetConfig.AmfList != nil && len(amfSetConfig.AmfList) != 0 && Contain(nfId, amfSetConfig.AmfList) {
-            return checkSupportedNssaiAvailabilityData(snssai, tai, amfSetConfig.SupportedNssaiAvailabilityData)
-        }
-    }
+// Check whether S-NSSAI is supported or not by the AMF at UE's current TA
+func checkSupportedSnssaiInAmfTa(snssai Snssai, nfId string, tai Tai) bool {
+    // Uncomment following lines if supported S-NSSAI lists of AMF Sets are independent of those of AMFs
+    // for _, amfSetConfig := range factory.NssfConfig.Configuration.AmfSetList {
+    //     if amfSetConfig.AmfList != nil && len(amfSetConfig.AmfList) != 0 && Contain(nfId, amfSetConfig.AmfList) {
+    //         return checkSupportedNssaiAvailabilityData(snssai, tai, amfSetConfig.SupportedNssaiAvailabilityData)
+    //     }
+    // }
 
     for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
@@ -122,6 +132,19 @@ func checkSupportedSnssaiInTa(snssai Snssai, nfId string, tai Tai) bool {
 
     flog.Nsselection.Warnf("No AMF %s in NSSF configuration", nfId)
     return false
+}
+
+func checkAllowedNssaiInAmfTa(allowedNssaiList []AllowedNssai, nfId string, tai Tai) bool {
+    for _, allowedNssai := range allowedNssaiList {
+        for _, allowedSnssai := range allowedNssai.AllowedSnssaiList {
+            if checkSupportedSnssaiInAmfTa(*allowedSnssai.AllowedSnssai, nfId, tai) == true {
+                continue
+            } else {
+                return false
+            }
+        }
+    }
+    return true
 }
 
 // Check whether S-NSSAI is standard or non-standard value
@@ -219,52 +242,82 @@ func addAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
     }
 }
 
-// // Add AMF information to Authorized Network Slice Info
-// func addAmfInformation(a *AuthorizedNetworkSliceInfo) {
-//     if a.AllowedNssaiList == nil || len(a.AllowedNssaiList) == 0 {
-//         return
-//     }
-//
-//     // Check if any AMF can serve the UE
-//     // That is, whether NSSAI of all Allowed S-NSSAIs is a subset of NSSAI supported by AMF
-//     // Simply use the first applicable AMF set
-//     // TODO: Policies of AMF selection (e.g. load balance between AMF instances)
-//     hitAmfSet := false
-//     for _, amfSetConfig := range factory.NssfConfig.Configuration.AmfSetList {
-//         hitAllowedNssai := true
-//         for _, allowedNssai := range a.AllowedNssaiList {
-//             for _, allowedSnssai := range allowedNssai.AllowedSnssaiList {
-//                 if Contain(*allowedSnssai.AllowedSnssai, amfSetConfig.SupportedNssai) == true {
-//                     continue
-//                 } else {
-//                     hitAllowedNssai = false
-//                     break
-//                 }
-//             }
-//             if hitAllowedNssai == false {
-//                 break
-//             }
-//         }
-//
-//         if hitAllowedNssai == false {
-//             continue
-//         } else {
-//             // Add AMF Set to Authorized Network Slice Info
-//             if amfSetConfig.AmfList != nil && len(amfSetConfig.AmfList) != 0 {
-//                 // List of candidate AMF(s) provided in configuration
-//                 // TODO: Possibly querying the NRF
-//                 a.CandidateAmfList = append(a.CandidateAmfList, amfSetConfig.AmfList...)
-//             } else {
-//                 a.TargetAmfSet = amfSetConfig.AmfSetId
-//                 // The API URI of the NRF may be included if target AMF Set is included
-//                 a.NrfAmfSet = amfSetConfig.NrfAmfSet
-//             }
-//             hitAmfSet = true
-//             break
-//         }
-//     }
-//
-//     if hitAmfSet == false {
-//         flog.Nsselection.Warnf("No AMF Set in configuration can serve the UE")
-//     }
-// }
+// Add AMF information to Authorized Network Slice Info
+func addAmfInformation(tai Tai, a *AuthorizedNetworkSliceInfo) {
+    if a.AllowedNssaiList == nil || len(a.AllowedNssaiList) == 0 {
+        return
+    }
+
+    // Check if any AMF can serve the UE
+    // That is, whether NSSAI of all Allowed S-NSSAIs is a subset of NSSAI supported by AMF
+
+    // Find AMF Set that could serve UE from AMF Set list in configuration
+    // Simply use the first applicable AMF set
+    // TODO: Policies of AMF selection (e.g. load balance between AMF instances)
+    for _, amfSetConfig := range factory.NssfConfig.Configuration.AmfSetList {
+        hitAllowedNssai := true
+        for _, allowedNssai := range a.AllowedNssaiList {
+            for _, allowedSnssai := range allowedNssai.AllowedSnssaiList {
+                if checkSupportedNssaiAvailabilityData(*allowedSnssai.AllowedSnssai,
+                                                       tai, amfSetConfig.SupportedNssaiAvailabilityData) == true {
+                    continue
+                } else {
+                    hitAllowedNssai = false
+                    break
+                }
+            }
+            if hitAllowedNssai == false {
+                break
+            }
+        }
+
+        if hitAllowedNssai == false {
+            continue
+        } else {
+            // Add AMF Set to Authorized Network Slice Info
+            if amfSetConfig.AmfList != nil && len(amfSetConfig.AmfList) != 0 {
+                // List of candidate AMF(s) provided in configuration
+                a.CandidateAmfList = append(a.CandidateAmfList, amfSetConfig.AmfList...)
+            } else {
+                // TODO: Possibly querying the NRF
+                a.TargetAmfSet = amfSetConfig.AmfSetId
+                // The API URI of the NRF may be included if target AMF Set is included
+                a.NrfAmfSet = amfSetConfig.NrfAmfSet
+            }
+            return
+        }
+    }
+
+    // No AMF Set in configuration can serve the UE
+    // Find all candidate AMFs that could serve UE from AMF list in configuration
+    hitAmf := false
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        hitAllowedNssai := true
+        for _, allowedNssai := range a.AllowedNssaiList {
+            for _, allowedSnssai := range allowedNssai.AllowedSnssaiList {
+                if checkSupportedNssaiAvailabilityData(*allowedSnssai.AllowedSnssai,
+                                                       tai, amfConfig.SupportedNssaiAvailabilityData) == true {
+                    continue
+                } else {
+                    hitAllowedNssai = false
+                    break
+                }
+            }
+            if hitAllowedNssai == false {
+                break
+            }
+        }
+
+        if hitAllowedNssai == false {
+            continue
+        } else {
+            // Add AMF Set to Authorized Network Slice Info
+            a.CandidateAmfList = append(a.CandidateAmfList, amfConfig.NfId)
+            hitAmf = true
+        }
+    }
+
+    if hitAmf != true {
+        flog.Nsselection.Warnf("No candidate AMF or AMF Set can serve the UE")
+    }
+}

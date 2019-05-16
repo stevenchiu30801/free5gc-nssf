@@ -2,9 +2,9 @@ info:
   version: 1.0.0
   description: NSSF initial local configuration
   host: free5gc-nssf.nctu.me:8080
-  servingPlmnId:
-    mcc: 466
-    mnc: 92
+  servingPlmnIdList:
+    - mcc: 466
+      mnc: 92
 
 configuration:
   supportedNssaiInPlmn:
@@ -121,9 +121,6 @@ configuration:
             tac: 33456
           supportedSnssaiList:
             - sst: 1
-            - sst: 1
-              sd: 1
-            - sst: 1
               sd: 2
             - sst: 2
         - tai:
@@ -160,8 +157,8 @@ configuration:
             - sst: 1
               sd: 1
             - sst: 2
-              sd: 1
             - sst: 2
+              sd: 1
   taList:
     - tai:
         plmnId:
@@ -169,24 +166,52 @@ configuration:
           mnc: 92
         tac: 33456
       accessType: 3GPP_ACCESS
+      supportedSnssaiList:
+        - sst: 1
+        - sst: 1
+          sd: 1
+        - sst: 1
+          sd: 2
+        - sst: 2
     - tai:
         plmnId:
           mcc: 466
           mnc: 92
         tac: 33457
       accessType: 3GPP_ACCESS
+      supportedSnssaiList:
+        - sst: 1
+        - sst: 1
+          sd: 1
+        - sst: 1
+          sd: 2
+        - sst: 2
     - tai:
         plmnId:
           mcc: 466
           mnc: 92
         tac: 33458
       accessType: 3GPP_ACCESS
+      supportedSnssaiList:
+        - sst: 1
+        - sst: 1
+          sd: 1
+        - sst: 1
+          sd: 3
+        - sst: 2
     - tai:
         plmnId:
           mcc: 466
           mnc: 92
         tac: 33459
       accessType: 3GPP_ACCESS
+      supportedSnssaiList:
+        - sst: 1
+        - sst: 1
+          sd: 1
+        - sst: 2
+        - sst: 2
+          sd: 1
   mappingListFromPlmn:
     - operatorName: NTT Docomo
       homePlmnId:
