@@ -449,6 +449,8 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
+                TargetAmfSet: "2",
+                NrfAmfSet: "http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances",
             },
         },
         {
@@ -663,6 +665,8 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                         AccessType: func() *AccessType { a := IS_3_GPP_ACCESS; return &a }(),
                     },
                 },
+                TargetAmfSet: "2",
+                NrfAmfSet: "http://free5gc-nrf.nctu.me:8084/nnrf-nfm/v1/nf-instances",
             },
         },
         {

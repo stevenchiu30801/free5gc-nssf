@@ -96,6 +96,7 @@ configuration:
             tac: 33456
           supportedSnssaiList:
             - sst: 1
+            - sst: 1
               sd: 1
             - sst: 1
               sd: 3
@@ -153,6 +154,32 @@ configuration:
               mcc: 466
               mnc: 92
             tac: 33459
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 2
+            - sst: 2
+              sd: 1
+    - nfId: b9e6e2cb-5ce8-4cb6-9173-a266dd9a2f0c
+      supportedNssaiAvailabilityData:
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33456
+          supportedSnssaiList:
+            - sst: 1
+            - sst: 1
+              sd: 1
+            - sst: 1
+              sd: 2
+            - sst: 2
+        - tai:
+            plmnId:
+              mcc: 466
+              mnc: 92
+            tac: 33458
           supportedSnssaiList:
             - sst: 1
             - sst: 1
