@@ -24,7 +24,7 @@ type AllowedSnssai struct {
 
 func (a *AllowedSnssai) CheckIntegrity() error {
     if a.AllowedSnssai == nil {
-        return fmt.Errorf("`allowedSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`allowedSnssai` should not be empty")
     } else {
         err := a.AllowedSnssai.CheckIntegrity()
         if err != nil {

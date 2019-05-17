@@ -29,7 +29,7 @@ type Configuration struct {
 
 func (c *Configuration) checkIntegrity() error {
     if c.SupportedNssaiInPlmn == nil || len(c.SupportedNssaiInPlmn) == 0 {
-        return fmt.Errorf("`supportedNssaiInPlmn` in configuration should not be empty")
+        return fmt.Errorf("`supportedNssaiInPlmn` should not be empty")
     } else {
         for i, supportedSnssaiInPlmn := range c.SupportedNssaiInPlmn {
             err := supportedSnssaiInPlmn.CheckIntegrity()
@@ -49,7 +49,7 @@ func (c *Configuration) checkIntegrity() error {
     }
 
     if c.AmfSetList == nil || len(c.AmfSetList) == 0 {
-        return fmt.Errorf("`amfSetList` in configuration should not be empty")
+        return fmt.Errorf("`amfSetList` should not be empty")
     } else {
         for i, amfSetConfig := range c.AmfSetList {
             err := amfSetConfig.checkIntegrity()
@@ -60,7 +60,7 @@ func (c *Configuration) checkIntegrity() error {
     }
 
     if c.AmfList == nil || len(c.AmfList) == 0 {
-        return fmt.Errorf("`amfList` in configuration should not be empty")
+        return fmt.Errorf("`amfList` should not be empty")
     } else {
         for i, amfConfig := range c.AmfList {
             err := amfConfig.checkIntegrity()
@@ -71,7 +71,7 @@ func (c *Configuration) checkIntegrity() error {
     }
 
     if c.TaList == nil || len(c.TaList) == 0 {
-        return fmt.Errorf("`taList` in configuration should not be empty")
+        return fmt.Errorf("`taList` should not be empty")
     } else {
         for i, taConfig := range c.TaList {
             err := taConfig.checkIntegrity()
@@ -82,7 +82,7 @@ func (c *Configuration) checkIntegrity() error {
     }
 
     if c.MappingListFromPlmn == nil || len(c.MappingListFromPlmn) == 0 {
-        return fmt.Errorf("`mappingListFromPlmn` in configuration should not be empty")
+        return fmt.Errorf("`mappingListFromPlmn` should not be empty")
     } else {
         for i, mappingFromPlmnConfig := range c.MappingListFromPlmn {
             err := mappingFromPlmnConfig.checkIntegrity()

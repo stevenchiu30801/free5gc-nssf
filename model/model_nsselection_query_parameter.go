@@ -29,7 +29,7 @@ type NsselectionQueryParameter struct {
 
 func (p *NsselectionQueryParameter) CheckIntegrity() error {
     if p.NfType == nil || *p.NfType == "" {
-        return fmt.Errorf("`nf-type` in query parameter should not be empty")
+        return fmt.Errorf("`nf-type` should not be empty")
     } else {
         err := p.NfType.CheckIntegrity()
         if err != nil {
@@ -38,7 +38,7 @@ func (p *NsselectionQueryParameter) CheckIntegrity() error {
     }
 
     if p.NfId == "" {
-        return fmt.Errorf("`nf-id` in query parameter should not be empty")
+        return fmt.Errorf("`nf-id` should not be empty")
     }
 
     if p.SliceInfoRequestForRegistration != nil {

@@ -23,7 +23,7 @@ type MappingFromPlmnConfig struct {
 
 func (m *MappingFromPlmnConfig) checkIntegrity() error {
     if m.HomePlmnId == nil {
-        return fmt.Errorf("`homePlmnId` in configuration should not be empty")
+        return fmt.Errorf("`homePlmnId` should not be empty")
     } else {
         err := m.HomePlmnId.CheckIntegrity()
         if err != nil {
@@ -32,7 +32,7 @@ func (m *MappingFromPlmnConfig) checkIntegrity() error {
     }
 
     if m.MappingOfSnssai == nil || len(m.MappingOfSnssai) == 0 {
-        return fmt.Errorf("`mappingOfSnssai` in configuration should not empty")
+        return fmt.Errorf("`mappingOfSnssai` should not empty")
     } else {
         for i, mappingOfSnssai := range m.MappingOfSnssai {
             err := mappingOfSnssai.CheckIntegrity()

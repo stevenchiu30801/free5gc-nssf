@@ -21,11 +21,11 @@ type AmfConfig struct {
 
 func (a *AmfConfig) checkIntegrity() error {
     if a.NfId == "" {
-        return fmt.Errorf("`nfId` in configuration should not be empty")
+        return fmt.Errorf("`nfId` should not be empty")
     }
 
     if a.SupportedNssaiAvailabilityData == nil || len(a.SupportedNssaiAvailabilityData) == 0 {
-        return fmt.Errorf("`supportedNssaiAvailabilityData` in configuration should not be empty")
+        return fmt.Errorf("`supportedNssaiAvailabilityData` should not be empty")
     } else {
         for i, supportedNssaiAvailabilityData := range a.SupportedNssaiAvailabilityData {
             err := supportedNssaiAvailabilityData.CheckIntegrity()

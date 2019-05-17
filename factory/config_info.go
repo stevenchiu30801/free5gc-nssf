@@ -25,11 +25,11 @@ type Info struct {
 
 func (i *Info) checkIntegrity() error {
     if i.Host == "" {
-        return fmt.Errorf("`host` in configuration should not be empty")
+        return fmt.Errorf("`host` should not be empty")
     }
 
     if i.ServingPlmnIdList == nil || len(i.ServingPlmnIdList) == 0 {
-        return fmt.Errorf("`servingPlmnIdList` in configuration should not be empty")
+        return fmt.Errorf("`servingPlmnIdList` should not be empty")
     } else {
         for i, plmnId := range i.ServingPlmnIdList {
             err := plmnId.CheckIntegrity()

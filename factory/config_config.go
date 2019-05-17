@@ -19,7 +19,7 @@ type Config struct {
 
 func (c *Config) CheckIntegrity() error {
     if c.Info == nil {
-        return fmt.Errorf("`info` in configuration should not be empty")
+        return fmt.Errorf("`info` should not be empty")
     } else {
         err := c.Info.checkIntegrity()
         if err != nil {
@@ -28,7 +28,7 @@ func (c *Config) CheckIntegrity() error {
     }
 
     if c.Configuration == nil {
-        return fmt.Errorf("`configuration` in configuration should not be empty")
+        return fmt.Errorf("`configuration` should not be empty")
     } else {
         err := c.Configuration.checkIntegrity()
         if err != nil {

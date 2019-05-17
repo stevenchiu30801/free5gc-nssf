@@ -22,7 +22,7 @@ type SupportedNssaiAvailabilityData struct {
 
 func (s *SupportedNssaiAvailabilityData) CheckIntegrity() error {
     if s.Tai == nil {
-        return fmt.Errorf("`tai` in request body should not be empty")
+        return fmt.Errorf("`tai` should not be empty")
     } else {
         err := s.Tai.CheckIntegrity()
         if err != nil {
@@ -31,7 +31,7 @@ func (s *SupportedNssaiAvailabilityData) CheckIntegrity() error {
     }
 
     if s.SupportedSnssaiList == nil || len(s.SupportedSnssaiList) == 0 {
-        return fmt.Errorf("`supportedSnssaiList` in request body should not be empty")
+        return fmt.Errorf("`supportedSnssaiList` should not be empty")
     } else {
         for i, snssai := range s.SupportedSnssaiList {
             err := snssai.CheckIntegrity()

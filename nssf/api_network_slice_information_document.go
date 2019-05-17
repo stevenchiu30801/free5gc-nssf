@@ -108,7 +108,7 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     // Parse query parameter
     p, err := parseQueryParameter(r)
     if err != nil {
-        problemDetail := err.Error()
+        problemDetail := "[Query Parameter] " + err.Error()
         status = http.StatusBadRequest
         d = ProblemDetails {
             Title: MALFORMED_REQUEST,
@@ -121,7 +121,7 @@ func NSSelectionGet(w http.ResponseWriter, r *http.Request) {
     // Check data integrity
     err = p.CheckIntegrity()
     if err != nil {
-        problemDetail := err.Error()
+        problemDetail := "[Query Parameter] " + err.Error()
         s := strings.Split(problemDetail, "`")
         invalidParam := s[len(s) - 2]
         status = http.StatusBadRequest

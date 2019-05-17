@@ -21,7 +21,7 @@ type NsiConfig struct {
 
 func (n *NsiConfig) checkIntegrity() error {
     if n.Snssai == nil {
-        return fmt.Errorf("`snssai` in configuration should not be empty")
+        return fmt.Errorf("`snssai` should not be empty")
     } else {
         err := n.Snssai.CheckIntegrity()
         if err != nil {
@@ -30,7 +30,7 @@ func (n *NsiConfig) checkIntegrity() error {
     }
 
     if n.NsiInformationList == nil || len(n.NsiInformationList) == 0 {
-        return fmt.Errorf("`nsiInformation` in configuration should not be empty")
+        return fmt.Errorf("`nsiInformation` should not be empty")
     } else {
         for i, nsiInformation := range n.NsiInformationList {
             err := nsiInformation.CheckIntegrity()

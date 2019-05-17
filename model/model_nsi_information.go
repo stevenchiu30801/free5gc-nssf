@@ -22,7 +22,7 @@ type NsiInformation struct {
 
 func (n *NsiInformation) CheckIntegrity() error {
     if n.NrfId == "" {
-        return fmt.Errorf("`nrfId` in query parameter should not be empty")
+        return fmt.Errorf("`nrfId` should not be empty")
     }
     // TODO: Check whether `NrfId` is valid URI or not
 

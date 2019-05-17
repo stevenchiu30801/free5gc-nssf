@@ -22,7 +22,7 @@ type SubscribedSnssai struct {
 
 func (s *SubscribedSnssai) CheckIntegrity() error {
     if s.SubscribedSnssai == nil {
-        return fmt.Errorf("`subscribedSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`subscribedSnssai` should not be empty")
     } else {
         err := s.SubscribedSnssai.CheckIntegrity()
         if err != nil {

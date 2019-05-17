@@ -22,7 +22,7 @@ type ConfiguredSnssai struct {
 
 func (c *ConfiguredSnssai) CheckIntegrity() error {
     if c.ConfiguredSnssai == nil {
-        return fmt.Errorf("`configuredSnssai` in query parameter should not be empty")
+        return fmt.Errorf("`configuredSnssai` should not be empty")
     } else {
         err := c.ConfiguredSnssai.CheckIntegrity()
         if err != nil {

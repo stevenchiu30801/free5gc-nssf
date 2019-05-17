@@ -7,7 +7,7 @@
 package factory
 
 import (
-    // "fmt"
+    "fmt"
     "io/ioutil"
 
     "gopkg.in/yaml.v2"
@@ -19,6 +19,7 @@ var NssfConfig Config
 
 func checkErr(err error) {
     if err != nil {
+        err = fmt.Errorf("[Configuration] %s", err.Error())
         flog.System.Fatal(err)
     }
 }

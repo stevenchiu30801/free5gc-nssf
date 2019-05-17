@@ -22,7 +22,7 @@ type Tai struct {
 
 func (t *Tai) CheckIntegrity() error {
     if t.PlmnId == nil {
-        return fmt.Errorf("`plmnId` in query parameter should not be empty")
+        return fmt.Errorf("`plmnId` should not be empty")
     } else {
         err := t.PlmnId.CheckIntegrity()
         if err != nil {
@@ -31,7 +31,7 @@ func (t *Tai) CheckIntegrity() error {
     }
 
     if t.Tac == "" {
-        return fmt.Errorf("`tac` in query parameter should not be empty")
+        return fmt.Errorf("`tac` should not be empty")
     }
 
     return nil

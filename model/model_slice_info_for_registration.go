@@ -57,7 +57,7 @@ func (s *SliceInfoForRegistration) CheckIntegrity() error {
     }
 
     if s.RequestMapping == true && (s.SNssaiForMapping == nil || len(s.SNssaiForMapping) == 0) {
-        return fmt.Errorf("`sNssaiForMapping` in query parameter should be included when `requestMapping` is set to true")
+        return fmt.Errorf("`sNssaiForMapping` should be included when `requestMapping` is set to true")
     } else if s.SNssaiForMapping != nil || len(s.SNssaiForMapping) != 0 {
         for i, sNssaiForMapping := range s.SNssaiForMapping {
             err := sNssaiForMapping.CheckIntegrity()

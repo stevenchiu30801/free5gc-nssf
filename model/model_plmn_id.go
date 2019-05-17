@@ -22,11 +22,11 @@ type PlmnId struct {
 
 func (p *PlmnId) CheckIntegrity() error {
     if p.Mcc == "" {
-        return fmt.Errorf("`mcc` in query parameter should not be empty")
+        return fmt.Errorf("`mcc` should not be empty")
     }
 
     if p.Mnc == "" {
-        return fmt.Errorf("`mnc` in query parameter should not be empty")
+        return fmt.Errorf("`mnc` should not be empty")
     }
 
     return nil

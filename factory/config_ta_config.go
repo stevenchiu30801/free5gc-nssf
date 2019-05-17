@@ -23,7 +23,7 @@ type TaConfig struct {
 
 func (t *TaConfig) checkIntegrity() error {
     if t.Tai == nil {
-        return fmt.Errorf("`tac` in configuration should not be empty")
+        return fmt.Errorf("`tac` should not be empty")
     } else {
         err := t.Tai.CheckIntegrity()
         if err != nil {
@@ -32,7 +32,7 @@ func (t *TaConfig) checkIntegrity() error {
     }
 
     if t.AccessType == nil || *t.AccessType == AccessType("") {
-        return fmt.Errorf("`accessType` in configuration should not be empty")
+        return fmt.Errorf("`accessType` should not be empty")
     } else {
         err := t.AccessType.CheckIntegrity()
         if err != nil {

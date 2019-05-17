@@ -22,7 +22,7 @@ type NssaiAvailabilityInfo struct {
 
 func (n *NssaiAvailabilityInfo) CheckIntegrity() error {
     if n.SupportedNssaiAvailabilityData == nil || len(n.SupportedNssaiAvailabilityData) == 0 {
-        return fmt.Errorf("`supportedNssaiAvailabilityData` in request body should not be empty")
+        return fmt.Errorf("`supportedNssaiAvailabilityData` should not be empty")
     } else {
         for i, supportedNssaiAvailabilityData := range n.SupportedNssaiAvailabilityData {
             err := supportedNssaiAvailabilityData.CheckIntegrity()
