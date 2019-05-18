@@ -91,14 +91,22 @@ func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
 
 // Check whether S-NSSAI is supported or not at UE's current TA
 func checkSupportedSnssaiInTa(snssai Snssai, tai Tai) bool {
-    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
-        if reflect.DeepEqual(*taConfig.Tai, tai) == true {
-            for _, supportedSnssai := range taConfig.SupportedSnssaiList {
-                if supportedSnssai == snssai {
-                    return true
-                }
-            }
-            return false
+    // for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+    //     if reflect.DeepEqual(*taConfig.Tai, tai) == true {
+    //         for _, supportedSnssai := range taConfig.SupportedSnssaiList {
+    //             if supportedSnssai == snssai {
+    //                 return true
+    //             }
+    //         }
+    //         return false
+    //     }
+    // }
+    // return false
+
+    // Check supported S-NSSAI in AmfList instead of TaList
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if checkSupportedNssaiAvailabilityData(snssai, tai, amfConfig.SupportedNssaiAvailabilityData) == true {
+            return true
         }
     }
     return false

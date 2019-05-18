@@ -40,18 +40,19 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
         nfId string
         status int
         n NssaiAvailabilityInfo
+        a AuthorizedNssaiAvailabilityInfo
         d ProblemDetails
     )
 
     // Parse nfId from URL path
     s := strings.Split(r.URL.Path, "/")
     nfId = s[len(s) - 1]
-    flog.Nssaiavailability.Infof(nfId)
+    // flog.Nssaiavailability.Infof(nfId)
 
     // Parse request body
     err := json.NewDecoder(r.Body).Decode(&n)
     if err != nil {
-        problemDetail := err.Error()
+        problemDetail := "[Request Body] " + err.Error()
         status = http.StatusBadRequest
         d = ProblemDetails {
             Title: MALFORMED_REQUEST,
@@ -64,7 +65,7 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
     // Check data integrity
     err = n.CheckIntegrity()
     if err != nil {
-        problemDetail := err.Error()
+        problemDetail := "[Request Body] " + err.Error()
         s := strings.Split(problemDetail, "`")
         invalidParam := s[len(s) - 2]
         status = http.StatusBadRequest
@@ -82,8 +83,12 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
         isValidRequest = false
     }
 
+    // TODO: Request NfProfile of AMF from NRF
+    //       Check if AMF is valid and obtain AMF Set ID
+    //       If NfId is invalid, return ProblemDetails with code 404 Not Found
+
     if isValidRequest == true {
-        status = http.StatusOK
+        status = nssaiavailabilityPut(nfId, n, &a, &d)
     }
 
     // Set response

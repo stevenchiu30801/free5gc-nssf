@@ -317,11 +317,14 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
 
                 if found == false {
                     // No mapping of Requested S-NSSAI to HPLMN S-NSSAI is provided by UE
-                    // TODO: Search for local configuration if there is no provided mapping from UE
+                    // TODO: Search for local configuration if there is no provided mapping from UE, and update UE's
+                    //       Configured NSSAI
                     checkInvalidRequestedNssai = true
                     a.RejectedNssaiInPlmn = append(a.RejectedNssaiInPlmn, requestedSnssai)
                     continue
                 } else {
+                    // TODO: Check if mappings of S-NSSAIs are correct
+                    //       If not, update UE's Configured NSSAI
                     mappingOfRequestedSnssai = *targetMapping.HomeSnssai
                 }
             } else {
