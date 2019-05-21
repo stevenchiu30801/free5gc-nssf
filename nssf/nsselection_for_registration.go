@@ -31,6 +31,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
             // Subscribed S-NSSAI is marked as default S-NSSAI
 
             var mappingOfSubscribedSnssai Snssai
+            // TODO: Compared with Restricted S-NSSAI list in configuration under roaming scenario
             if p.HomePlmnId != nil && checkStandardSnssai(*subscribedSnssai.SubscribedSnssai) == false {
                 targetMapping, found := findMappingWithHomeSnssai(*subscribedSnssai.SubscribedSnssai, mappingOfSnssai)
 
@@ -309,6 +310,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
             }
 
             var mappingOfRequestedSnssai Snssai
+            // TODO: Compared with Restricted S-NSSAI list in configuration under roaming scenario
             if p.HomePlmnId != nil && checkStandardSnssai(requestedSnssai) == false {
                 // Standard S-NSSAIs are supported to be commonly decided by all roaming partners
                 // Only non-standard S-NSSAIs are required to find mappings

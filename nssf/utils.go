@@ -15,6 +15,14 @@ import (
     . "../model"
 )
 
+// Title in Problem Details for NSSF HTTP APIs
+const (
+    INVALID_REQUEST = "Invalid request message framing"
+    MALFORMED_REQUEST = "Malformed request syntax"
+    UNAUTHORIZED_CONSUMER = "Unauthorized NF service consumer"
+    UNSUPPORTED_RESOURCE = "Unsupported request resources"
+)
+
 // Check if a slice contains an element
 func Contain(target interface{}, slice interface{}) bool {
     arr := reflect.ValueOf(slice)
@@ -91,25 +99,25 @@ func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
 
 // Check whether S-NSSAI is supported or not at UE's current TA
 func checkSupportedSnssaiInTa(snssai Snssai, tai Tai) bool {
-    // for _, taConfig := range factory.NssfConfig.Configuration.TaList {
-    //     if reflect.DeepEqual(*taConfig.Tai, tai) == true {
-    //         for _, supportedSnssai := range taConfig.SupportedSnssaiList {
-    //             if supportedSnssai == snssai {
-    //                 return true
-    //             }
-    //         }
-    //         return false
-    //     }
-    // }
-    // return false
-
-    // Check supported S-NSSAI in AmfList instead of TaList
-    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
-        if checkSupportedNssaiAvailabilityData(snssai, tai, amfConfig.SupportedNssaiAvailabilityData) == true {
-            return true
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if reflect.DeepEqual(*taConfig.Tai, tai) == true {
+            for _, supportedSnssai := range taConfig.SupportedSnssaiList {
+                if supportedSnssai == snssai {
+                    return true
+                }
+            }
+            return false
         }
     }
     return false
+
+    // // Check supported S-NSSAI in AmfList instead of TaList
+    // for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+    //     if checkSupportedNssaiAvailabilityData(snssai, tai, amfConfig.SupportedNssaiAvailabilityData) == true {
+    //         return true
+    //     }
+    // }
+    // return false
 }
 
 // Check whether S-NSSAI is in SupportedNssaiAvailabilityData under the given TAI

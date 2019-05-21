@@ -227,6 +227,13 @@ configuration:
         - sst: 1
           sd: 3
         - sst: 2
+      restrictedSnssaiList:
+        - homePlmnId:
+            mcc: 310
+            mnc: 560
+          sNssaiList:
+            - sst: 1
+              sd: 3
     - tai:
         plmnId:
           mcc: 466
@@ -240,6 +247,13 @@ configuration:
         - sst: 2
         - sst: 2
           sd: 1
+      restrictedSnssaiList:
+        - homePlmnId:
+            mcc: 310
+            mnc: 560
+          sNssaiList:
+            - sst: 2
+              sd: 1
   mappingListFromPlmn:
     - operatorName: NTT Docomo
       homePlmnId:

@@ -18,28 +18,30 @@ func nssaiavailabilityPut(nfId string,
                           n NssaiAvailabilityInfo,
                           a *AuthorizedNssaiAvailabilityInfo,
                           d *ProblemDetails) (status int) {
+    for _, s := range n.SupportedNssaiAvailabilityData {
+        if checkSupportedNssaiInPlmn(s.SupportedSnssaiList) == false {
+            *d = ProblemDetails {
+                Title: UNSUPPORTED_RESOURCE,
+                Status: http.StatusForbidden,
+                Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
+                Cause: "SNSSAI_NOT_SUPPORTED",
+            }
+
+            status = http.StatusForbidden
+            return
+        }
+    }
+
+    // TODO: Currently authorize all the provided S-NSSAIs
+    //       Take some issue into consideration e.g. operator policies
+
     hitAmf := false
     // Find AMF configuration of given NfId
     // If found, then update the SupportedNssaiAvailabilityData
     for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
-            for _, s := range n.SupportedNssaiAvailabilityData {
-                hitTai := false
-                for j, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
-                    if reflect.DeepEqual(supportedNssaiAvailabilityData.Tai, s.Tai) == true {
-                        // Replace SupportedNssaiAvailabilityData if record of the TAI exists
-                        factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[j] = s
+            factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData = n.SupportedNssaiAvailabilityData
 
-                        hitTai = true
-                        break
-                    }
-                }
-                if hitTai == false {
-                    // Create new record of the TAI when no corresponding SupportedNssaiAvailability exists
-                    factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData =
-                        append(factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData, s)
-                }
-            }
             hitAmf = true
             break
         }
@@ -52,6 +54,23 @@ func nssaiavailabilityPut(nfId string,
         amfConfig.SupportedNssaiAvailabilityData = n.SupportedNssaiAvailabilityData
         factory.NssfConfig.Configuration.AmfList = append(factory.NssfConfig.Configuration.AmfList,
                                                           amfConfig)
+    }
+
+    for _, s := range n.SupportedNssaiAvailabilityData {
+        var authorizedNssaiAvailabilityData AuthorizedNssaiAvailabilityData
+        authorizedNssaiAvailabilityData.Tai = s.Tai
+        authorizedNssaiAvailabilityData.SupportedSnssaiList = s.SupportedSnssaiList
+
+        for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+            if reflect.DeepEqual(taConfig.Tai, s.Tai) == true {
+                if taConfig.RestrictedSnssaiList != nil && len(taConfig.RestrictedSnssaiList) != 0 {
+                    authorizedNssaiAvailabilityData.RestrictedSnssaiList = taConfig.RestrictedSnssaiList
+                }
+                break
+            }
+        }
+
+        a.AuthorizedNssaiAvailabilityData = append(a.AuthorizedNssaiAvailabilityData, authorizedNssaiAvailabilityData)
     }
 
     return http.StatusOK

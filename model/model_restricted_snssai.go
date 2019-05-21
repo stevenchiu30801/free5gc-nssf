@@ -9,9 +9,37 @@
 
 package model
 
+import (
+    "fmt"
+)
+
 type RestrictedSnssai struct {
 
-	HomePlmnId *PlmnId `json:"homePlmnId"`
+    HomePlmnId *PlmnId `json:"homePlmnId" yaml:"homePlmnId"`
 
-	SNssaiList []Snssai `json:"sNssaiList"`
+    SNssaiList []Snssai `json:"sNssaiList" yaml:"sNssaiList"`
+}
+
+func (r *RestrictedSnssai) CheckIntegrity() error {
+    if r.HomePlmnId == nil {
+        return fmt.Errorf("`homePlmnId` should not be empty")
+    } else {
+        err := r.HomePlmnId.CheckIntegrity()
+        if err != nil {
+            return fmt.Errorf("`homePlmnId`:%s", err.Error())
+        }
+    }
+
+    if r.SNssaiList == nil || len(r.SNssaiList) == 0 {
+        return fmt.Errorf("`sNssaiList` should not be empty")
+    } else {
+        for i, snssai := range r.SNssaiList {
+            err := snssai.CheckIntegrity()
+            if err != nil {
+                return fmt.Errorf("`sNssaiList`[%d]:%s", i, err.Error())
+            }
+        }
+    }
+
+    return nil
 }

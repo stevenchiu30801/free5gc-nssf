@@ -27,6 +27,7 @@ func NSSAIAvailabilityDelete(w http.ResponseWriter, r *http.Request) {
 // NSSAIAvailabilityPatch - Updates an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
 func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	// w.Header().Set("Content-Type", "application/json-patch+json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -83,9 +84,10 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
         isValidRequest = false
     }
 
-    // TODO: Request NfProfile of AMF from NRF
-    //       Check if AMF is valid and obtain AMF Set ID
+    // TODO: Request NfProfile of NfId from NRF
+    //       Check if NfId is valid AMF and obtain AMF Set ID
     //       If NfId is invalid, return ProblemDetails with code 404 Not Found
+    //       If NF consumer is not authorized to update NSSAI availability, return ProblemDetails with code 403 Forbidden
 
     if isValidRequest == true {
         status = nssaiavailabilityPut(nfId, n, &a, &d)
@@ -97,7 +99,7 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(status)
     switch status {
         case http.StatusOK:
-            json.NewEncoder(w).Encode(&n)
+            json.NewEncoder(w).Encode(&a)
             flog.Nssaiavailability.Infof("Response code 200 OK")
         case http.StatusBadRequest:
             json.NewEncoder(w).Encode(&d)
