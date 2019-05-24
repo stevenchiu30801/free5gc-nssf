@@ -388,7 +388,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         useDefaultSubscribedSnssai(p, a)
     }
 
-    if checkAllowedNssaiInAmfTa(a.AllowedNssaiList, p.NfId, *p.Tai) == false {
+    if p.Tai != nil && checkAllowedNssaiInAmfTa(a.AllowedNssaiList, p.NfId, *p.Tai) == false {
         addAmfInformation(*p.Tai, a)
     }
 
