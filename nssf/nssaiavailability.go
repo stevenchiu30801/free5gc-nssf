@@ -7,12 +7,34 @@
 package nssf
 
 import (
+    "encoding/json"
     "net/http"
     "reflect"
 
     factory "../factory"
+    flog "../flog"
     . "../model"
 )
+
+func nssaiavailabilityPatch(nfId string,
+                            p PatchDocument,
+                            a *AuthorizedNssaiAvailabilityInfo,
+                            d *ProblemDetails) (status int) {
+    for key := range *p[0].Value {
+        if key == "tai" {
+
+        } else if key == "supportedSnssaiList" {
+
+        } else {
+
+        }
+
+        e, _ := json.Marshal((*p[0].Value)[key])
+        flog.Nssaiavailability.Infof("%s", e)
+    }
+
+    return http.StatusOK
+}
 
 func nssaiavailabilityPut(nfId string,
                           n NssaiAvailabilityInfo,

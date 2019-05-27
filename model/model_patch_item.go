@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "fmt"
+)
+
 type PatchItem struct {
 
 	Op *PatchOperation `json:"op"`
@@ -18,4 +22,21 @@ type PatchItem struct {
 	From string `json:"from,omitempty"`
 
 	Value *map[string]interface{} `json:"value,omitempty"`
+}
+
+func (p *PatchItem) CheckIntegrity() error {
+    if p.Op == nil {
+        return fmt.Errorf("`op` should not be empty")
+    } else {
+        err := p.Op.CheckIntegrity()
+        if err != nil {
+            return fmt.Errorf("`op`:%s", err.Error())
+        }
+    }
+
+    if p.Path == "" {
+        return fmt.Errorf("`path` should not be empty")
+    }
+
+    return nil
 }

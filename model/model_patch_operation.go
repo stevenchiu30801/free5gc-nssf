@@ -9,5 +9,27 @@
 
 package model
 
-type PatchOperation struct {
+import (
+    "fmt"
+)
+
+type PatchOperation string
+
+// List of PatchOperation
+const (
+	ADDPatchOperation PatchOperation = "add"
+	COPYPatchOperation PatchOperation = "copy"
+	MOVEPatchOperation PatchOperation = "move"
+	REMOVEPatchOperation PatchOperation = "remove"
+	REPLACEPatchOperation PatchOperation = "replace"
+	TESTPatchOperation PatchOperation = "test"
+)
+
+func (p *PatchOperation) CheckIntegrity() error {
+    if *p != ADDPatchOperation && *p != COPYPatchOperation && *p != MOVEPatchOperation && *p != REMOVEPatchOperation &&
+       *p != REPLACEPatchOperation && *p != TESTPatchOperation {
+           return fmt.Errorf("'%s' is unrecognized", string(*p))
+    }
+
+    return nil
 }

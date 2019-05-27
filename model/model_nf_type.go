@@ -44,8 +44,8 @@ func (n NfType) CheckIntegrity() error {
     if n != NRF && n != UDM && n != AMF && n != SMF && n != AUSF && n != NEF && n != PCF && n != SMSF && n != NSSF &&
        n != UDR && n != LMF && n != GMLC && n != _5_G_EIR && n != SEPP && n != UPF && n != N3_IWF && n != AF &&
        n != UDSF && n != BSF && n != CHF && n != NWDAF {
-            return fmt.Errorf("'%s' is unrecognized", string(n))
-       }
+        return fmt.Errorf("'%s' is unrecognized", string(n))
+    }
 
-       return nil
+    return nil
 }

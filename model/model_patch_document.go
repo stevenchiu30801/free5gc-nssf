@@ -9,4 +9,19 @@
 
 package model
 
+import (
+    "fmt"
+)
+
 type PatchDocument []PatchItem
+
+func (p *PatchDocument) CheckIntegrity() error {
+    for i, patchItem := range *p {
+        err := patchItem.CheckIntegrity()
+        if err != nil {
+            return fmt.Errorf("[%d]:%s", i, err.Error())
+        }
+    }
+
+    return nil
+}
