@@ -8,8 +8,10 @@ package nssf
 
 import (
     "encoding/json"
+    "fmt"
     "net/http"
     "reflect"
+    "strings"
 
     factory "../factory"
     flog "../flog"
@@ -20,17 +22,64 @@ func nssaiavailabilityPatch(nfId string,
                             p PatchDocument,
                             a *AuthorizedNssaiAvailabilityInfo,
                             d *ProblemDetails) (status int) {
-    for key := range *p[0].Value {
-        if key == "tai" {
+    for i, patchItem := range p {
+        s := strings.Split(patchItem.Path, "/")
 
-        } else if key == "supportedSnssaiList" {
+        switch s[1] {
+        case "supportedNssaiAvailabilityData":
+            if s[2] != "" {
+                var tai Tai
+                err := json.NewDecoder(strings.NewReader(s[2])).Decode(&tai)
+                if err != nil {
+                    problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` %s", i, err.Error())
+                    *d = ProblemDetails {
+                        Title: MALFORMED_REQUEST,
+                        Status: http.StatusBadRequest,
+                        Detail: problemDetail,
+                        InvalidParams: []InvalidParam {
+                            {
+                                Param: "path",
+                                Reason: problemDetail,
+                            },
+                        },
+                    }
 
-        } else {
+                    status = http.StatusBadRequest
+                    return
+                }
 
+                for key := range *patchItem.Value {
+                    if key == "supportedSnssaiList" {
+                        snssaiMap, _ := (*patchItem.Value)[key]
+                        snssaiListIntf := reflect.ValueOf(snssaiMap)
+                        if snssaiListIntf.Kind() != reflect.Slice {
+                            problemDetail := fmt.Sprintf("[Request Body] [%d]:`value`:`supportedSnssaiList` should be a valid slice")
+                            *d = ProblemDetails {
+                                Title: MALFORMED_REQUEST,
+                                Status: http.StatusBadRequest,
+                                Detail: problemDetail,
+                                InvalidParams: []InvalidParam {
+                                    {
+                                        Param: "supportedSnssaiList",
+                                        Reason: problemDetail,
+                                    },
+                                },
+                            }
+
+                            status = http.StatusBadRequest
+                            return
+                        }
+
+                        for j := 0; j < snssaiListIntf.Len(); j++ {
+                            flog.Nssaiavailability.Infof("%v", snssaiListIntf.Index(j).Interface())
+                        }
+                    }
+
+
+                }
+            }
+        default:
         }
-
-        e, _ := json.Marshal((*p[0].Value)[key])
-        flog.Nssaiavailability.Infof("%s", e)
     }
 
     return http.StatusOK

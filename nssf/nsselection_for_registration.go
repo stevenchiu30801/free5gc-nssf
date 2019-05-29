@@ -182,7 +182,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         // for S-NSSAIs in both `sNssaiForMapping` and `subscribedSnssai` if present
 
         if p.HomePlmnId == nil {
-            problemDetail := "`home-plmn-id` should be provided when requesting VPLMN specific mapped S-NSSAI values"
+            problemDetail := "[Query Parameter] `home-plmn-id` should be provided when requesting VPLMN specific mapped S-NSSAI values"
             *d = ProblemDetails {
                 Title: INVALID_REQUEST,
                 Status: http.StatusBadRequest,
