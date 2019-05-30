@@ -8,6 +8,7 @@ package nssf
 
 import (
     "encoding/json"
+    "fmt"
     "reflect"
 
     factory "../factory"
@@ -150,6 +151,7 @@ func checkSupportedSnssaiInAmfTa(snssai Snssai, nfId string, tai Tai) bool {
     return false
 }
 
+// Check whether all S-NSSAIs in Allowed NSSAI is supported by the AMF at UE's current TA
 func checkAllowedNssaiInAmfTa(allowedNssaiList []AllowedNssai, nfId string, tai Tai) bool {
     for _, allowedNssai := range allowedNssaiList {
         for _, allowedSnssai := range allowedNssai.AllowedSnssaiList {
@@ -212,6 +214,48 @@ func getAccessTypeFromConfig(tai Tai) AccessType {
     e, _ := json.Marshal(&tai)
     flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
     return IS_3_GPP_ACCESS
+}
+
+// Get restricted S-NSSAI list of the given TAI from configuration
+func getRestrictedSnssaiListFromConfig(tai Tai) []RestrictedSnssai {
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        if reflect.DeepEqual(*taConfig.Tai, tai) == true {
+            if taConfig.RestrictedSnssaiList != nil && len(taConfig.RestrictedSnssaiList) != 0 {
+                return taConfig.RestrictedSnssaiList
+            } else {
+                return nil
+            }
+        }
+    }
+    e, _ := json.Marshal(&tai)
+    flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
+    return nil
+}
+
+// Get authorized NSSAI availability data of the given NF ID and TAI from configuration
+func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (AuthorizedNssaiAvailabilityData, error) {
+    var a AuthorizedNssaiAvailabilityData
+    a.Tai = new(Tai)
+    *a.Tai = tai
+
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true {
+                    a.SupportedSnssaiList = append(a.SupportedSnssaiList, supportedNssaiAvailabilityData.SupportedSnssaiList...)
+                    a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(tai)
+
+                    // TODO: Sort the returned slice
+                    return a, nil
+                }
+            }
+            e, _ := json.Marshal(&tai)
+            err := fmt.Errorf("No supported S-NSSAI list by AMF %s under TAI %s in NSSF configuration", nfId, e)
+            return a, err
+        }
+    }
+    err := fmt.Errorf("No AMF configuration of %s", nfId)
+    return a, err
 }
 
 // Find target S-NSSAI mapping with serving S-NSSAIs from mapping of S-NSSAI(s)
