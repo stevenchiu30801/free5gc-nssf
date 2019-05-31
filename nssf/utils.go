@@ -258,6 +258,21 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
     return a, err
 }
 
+// Get supported S-NSSAI list of the given NF ID and TAI from configuration
+func getSupportedSnssaiListFromConfig(nfId string, tai Tai) []Snssai {
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true {
+                    return supportedNssaiAvailabilityData.SupportedSnssaiList
+                }
+            }
+            return nil
+        }
+    }
+    return nil
+}
+
 // Find target S-NSSAI mapping with serving S-NSSAIs from mapping of S-NSSAI(s)
 func findMappingWithServingSnssai(snssai Snssai, mappings []MappingOfSnssai) (MappingOfSnssai, bool) {
     for _, mapping := range mappings {

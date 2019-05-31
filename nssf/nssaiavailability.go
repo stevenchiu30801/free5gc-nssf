@@ -35,22 +35,25 @@ func parsePathInPatchItem(path string) (Tai, Snssai, int, error) {
     case "":
         // '/'
     case "supportedNssaiAvailabilityData":
-        if len(s) > 1 {
+        if len(s) > 1 && s[1] != "" {
             // '/supportedNssaiAvailabilityData/{TAI}'
             err := json.NewDecoder(strings.NewReader(s[1])).Decode(&tai)
             if err != nil {
                 return tai, snssai, 0, err
             }
 
-            if len(s) > 2 {
+            if len(s) > 2 && s[2] != "" {
                 // '/supportedNssaiAvailabilityData/{Tai}/{Snssai}'
                 err = json.NewDecoder(strings.NewReader(s[2])).Decode(&snssai)
                 if err != nil {
                     return tai, snssai, 0, err
                 }
                 return tai, snssai, 3, nil
+            } else {
+                return tai, snssai, 2, nil
             }
-            return tai, snssai, 2, nil
+        } else {
+            return tai, snssai, 1, nil
         }
     default:
     }
@@ -135,6 +138,35 @@ func patchAddSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Sns
     }
 }
 
+// Copy `SupportedNssaiAvailabilityData` from one TAI to another for NSSAIAvailability PATCH
+func patchCopySupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai) {
+    var (
+        toIndex int = -1
+        copiedList []Snssai
+    )
+
+    for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for j, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, toTai) == true {
+                    toIndex = j
+                    if len(copiedList) != 0 {
+                        break
+                    }
+                }
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, fromTai) == true {
+                    copiedList = supportedNssaiAvailabilityData.SupportedSnssaiList
+                    if toIndex != -1 {
+                        break
+                    }
+                }
+            }
+
+            factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[toIndex].SupportedSnssaiList = copiedList
+            break
+        }
+    }
+}
 // NSSAIAvailability PATCH method
 func nssaiavailabilityPatch(nfId string,
                             p PatchDocument,
@@ -146,11 +178,13 @@ func nssaiavailabilityPatch(nfId string,
             taiInFrom *Tai
             snssaiInPath *Snssai
             snssaiInFrom *Snssai
+            depthInPath int
+            depthInFrom int
             supportedSnssaiList []Snssai
         )
 
         // Parse `path`
-        tai, snssai, depthInPath, err := parsePathInPatchItem(patchItem.Path)
+        tempTai, tempSnssai, depthInPath, err := parsePathInPatchItem(patchItem.Path)
         if err != nil {
             problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` %s", i, err.Error())
             *d = ProblemDetails {
@@ -171,17 +205,17 @@ func nssaiavailabilityPatch(nfId string,
 
         if depthInPath == 2 {
             taiInPath = new(Tai)
-            *taiInPath = tai
+            *taiInPath = tempTai
         }
         if depthInPath == 3 {
             taiInPath = new(Tai)
-            *taiInPath = tai
+            *taiInPath = tempTai
             snssaiInPath = new(Snssai)
-            *snssaiInPath = snssai
+            *snssaiInPath = tempSnssai
         }
 
         // PATCH for the whole `SupportedNssaiAvailabilityData` is not supported
-        // Since NSSF consumer could simply use NSSAIAvailability PUT method to update
+        // Since NSSF consumer could simply use NSSAIAvailability PUT/DELETE method to update
         // Therefore TAI must be provided in `path` on NSSAIAvailability PATCH method
         if taiInPath == nil {
             problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` TAI should be provided in path", i)
@@ -203,7 +237,7 @@ func nssaiavailabilityPatch(nfId string,
 
         // Parse `From`
         if patchItem.From != "" {
-            tai, snssai, depthInFrom, err := parsePathInPatchItem(patchItem.Path)
+            tempTai, tempSnssai, depthInFrom, err = parsePathInPatchItem(patchItem.From)
             if err != nil {
                 problemDetail := fmt.Sprintf("[Request Body] [%d]:`from` %s", i, err.Error())
                 *d = ProblemDetails {
@@ -224,13 +258,13 @@ func nssaiavailabilityPatch(nfId string,
 
             if depthInFrom == 2 {
                 taiInFrom = new(Tai)
-                *taiInFrom = tai
+                *taiInFrom = tempTai
             }
             if depthInFrom == 3 {
                 taiInFrom = new(Tai)
-                *taiInFrom = tai
+                *taiInFrom = tempTai
                 snssaiInFrom = new(Snssai)
-                *snssaiInFrom = snssai
+                *snssaiInFrom = tempSnssai
             }
 
             // Structure of `From` should match that of `Path` if `From` is provided
@@ -299,18 +333,12 @@ func nssaiavailabilityPatch(nfId string,
         case ADDPatchOperation:
             if len(supportedSnssaiList) != 0 {
                 patchAddSupportedSnssaiList(nfId, *taiInPath, supportedSnssaiList)
-
-                authorizedNssaiAvailabilityData, err := getAuthorizedNssaiAvailabilityDataFromConfig(nfId, *taiInPath)
-                if err == nil {
-                    a.AuthorizedNssaiAvailabilityData = append(a.AuthorizedNssaiAvailabilityData, authorizedNssaiAvailabilityData)
-                } else {
-                    flog.Nssaiavailability.Warnf(err.Error())
-                }
             } else {
+                problemDetail := "[Request Body] `value`:`supportedSnssaiList` should not be empty with `op`:'add' operation"
                 *d = ProblemDetails {
                     Title: INVALID_REQUEST,
                     Status: http.StatusBadRequest,
-                    Detail: "[Request Body] `value`:`supportedSnssaiList` should not be empty with `op`:'add' operation",
+                    Detail: problemDetail,
                     InvalidParams: []InvalidParam {
                         {
                             Param: "supportedSnssaiList",
@@ -323,10 +351,21 @@ func nssaiavailabilityPatch(nfId string,
                 return
             }
         case COPYPatchOperation:
+            if depthInPath == 2 {
+                // Copy between TAIs
+                patchCopySupportedNssaiAvailabilityData(nfId, *taiInPath, *taiInFrom)
+            }
         case MOVEPatchOperation:
         case REMOVEPatchOperation:
         case REPLACEPatchOperation:
         case TESTPatchOperation:
+        }
+
+        authorizedNssaiAvailabilityData, err := getAuthorizedNssaiAvailabilityDataFromConfig(nfId, *taiInPath)
+        if err == nil {
+            a.AuthorizedNssaiAvailabilityData = append(a.AuthorizedNssaiAvailabilityData, authorizedNssaiAvailabilityData)
+        } else {
+            flog.Nssaiavailability.Warnf(err.Error())
         }
     }
 
