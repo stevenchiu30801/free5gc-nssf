@@ -18,6 +18,77 @@ import (
     . "../model"
 )
 
+// Parse path in `PatchItem`
+// Pass pointer and put value of elements in path if provided
+func parsePathInPatchItem(path string) (Tai, Snssai, int, error) {
+    var (
+        tai Tai
+        snssai Snssai
+    )
+
+    if string(path[0]) == "/" {
+        path = path[1:]
+    }
+
+    s := strings.Split(path, "/")
+    switch s[0] {
+    case "":
+        // '/'
+    case "supportedNssaiAvailabilityData":
+        if len(s) > 1 {
+            // '/supportedNssaiAvailabilityData/{TAI}'
+            err := json.NewDecoder(strings.NewReader(s[1])).Decode(&tai)
+            if err != nil {
+                return tai, snssai, 0, err
+            }
+
+            if len(s) > 2 {
+                // '/supportedNssaiAvailabilityData/{Tai}/{Snssai}'
+                err = json.NewDecoder(strings.NewReader(s[2])).Decode(&snssai)
+                if err != nil {
+                    return tai, snssai, 0, err
+                }
+                return tai, snssai, 3, nil
+            }
+            return tai, snssai, 2, nil
+        }
+    default:
+    }
+    return tai, snssai, 0, nil
+}
+
+func parseValueInPatchItem(value map[string]interface{}) ([]Snssai, error) {
+    var supportedSnssaiList []Snssai
+
+    for key := range value {
+        if key == "supportedSnssaiList" {
+            snssaiListVal := reflect.ValueOf(value[key])
+            if snssaiListVal.Kind() != reflect.Slice {
+                err := fmt.Errorf("`supportedSnssaiList` should be a valid array")
+                return supportedSnssaiList, err
+            }
+
+            for i := 0; i < snssaiListVal.Len(); i++ {
+                // flog.Nssaiavailability.Infof("%v", snssaiListVal.Index(j).Interface())
+
+                // Convert map interface to json string then to struct
+                e, _ := json.Marshal(snssaiListVal.Index(i).Interface())
+
+                var snssai Snssai
+                err := json.NewDecoder(strings.NewReader(string(e))).Decode(&snssai)
+                if err != nil {
+                    err = fmt.Errorf("`supportedSnssaiList`[%d] %s", i, err.Error())
+                    return supportedSnssaiList, err
+                }
+
+                supportedSnssaiList = append(supportedSnssaiList, snssai)
+            }
+        }
+    }
+
+    return supportedSnssaiList, nil
+}
+
 // Add `SupportedSnssaiList` to configuration for NSSAIAvailability PATCH
 func patchAddSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Snssai) {
     hitAmf := false
@@ -72,16 +143,48 @@ func nssaiavailabilityPatch(nfId string,
     for i, patchItem := range p {
         var (
             taiInPath *Tai
-            // taiInFrom *Tai
+            taiInFrom *Tai
             snssaiInPath *Snssai
-            // snssaiInFrom *Snssai
+            snssaiInFrom *Snssai
             supportedSnssaiList []Snssai
         )
 
         // Parse `path`
-        s := strings.Split(patchItem.Path, "/")
-        if len(s) == 0 {
-            problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` is invalid")
+        tai, snssai, depthInPath, err := parsePathInPatchItem(patchItem.Path)
+        if err != nil {
+            problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` %s", i, err.Error())
+            *d = ProblemDetails {
+                Title: MALFORMED_REQUEST,
+                Status: http.StatusBadRequest,
+                Detail: problemDetail,
+                InvalidParams: []InvalidParam {
+                    {
+                        Param: "path",
+                        Reason: problemDetail,
+                    },
+                },
+            }
+
+            status = http.StatusBadRequest
+            return
+        }
+
+        if depthInPath == 2 {
+            taiInPath = new(Tai)
+            *taiInPath = tai
+        }
+        if depthInPath == 3 {
+            taiInPath = new(Tai)
+            *taiInPath = tai
+            snssaiInPath = new(Snssai)
+            *snssaiInPath = snssai
+        }
+
+        // PATCH for the whole `SupportedNssaiAvailabilityData` is not supported
+        // Since NSSF consumer could simply use NSSAIAvailability PUT method to update
+        // Therefore TAI must be provided in `path` on NSSAIAvailability PATCH method
+        if taiInPath == nil {
+            problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` TAI should be provided in path", i)
             *d = ProblemDetails {
                 Title: INVALID_REQUEST,
                 Status: http.StatusBadRequest,
@@ -97,122 +200,95 @@ func nssaiavailabilityPatch(nfId string,
             status = http.StatusBadRequest
             return
         }
-        switch s[1] {
-        case "":
-            // Similiar action as NSSAIAvailability PUT method
-        case "supportedNssaiAvailabilityData":
-            // PATCH for the whole `SupportedNssaiAvailabilityData` is not supported
-            // Since NSSF consumer could simply use NSSAIAvailability PUT method to update
-            if len(s) > 2 {
-                taiInPath = new(Tai)
-                err := json.NewDecoder(strings.NewReader(s[2])).Decode(&taiInPath)
-                if err != nil {
-                    problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` %s", i, err.Error())
-                    *d = ProblemDetails {
-                        Title: MALFORMED_REQUEST,
-                        Status: http.StatusBadRequest,
-                        Detail: problemDetail,
-                        InvalidParams: []InvalidParam {
-                            {
-                                Param: "path",
-                                Reason: problemDetail,
-                            },
+
+        // Parse `From`
+        if patchItem.From != "" {
+            tai, snssai, depthInFrom, err := parsePathInPatchItem(patchItem.Path)
+            if err != nil {
+                problemDetail := fmt.Sprintf("[Request Body] [%d]:`from` %s", i, err.Error())
+                *d = ProblemDetails {
+                    Title: MALFORMED_REQUEST,
+                    Status: http.StatusBadRequest,
+                    Detail: problemDetail,
+                    InvalidParams: []InvalidParam {
+                        {
+                            Param: "from",
+                            Reason: problemDetail,
                         },
-                    }
-
-                    status = http.StatusBadRequest
-                    return
+                    },
                 }
 
-                if len(s) > 3 {
-                    snssaiInPath = new(Snssai)
-                    err = json.NewDecoder(strings.NewReader(s[3])).Decode(&snssaiInPath)
-                    if err != nil {
-                       problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` %s", i, err.Error())
-                        *d = ProblemDetails {
-                            Title: MALFORMED_REQUEST,
-                            Status: http.StatusBadRequest,
-                            Detail: problemDetail,
-                            InvalidParams: []InvalidParam {
-                                {
-                                    Param: "path",
-                                    Reason: problemDetail,
-                                },
-                            },
-                        }
-
-                        status = http.StatusBadRequest
-                        return
-                    }
-                }
+                status = http.StatusBadRequest
+                return
             }
-        default:
+
+            if depthInFrom == 2 {
+                taiInFrom = new(Tai)
+                *taiInFrom = tai
+            }
+            if depthInFrom == 3 {
+                taiInFrom = new(Tai)
+                *taiInFrom = tai
+                snssaiInFrom = new(Snssai)
+                *snssaiInFrom = snssai
+            }
+
+            // Structure of `From` should match that of `Path` if `From` is provided
+            if depthInPath != depthInFrom {
+                problemDetail := fmt.Sprintf("[Request Body] [%d]:`path` and `from` should have same path structure", i)
+                *d = ProblemDetails {
+                    Title: INVALID_REQUEST,
+                    Status: http.StatusBadRequest,
+                    Detail: problemDetail,
+                    InvalidParams: []InvalidParam {
+                        {
+                            Param: "path",
+                            Reason: problemDetail,
+                        },
+                        {
+                            Param: "from",
+                            Reason: problemDetail,
+                        },
+                    },
+                }
+
+                status = http.StatusBadRequest
+                return
+            }
         }
 
         // Parse `Value`
         if patchItem.Value != nil {
-            for key := range *patchItem.Value {
-                if key == "supportedSnssaiList" {
-                    snssaiListVal := reflect.ValueOf((*patchItem.Value)[key])
-                    if snssaiListVal.Kind() != reflect.Slice {
-                        problemDetail := fmt.Sprintf("[Request Body] [%d]:`value`:`supportedSnssaiList` should be a valid array")
-                        *d = ProblemDetails {
-                            Title: INVALID_REQUEST,
-                            Status: http.StatusBadRequest,
-                            Detail: problemDetail,
-                            InvalidParams: []InvalidParam {
-                                {
-                                    Param: "supportedSnssaiList",
-                                    Reason: problemDetail,
-                                },
-                            },
-                        }
-
-                        status = http.StatusBadRequest
-                        return
-                    }
-
-                    for j := 0; j < snssaiListVal.Len(); j++ {
-                        // flog.Nssaiavailability.Infof("%v", snssaiListVal.Index(j).Interface())
-
-                        // Convert map interface to json string then to struct
-                        e, _ := json.Marshal(snssaiListVal.Index(j).Interface())
-
-                        var snssai Snssai
-                        err := json.NewDecoder(strings.NewReader(string(e))).Decode(&snssai)
-                        if err != nil {
-                            problemDetail := fmt.Sprintf("[Request Body] [%d]:`value`:supportedSnssaiList`[%d] %s", i, j, err.Error())
-                            *d = ProblemDetails {
-                                Title: MALFORMED_REQUEST,
-                                Status: http.StatusBadRequest,
-                                Detail: problemDetail,
-                                InvalidParams: []InvalidParam {
-                                    {
-                                        Param: "supportedSnssaiList",
-                                        Reason: problemDetail,
-                                    },
-                                },
-                            }
-
-                            status = http.StatusBadRequest
-                            return
-                        }
-
-                        if checkSupportedSnssaiInPlmn(snssai) == false {
-                            *d = ProblemDetails {
-                                Title: UNSUPPORTED_RESOURCE,
-                                Status: http.StatusForbidden,
-                                Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
-                                Cause: "SNSSAI_NOT_SUPPORTED",
-                            }
-
-                            status = http.StatusForbidden
-                            return
-                        }
-
-                        supportedSnssaiList = append(supportedSnssaiList, snssai)
-                    }
+            supportedSnssaiList, err = parseValueInPatchItem(*patchItem.Value)
+            if err != nil {
+                problemDetail := fmt.Sprintf("[Request Body] [%d]:`value`:%s", i, err.Error())
+                *d = ProblemDetails {
+                    Title: MALFORMED_REQUEST,
+                    Status: http.StatusBadRequest,
+                    Detail: problemDetail,
+                    InvalidParams: []InvalidParam {
+                        {
+                            Param: "supportedSnssaiList",
+                            Reason: problemDetail,
+                        },
+                    },
                 }
+
+                status = http.StatusBadRequest
+                return
+            }
+
+            // Check if all S-NSSAIs is valid in the PLMN
+            if checkSupportedNssaiInPlmn(supportedSnssaiList) == false {
+                *d = ProblemDetails {
+                    Title: UNSUPPORTED_RESOURCE,
+                    Status: http.StatusForbidden,
+                    Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
+                    Cause: "SNSSAI_NOT_SUPPORTED",
+                }
+
+                status = http.StatusForbidden
+                return
             }
         }
 
@@ -221,7 +297,7 @@ func nssaiavailabilityPatch(nfId string,
         // These are verified in integrity check
         switch *patchItem.Op {
         case ADDPatchOperation:
-            if taiInPath != nil && len(supportedSnssaiList) != 0 {
+            if len(supportedSnssaiList) != 0 {
                 patchAddSupportedSnssaiList(nfId, *taiInPath, supportedSnssaiList)
 
                 authorizedNssaiAvailabilityData, err := getAuthorizedNssaiAvailabilityDataFromConfig(nfId, *taiInPath)
@@ -234,7 +310,13 @@ func nssaiavailabilityPatch(nfId string,
                 *d = ProblemDetails {
                     Title: INVALID_REQUEST,
                     Status: http.StatusBadRequest,
-                    Detail: "Both TAI in `path` and `value`:`supportedSnssaiList` should be provided with `op`:'add' operation",
+                    Detail: "[Request Body] `value`:`supportedSnssaiList` should not be empty with `op`:'add' operation",
+                    InvalidParams: []InvalidParam {
+                        {
+                            Param: "supportedSnssaiList",
+                            Reason: problemDetail,
+                        },
+                    },
                 }
 
                 status = http.StatusBadRequest
