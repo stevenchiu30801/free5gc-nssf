@@ -7,17 +7,21 @@ info:
       mnc: 92
 
 configuration:
-  supportedNssaiInPlmn:
-    - sst: 1
-      sd: 1
-    - sst: 1
-      sd: 2
-    - sst: 1
-      sd: 3
-    - sst: 2
-      sd: 1
-    - sst: 2
-      sd: 2
+  supportedNssaiInPlmnList:
+    - plmnId:
+        mcc: 466
+        mnc: 92
+      supportedSnssaiList:
+        - sst: 1
+          sd: 1
+        - sst: 1
+          sd: 2
+        - sst: 1
+          sd: 3
+        - sst: 2
+          sd: 1
+        - sst: 2
+          sd: 2
   nsiList:
     - snssai:
         sst: 1

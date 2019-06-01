@@ -8,13 +8,11 @@ package factory
 
 import (
     "fmt"
-
-    . "../model"
 )
 
 type Configuration struct {
 
-    SupportedNssaiInPlmn []Snssai `yaml:"supportedNssaiInPlmn"`
+    SupportedNssaiInPlmnList []SupportedNssaiInPlmn `yaml:"supportedNssaiInPlmnList"`
 
     NsiList []NsiConfig `yaml:"nsiList,omitempty"`
 
@@ -28,13 +26,13 @@ type Configuration struct {
 }
 
 func (c *Configuration) checkIntegrity() error {
-    if c.SupportedNssaiInPlmn == nil || len(c.SupportedNssaiInPlmn) == 0 {
-        return fmt.Errorf("`supportedNssaiInPlmn` should not be empty")
+    if c.SupportedNssaiInPlmnList == nil || len(c.SupportedNssaiInPlmnList) == 0 {
+        return fmt.Errorf("`supportedNssaiInPlmnList` should not be empty")
     } else {
-        for i, supportedSnssaiInPlmn := range c.SupportedNssaiInPlmn {
-            err := supportedSnssaiInPlmn.CheckIntegrity()
+        for i, supportedNssaiInPlmn := range c.SupportedNssaiInPlmnList {
+            err := supportedNssaiInPlmn.checkIntegrity()
             if err != nil {
-                return fmt.Errorf("`supportedNssaiInPlmn`[%d]:%s", i, err.Error())
+                return fmt.Errorf("`supportedNssaiInPlmnList`[%d]:%s", i, err.Error())
             }
         }
     }

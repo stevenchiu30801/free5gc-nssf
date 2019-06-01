@@ -48,7 +48,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         }
     }
 
-    if checkSupportedSnssaiInPlmn(*p.SliceInfoRequestForPduSession.SNssai) == false {
+    if p.Tai != nil && checkSupportedSnssaiInPlmn(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai.PlmnId) == false {
         // Return ProblemDetails indicating S-NSSAI is not supported
         // TODO: Based on TS 23.501 V15.2.0, if the Requested NSSAI includes an S-NSSAI that is not valid in the
         //       Serving PLMN, the NSSF may derive the Configured NSSAI for Serving PLMN

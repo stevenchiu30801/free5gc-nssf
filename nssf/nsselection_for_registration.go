@@ -132,7 +132,7 @@ func setConfiguredNssai(p NsselectionQueryParameter, a *AuthorizedNetworkSliceIn
             mappingOfSubscribedSnssai = *subscribedSnssai.SubscribedSnssai
         }
 
-        if checkSupportedSnssaiInPlmn(mappingOfSubscribedSnssai) == true {
+        if checkSupportedSnssaiInPlmn(mappingOfSubscribedSnssai, *p.Tai.PlmnId) == true {
             var configuredSnssai ConfiguredSnssai
             configuredSnssai.ConfiguredSnssai = new(Snssai)
             *configuredSnssai.ConfiguredSnssai = mappingOfSubscribedSnssai
@@ -283,7 +283,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
         // Requested NSSAI is provided
         // Verify which S-NSSAI(s) in the Requested NSSAI are permitted based on comparing the Subscribed S-NSSAI(s)
 
-        if checkSupportedNssaiInPlmn(p.SliceInfoRequestForRegistration.RequestedNssai) == false {
+        if p.Tai != nil && checkSupportedNssaiInPlmn(p.SliceInfoRequestForRegistration.RequestedNssai, *p.Tai.PlmnId) == false {
             // Return ProblemDetails indicating S-NSSAI is not supported
             // TODO: Based on TS 23.501 V15.2.0, if the Requested NSSAI includes an S-NSSAI that is not valid in the
             //       Serving PLMN, the NSSF may derive the Configured NSSAI for Serving PLMN
@@ -399,7 +399,11 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
     } else if checkInvalidRequestedNssai == true {
         // No Requested NSSAI is provided or the Requested NSSAI includes an S-NSSAI that is not valid
         // Determine the Configured NSSAI based on the subscription
-        setConfiguredNssai(p, a)
+        // Configure available NSSAI for UE in its PLMN
+        // If TAI is not provided, then unable to check if S-NSSAIs is supported in the PLMN
+        if p.Tai != nil {
+            setConfiguredNssai(p, a)
+        }
     }
 
     status = http.StatusOK

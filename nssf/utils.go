@@ -61,41 +61,53 @@ func checkSupportedTa(tai Tai) bool {
 }
 
 // Check whether the given S-NSSAI is supported or not in PLMN
-func checkSupportedSnssaiInPlmn(snssai Snssai) bool {
+func checkSupportedSnssaiInPlmn(snssai Snssai, plmnId PlmnId) bool {
     if checkStandardSnssai(snssai) == true {
         return true
     }
 
-    for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedNssaiInPlmn {
-        if snssai == supportedSnssai {
-            return true
+    for _, supportedNssaiInPlmn := range factory.NssfConfig.Configuration.SupportedNssaiInPlmnList {
+        if *supportedNssaiInPlmn.PlmnId == plmnId {
+            for _, supportedSnssai := range supportedNssaiInPlmn.SupportedSnssaiList {
+                if snssai == supportedSnssai {
+                    return true
+                }
+            }
+            return false
         }
     }
+    flog.Nsselection.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
     return false
 }
 
 // Check whether S-NSSAIs in NSSAI are supported or not in PLMN
-func checkSupportedNssaiInPlmn(nssai []Snssai) bool {
-    for _, snssai := range nssai {
-        // Standard S-NSSAIs are supposed to be supported
-        // If not, disable following check and be sure to add supported standard S-NSSAI(s) in configuration
-        if checkStandardSnssai(snssai) == true {
-            continue
-        }
+func checkSupportedNssaiInPlmn(nssai []Snssai, plmnId PlmnId) bool {
+    for _, supportedNssaiInPlmn := range factory.NssfConfig.Configuration.SupportedNssaiInPlmnList {
+        if *supportedNssaiInPlmn.PlmnId == plmnId {
+            for _, snssai := range nssai {
+                // Standard S-NSSAIs are supposed to be supported
+                // If not, disable following check and be sure to add supported standard S-NSSAI(s) in configuration
+                if checkStandardSnssai(snssai) == true {
+                    continue
+                }
 
-        hitSupportedNssai := false
-        for _, supportedSnssai := range factory.NssfConfig.Configuration.SupportedNssaiInPlmn {
-            if snssai == supportedSnssai {
-                hitSupportedNssai = true
-                break
+                hitSupportedNssai := false
+                for _, supportedSnssai := range supportedNssaiInPlmn.SupportedSnssaiList {
+                    if snssai == supportedSnssai {
+                        hitSupportedNssai = true
+                        break
+                    }
+                }
+
+                if hitSupportedNssai == false {
+                    return false
+                }
             }
-        }
-
-        if hitSupportedNssai == false {
-            return false
+            return true
         }
     }
-    return true
+    flog.Nsselection.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
+    return false
 }
 
 // Check whether S-NSSAI is supported or not at UE's current TA

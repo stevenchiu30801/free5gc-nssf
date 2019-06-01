@@ -18,7 +18,7 @@ import (
     . "../model"
 )
 
-// Parse path in `PatchItem`
+// Parse `path` in `PatchItem`
 // Pass pointer and put value of elements in path if provided
 func parsePathInPatchItem(path string) (Tai, Snssai, int, error) {
     var (
@@ -60,11 +60,13 @@ func parsePathInPatchItem(path string) (Tai, Snssai, int, error) {
     return tai, snssai, 0, nil
 }
 
+// Parse `value` in `PatchItem`
 func parseValueInPatchItem(value map[string]interface{}) ([]Snssai, error) {
     var supportedSnssaiList []Snssai
 
     for key := range value {
-        if key == "supportedSnssaiList" {
+        switch key {
+        case "supportedSnssaiList":
             snssaiListVal := reflect.ValueOf(value[key])
             if snssaiListVal.Kind() != reflect.Slice {
                 err := fmt.Errorf("`supportedSnssaiList` should be a valid array")
@@ -86,13 +88,14 @@ func parseValueInPatchItem(value map[string]interface{}) ([]Snssai, error) {
 
                 supportedSnssaiList = append(supportedSnssaiList, snssai)
             }
+        default:
         }
     }
 
     return supportedSnssaiList, nil
 }
 
-// Add `SupportedSnssaiList` to configuration for NSSAIAvailability PATCH
+// Add `SupportedSnssaiList` of the given NF ID and TAI to configuration for NSSAIAvailability PATCH
 func patchAddSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Snssai) {
     hitAmf := false
     for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
@@ -112,6 +115,7 @@ func patchAddSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Sns
                 }
             }
             if hitTai == false {
+                // No supported S-NSSAI list of the given TAI
                 var s SupportedNssaiAvailabilityData
                 s.Tai = new(Tai)
                 *s.Tai = tai
@@ -124,6 +128,7 @@ func patchAddSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Sns
         }
     }
     if hitAmf == false {
+        // No AMF configuration of the given NF ID
         var a factory.AmfConfig
         a.NfId = nfId
 
@@ -313,7 +318,7 @@ func nssaiavailabilityPatch(nfId string,
             }
 
             // Check if all S-NSSAIs is valid in the PLMN
-            if checkSupportedNssaiInPlmn(supportedSnssaiList) == false {
+            if checkSupportedNssaiInPlmn(supportedSnssaiList, *taiInPath.PlmnId) == false {
                 *d = ProblemDetails {
                     Title: UNSUPPORTED_RESOURCE,
                     Status: http.StatusForbidden,
@@ -378,7 +383,7 @@ func nssaiavailabilityPut(nfId string,
                           a *AuthorizedNssaiAvailabilityInfo,
                           d *ProblemDetails) (status int) {
     for _, s := range n.SupportedNssaiAvailabilityData {
-        if checkSupportedNssaiInPlmn(s.SupportedSnssaiList) == false {
+        if checkSupportedNssaiInPlmn(s.SupportedSnssaiList, *s.Tai.PlmnId) == false {
             *d = ProblemDetails {
                 Title: UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
