@@ -174,6 +174,7 @@ func patchCopySupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai
             }
 
             if toIndex == -1 {
+                // No existing TAI in `path`, and therefore create a new one
                 var s SupportedNssaiAvailabilityData
                 s.Tai = new(Tai)
                 *s.Tai = toTai
@@ -182,6 +183,7 @@ func patchCopySupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai
                 factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData = append(
                     factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData, s)
             } else {
+                // Replace existing S-NSSAI list with copied list
                 factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[toIndex].SupportedSnssaiList =
                     factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[fromIndex].SupportedSnssaiList
             }
@@ -192,6 +194,48 @@ func patchCopySupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai
 
 // Move `SupportedNssaiAvailabilityData` from one TAI to another for NSSAIAvailability PATCH
 func patchMoveSupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai) {
+    patchCopySupportedNssaiAvailabilityData(nfId, toTai, fromTai)
+
+    // Delete supported NSSAI availability data of TAI in `from`
+    patchRemoveSupportedNssaiAvailabilityData(nfId, fromTai)
+}
+
+// Remove `SupportedNssaiAvailabilityData` of the given TAI for NSSAIAvailability PATCH
+func patchRemoveSupportedNssaiAvailabilityData(nfId string, tai Tai) {
+    for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for j, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true {
+                    factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData = append(
+                        factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[:j],
+                        factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[j + 1:]...)
+                }
+            }
+            break
+        }
+    }
+    return
+}
+
+// Remove S-NSSAI in `SupportedSnssaiList` of the given TAI for NSSAIAvailability PATCH
+func patchRemoveSupportedSnssai(nfId string, tai Tai, snssai Snssai) {
+    for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for j, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true {
+                    for k, supportedSnssai := range supportedNssaiAvailabilityData.SupportedSnssaiList {
+                        if supportedSnssai == snssai {
+                            factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[j].SupportedSnssaiList = append(
+                                factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[j].SupportedSnssaiList[:k],
+                                factory.NssfConfig.Configuration.AmfList[i].SupportedNssaiAvailabilityData[j].SupportedSnssaiList[k + 1:]...)
+                        }
+                    }
+                }
+            }
+            break
+        }
+    }
+    return
 }
 
 // NSSAIAvailability PATCH method
@@ -371,6 +415,13 @@ func nssaiavailabilityPatch(nfId string,
                 patchMoveSupportedNssaiAvailabilityData(nfId, taiInPath, taiInFrom)
             }
         case REMOVEPatchOperation:
+            if depthInPath == 2 {
+                // Remove supported S-NSSAI list
+                patchRemoveSupportedNssaiAvailabilityData(nfId, taiInPath)
+            } else if depthInPath == 3 {
+                // Remove specified supported S-NSSAI
+                patchRemoveSupportedSnssai(nfId, taiInPath, snssaiInPath)
+            }
         case REPLACEPatchOperation:
         case TESTPatchOperation:
         }
