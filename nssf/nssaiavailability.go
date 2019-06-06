@@ -214,7 +214,6 @@ func patchRemoveSupportedNssaiAvailabilityData(nfId string, tai Tai) {
             break
         }
     }
-    return
 }
 
 // Remove S-NSSAI in `SupportedSnssaiList` of the given TAI for NSSAIAvailability PATCH
@@ -235,7 +234,15 @@ func patchRemoveSupportedSnssai(nfId string, tai Tai, snssai Snssai) {
             break
         }
     }
-    return
+}
+
+// Replace `SupportedNssaiAvailabilityData` of the given TAI for NSSAIAvailability PATCH
+func patchReplaceSupportedSnssaiList(nfId string, tai Tai, supportedSnssaiList []Snssai) {
+    // Remove `SupportedNssaiAvailabilityData` of TAI
+    patchRemoveSupportedNssaiAvailabilityData(nfId, tai)
+
+    // Add `SupportedSnssaiList`
+    patchAddSupportedSnssaiList(nfId, tai, supportedSnssaiList)
 }
 
 // NSSAIAvailability PATCH method
@@ -248,7 +255,7 @@ func nssaiavailabilityPatch(nfId string,
             taiInPath Tai
             taiInFrom Tai
             snssaiInPath Snssai
-            snssaiInFrom Snssai
+            // snssaiInFrom Snssai
             depthInPath int
             depthInFrom int
             supportedSnssaiList []Snssai
@@ -297,7 +304,7 @@ func nssaiavailabilityPatch(nfId string,
 
         // Parse `From`
         if patchItem.From != "" {
-            taiInFrom, snssaiInFrom, depthInFrom, err = parsePathInPatchItem(patchItem.From)
+            taiInFrom, _, depthInFrom, err = parsePathInPatchItem(patchItem.From)
             if err != nil {
                 problemDetail := fmt.Sprintf("[Request Body] [%d]:`from` %s", i, err.Error())
                 *d = ProblemDetails {
@@ -375,8 +382,6 @@ func nssaiavailabilityPatch(nfId string,
             }
         }
 
-        flog.Nssaiavailability.Warnf("Delete this log after %v and %v are used", snssaiInPath, snssaiInFrom)
-
         // `From` shall be present if the patch operation is "move" or "copy"
         // `Value` shall be present if the patch operation is "add", "replace" or "test"
         // These are verified in integrity check
@@ -423,6 +428,29 @@ func nssaiavailabilityPatch(nfId string,
                 patchRemoveSupportedSnssai(nfId, taiInPath, snssaiInPath)
             }
         case REPLACEPatchOperation:
+            // TODO: Replace single S-NSSAI in supported S-NSSAI list
+            if len(supportedSnssaiList) == 0 {
+                problemDetail := "[Request Body] `value`:`supportedSnssaiList` should not be empty with `op`:'copy' operation"
+                *d = ProblemDetails {
+                    Title: INVALID_REQUEST,
+                    Status: http.StatusBadRequest,
+                    Detail: problemDetail,
+                    InvalidParams: []InvalidParam {
+                        {
+                            Param: "supportedSnssaiList",
+                            Reason: problemDetail,
+                        },
+                    },
+                }
+
+                status = http.StatusBadRequest
+                return
+            }
+
+            if depthInPath == 2 {
+                // Replace supported S-NSSAI list
+                patchReplaceSupportedSnssaiList(nfId, taiInPath, supportedSnssaiList)
+            }
         case TESTPatchOperation:
         }
 
