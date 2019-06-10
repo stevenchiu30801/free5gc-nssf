@@ -17,7 +17,7 @@ var (
     MuteLogIndFromArgs bool
 )
 
-type TestingParameter struct {
+type TestingNsselection struct {
 
     ConfigFile string
 
@@ -26,6 +26,19 @@ type TestingParameter struct {
     GenerateNonRoamingQueryParameter func() NsselectionQueryParameter
 
     GenerateRoamingQueryParameter func() NsselectionQueryParameter
+}
+
+type TestingNssaiavailability struct {
+
+    ConfigFile string
+
+    MuteLogInd bool
+
+    NfId string
+
+    GenerateAddRequestBody func() NssaiAvailabilityInfo
+
+    GeneratePatchRequestBody func() PatchDocument
 }
 
 func init() {

@@ -21,7 +21,7 @@ import (
     test "../test"
 )
 
-var nsselectionForPduSessionTestingParameter = test.TestingParameter {
+var testingNsselectionForPduSession = test.TestingNsselection {
     ConfigFile: test.ConfigFileFromArgs,
     MuteLogInd: test.MuteLogIndFromArgs,
     GenerateNonRoamingQueryParameter: func() NsselectionQueryParameter {
@@ -114,15 +114,15 @@ func TestNsselectionForPduSessionTemplate(t *testing.T) {
     t.Skip()
 
     // Tests may have different configuration files
-    factory.InitConfigFactory(nsselectionForPduSessionTestingParameter.ConfigFile)
+    factory.InitConfigFactory(testingNsselectionForPduSession.ConfigFile)
 
-    d, _ := yaml.Marshal(&factory.NssfConfig.Info)
+    d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
 func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForPduSessionTestingParameter.ConfigFile)
-    if nsselectionForPduSessionTestingParameter.MuteLogInd == true {
+    factory.InitConfigFactory(testingNsselectionForPduSession.ConfigFile)
+    if testingNsselectionForPduSession.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -162,7 +162,7 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := nsselectionForPduSessionTestingParameter.GenerateNonRoamingQueryParameter()
+            p := testingNsselectionForPduSession.GenerateNonRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -177,13 +177,13 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
             if status == http.StatusOK {
                 if checkAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                    r, _ := json.Marshal(&a)
+                    r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
-                    e, _ := json.Marshal(subtest.expectProblemDetails)
-                    r, _ := json.Marshal(&d)
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
                     t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             }
@@ -192,8 +192,8 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
 }
 
 func TestNsselectionForPduSessionRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForPduSessionTestingParameter.ConfigFile)
-    if nsselectionForPduSessionTestingParameter.MuteLogInd == true {
+    factory.InitConfigFactory(testingNsselectionForPduSession.ConfigFile)
+    if testingNsselectionForPduSession.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -254,7 +254,7 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := nsselectionForPduSessionTestingParameter.GenerateRoamingQueryParameter()
+            p := testingNsselectionForPduSession.GenerateRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -269,13 +269,13 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             if status == http.StatusOK {
                 if checkAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                    r, _ := json.Marshal(&a)
+                    r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
-                    e, _ := json.Marshal(subtest.expectProblemDetails)
-                    r, _ := json.Marshal(&d)
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
                     t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             }

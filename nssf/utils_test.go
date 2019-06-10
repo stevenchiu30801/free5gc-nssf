@@ -28,7 +28,7 @@ func TestPluginTemplate(t *testing.T) {
 
     factory.InitConfigFactory(utilsConfig)
 
-    d, _ := yaml.Marshal(&factory.NssfConfig.Info)
+    d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
@@ -305,8 +305,8 @@ func TestAddAmfInformation(t *testing.T) {
 
             a.Sort()
             if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) != true {
-                e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                r, _ := json.Marshal(&a)
+                e, _ := json.Marshal(*subtest.expectAuthorizedNetworkSliceInfo)
+                r, _ := json.Marshal(a)
                 t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
             }
         })

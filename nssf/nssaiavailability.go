@@ -168,7 +168,7 @@ func patchCopySupportedNssaiAvailabilityData(nfId string, toTai Tai, fromTai Tai
             }
 
             if fromIndex == -1 {
-                e, _ := json.Marshal(&fromTai)
+                e, _ := json.Marshal(fromTai)
                 flog.Nssaiavailability.Warnf("Provided TAI %s in `from` in request body of PATCH request is not found in configuration", e)
                 return
             }

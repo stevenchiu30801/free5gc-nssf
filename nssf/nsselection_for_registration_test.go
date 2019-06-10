@@ -21,7 +21,7 @@ import (
     test "../test"
 )
 
-var nsselectionForRegistrationTestingParameter = test.TestingParameter {
+var testingNsselectionForRegistration = test.TestingNsselection {
     ConfigFile: test.ConfigFileFromArgs,
     MuteLogInd: test.MuteLogIndFromArgs,
     GenerateNonRoamingQueryParameter: func() NsselectionQueryParameter {
@@ -273,15 +273,15 @@ func TestNsselectionForRegistrationTemplate(t *testing.T) {
     t.Skip()
 
     // Tests may have different configuration files
-    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
+    factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
 
-    d, _ := yaml.Marshal(&factory.NssfConfig.Info)
+    d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
 func TestNsselectionForRegistrationGeneral(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
-    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
+    factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
+    if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -371,7 +371,7 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := nsselectionForRegistrationTestingParameter.GenerateNonRoamingQueryParameter()
+            p := testingNsselectionForRegistration.GenerateNonRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -386,14 +386,14 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
             if status == http.StatusOK {
                 a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
-                    e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                    r, _ := json.Marshal(&a)
+                    e, _ := json.Marshal(*subtest.expectAuthorizedNetworkSliceInfo)
+                    r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
-                    e, _ := json.Marshal(subtest.expectProblemDetails)
-                    r, _ := json.Marshal(&d)
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
                     t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             }
@@ -402,8 +402,8 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
 }
 
 func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
-    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
+    factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
+    if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -562,7 +562,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := nsselectionForRegistrationTestingParameter.GenerateNonRoamingQueryParameter()
+            p := testingNsselectionForRegistration.GenerateNonRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -577,14 +577,14 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
             if status == http.StatusOK {
                 a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
-                    e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                    r, _ := json.Marshal(&a)
+                    e, _ := json.Marshal(*subtest.expectAuthorizedNetworkSliceInfo)
+                    r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
-                    e, _ := json.Marshal(subtest.expectProblemDetails)
-                    r, _ := json.Marshal(&d)
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
                     t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             }
@@ -593,8 +593,8 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
 }
 
 func TestNsselectionForRegistrationRoaming(t *testing.T) {
-    factory.InitConfigFactory(nsselectionForRegistrationTestingParameter.ConfigFile)
-    if nsselectionForRegistrationTestingParameter.MuteLogInd == true {
+    factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
+    if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -828,7 +828,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                 d ProblemDetails
             )
 
-            p := nsselectionForRegistrationTestingParameter.GenerateRoamingQueryParameter()
+            p := testingNsselectionForRegistration.GenerateRoamingQueryParameter()
 
             if subtest.modifyQueryParameter != nil {
                 subtest.modifyQueryParameter(&p)
@@ -843,14 +843,14 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
             if status == http.StatusOK {
                 a.Sort()
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) == false {
-                    e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
-                    r, _ := json.Marshal(&a)
+                    e, _ := json.Marshal(*subtest.expectAuthorizedNetworkSliceInfo)
+                    r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
-                    e, _ := json.Marshal(subtest.expectProblemDetails)
-                    r, _ := json.Marshal(&d)
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
                     t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
                 }
             }

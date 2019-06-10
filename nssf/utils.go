@@ -55,7 +55,7 @@ func checkSupportedTa(tai Tai) bool {
             return true
         }
     }
-    e, _ := json.Marshal(&tai)
+    e, _ := json.Marshal(tai)
     flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
     return false
 }
@@ -223,7 +223,7 @@ func getAccessTypeFromConfig(tai Tai) AccessType {
             return *taConfig.AccessType
         }
     }
-    e, _ := json.Marshal(&tai)
+    e, _ := json.Marshal(tai)
     flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
     return IS_3_GPP_ACCESS
 }
@@ -239,7 +239,7 @@ func getRestrictedSnssaiListFromConfig(tai Tai) []RestrictedSnssai {
             }
         }
     }
-    e, _ := json.Marshal(&tai)
+    e, _ := json.Marshal(tai)
     flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
     return nil
 }
@@ -261,7 +261,7 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
                     return a, nil
                 }
             }
-            e, _ := json.Marshal(&tai)
+            e, _ := json.Marshal(tai)
             err := fmt.Errorf("No supported S-NSSAI list by AMF %s under TAI %s in NSSF configuration", nfId, e)
             return a, err
         }
