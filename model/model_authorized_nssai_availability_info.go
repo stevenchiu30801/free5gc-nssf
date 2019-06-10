@@ -15,3 +15,8 @@ type AuthorizedNssaiAvailabilityInfo struct {
 
 	SupportedFeatures string `json:"supportedFeatures,omitempty"`
 }
+
+func (a *AuthorizedNssaiAvailabilityInfo) Sort() {
+    var byTai ByTai = a.AuthorizedNssaiAvailabilityData
+    byTai.Sort()
+}

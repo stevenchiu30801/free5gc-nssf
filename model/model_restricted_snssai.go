@@ -11,6 +11,7 @@ package model
 
 import (
     "fmt"
+    "sort"
 )
 
 type RestrictedSnssai struct {
@@ -42,4 +43,30 @@ func (r *RestrictedSnssai) CheckIntegrity() error {
     }
 
     return nil
+}
+
+type ByHomePlmnId []RestrictedSnssai
+
+func (h ByHomePlmnId) Len() int {
+    return len(h)
+}
+
+func (h ByHomePlmnId) Swap(i, j int) {
+    h[i], h[j] = h[j], h[i]
+}
+
+func (h ByHomePlmnId) Less(i, j int) bool {
+    if h[i].HomePlmnId.Mcc == h[j].HomePlmnId.Mcc {
+        return h[i].HomePlmnId.Mnc < h[j].HomePlmnId.Mnc
+    } else {
+        return h[i].HomePlmnId.Mcc < h[j].HomePlmnId.Mcc
+    }
+}
+
+func (h *ByHomePlmnId) Sort() {
+    for i := range *h {
+        sort.Sort(BySst((*h)[i].SNssaiList))
+    }
+
+    sort.Sort(*h)
 }

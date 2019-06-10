@@ -9,6 +9,10 @@
 
 package model
 
+import (
+    "sort"
+)
+
 type AuthorizedNssaiAvailabilityData struct {
 
 	Tai *Tai `json:"tai"`
@@ -16,4 +20,34 @@ type AuthorizedNssaiAvailabilityData struct {
 	SupportedSnssaiList []Snssai `json:"supportedSnssaiList"`
 
 	RestrictedSnssaiList []RestrictedSnssai `json:"restrictedSnssaiList,omitempty"`
+}
+
+type ByTai []AuthorizedNssaiAvailabilityData
+
+func (t ByTai) Len() int {
+    return len(t)
+}
+
+func (t ByTai) Swap(i, j int) {
+    t[i], t[j] = t[j], t[i]
+}
+
+func (t ByTai) Less(i, j int) bool {
+    if *t[i].Tai.PlmnId == *t[j].Tai.PlmnId {
+        return t[i].Tai.Tac < t[j].Tai.Tac
+    } else if t[i].Tai.PlmnId.Mcc == t[j].Tai.PlmnId.Mcc {
+        return t[i].Tai.PlmnId.Mnc < t[j].Tai.PlmnId.Mnc
+    } else {
+        return t[i].Tai.PlmnId.Mcc < t[j].Tai.PlmnId.Mcc
+    }
+}
+
+func (t *ByTai) Sort() {
+    for i := range *t {
+        sort.Sort(BySst((*t)[i].SupportedSnssaiList))
+        var byHomePlmnId ByHomePlmnId = (*t)[i].RestrictedSnssaiList
+        byHomePlmnId.Sort()
+    }
+
+    sort.Sort(*t)
 }
