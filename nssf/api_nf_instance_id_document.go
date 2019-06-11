@@ -11,6 +11,7 @@ package nssf
 
 import (
     "encoding/json"
+    "io/ioutil"
 	"net/http"
     "strings"
 
@@ -33,7 +34,7 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
         isValidRequest bool = true
         nfId string
         status int
-        p PatchDocument
+        // p PatchDocument
         a AuthorizedNssaiAvailabilityInfo
         d ProblemDetails
     )
@@ -43,38 +44,38 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
     nfId = s[len(s) - 1]
 
     // Parse request body
-    err := json.NewDecoder(r.Body).Decode(&p)
-    if err != nil {
-        problemDetail := "[Request Body] " + err.Error()
-        status = http.StatusBadRequest
-        d = ProblemDetails {
-            Title: MALFORMED_REQUEST,
-            Status: http.StatusBadRequest,
-            Detail: problemDetail,
-        }
-        isValidRequest = false
-    }
+    // err := json.NewDecoder(r.Body).Decode(&p)
+    // if err != nil {
+    //     problemDetail := "[Request Body] " + err.Error()
+    //     status = http.StatusBadRequest
+    //     d = ProblemDetails {
+    //         Title: MALFORMED_REQUEST,
+    //         Status: http.StatusBadRequest,
+    //         Detail: problemDetail,
+    //     }
+    //     isValidRequest = false
+    // }
 
     // Check data integrity
-    err = p.CheckIntegrity()
-    if err != nil {
-        problemDetail := "[Request Body] " + err.Error()
-        s := strings.Split(problemDetail, "`")
-        invalidParam := s[len(s) - 2]
-        status = http.StatusBadRequest
-        d = ProblemDetails {
-            Title: INVALID_REQUEST,
-            Status: http.StatusBadRequest,
-            Detail: problemDetail,
-            InvalidParams: []InvalidParam {
-                {
-                    Param: invalidParam,
-                    Reason: problemDetail,
-                },
-            },
-        }
-        isValidRequest = false
-    }
+    // err = p.CheckIntegrity()
+    // if err != nil {
+    //     problemDetail := "[Request Body] " + err.Error()
+    //     s := strings.Split(problemDetail, "`")
+    //     invalidParam := s[len(s) - 2]
+    //     status = http.StatusBadRequest
+    //     d = ProblemDetails {
+    //         Title: INVALID_REQUEST,
+    //         Status: http.StatusBadRequest,
+    //         Detail: problemDetail,
+    //         InvalidParams: []InvalidParam {
+    //             {
+    //                 Param: invalidParam,
+    //                 Reason: problemDetail,
+    //             },
+    //         },
+    //     }
+    //     isValidRequest = false
+    // }
 
     // TODO: Request NfProfile of NfId from NRF
     //       Check if NfId is valid AMF and obtain AMF Set ID
@@ -82,7 +83,8 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
     //       If NF consumer is not authorized to update NSSAI availability, return ProblemDetails with code 403 Forbidden
 
     if isValidRequest == true {
-        status = nssaiavailabilityPatch(nfId, p, &a, &d)
+        body, _ := ioutil.ReadAll(r.Body)
+        status = nssaiavailabilityPatch(nfId, body, &a, &d)
     }
 
     // Set response

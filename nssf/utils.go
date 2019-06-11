@@ -270,6 +270,28 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
     return a, err
 }
 
+// Get all authorized NSSAI availability data of the given NF ID from configuration
+func getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId string) ([]AuthorizedNssaiAvailabilityData, error) {
+    var s []AuthorizedNssaiAvailabilityData
+    var a AuthorizedNssaiAvailabilityData
+    a.Tai = new(Tai)
+
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                *a.Tai = *supportedNssaiAvailabilityData.Tai
+                a.SupportedSnssaiList = append(a.SupportedSnssaiList, supportedNssaiAvailabilityData.SupportedSnssaiList...)
+                a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(*a.Tai)
+
+                s = append(s, a)
+            }
+            return s, nil
+        }
+    }
+    err := fmt.Errorf("No AMF configuration of %s", nfId)
+    return s, err
+}
+
 // Get supported S-NSSAI list of the given NF ID and TAI from configuration
 func getSupportedSnssaiListFromConfig(nfId string, tai Tai) []Snssai {
     for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
