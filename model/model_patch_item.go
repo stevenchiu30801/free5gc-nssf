@@ -11,6 +11,7 @@ package model
 
 import (
     "fmt"
+    "reflect"
 )
 
 type PatchItem struct {
@@ -21,7 +22,8 @@ type PatchItem struct {
 
 	From string `json:"from,omitempty"`
 
-	Value *map[string]interface{} `json:"value,omitempty"`
+	// Value *map[string]interface{} `json:"value,omitempty"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 func (p *PatchItem) CheckIntegrity() error {
@@ -42,7 +44,8 @@ func (p *PatchItem) CheckIntegrity() error {
         return fmt.Errorf("`from` should not be empty with `op`:'%s' operation", string(*p.Op))
     }
 
-    if (*p.Op == ADDPatchOperation || *p.Op == REPLACEPatchOperation || *p.Op == TESTPatchOperation) && p.Value == nil {
+    if (*p.Op == ADDPatchOperation || *p.Op == REPLACEPatchOperation || *p.Op == TESTPatchOperation) &&
+        (p.Value == nil || reflect.DeepEqual(p.Value, reflect.Zero(reflect.TypeOf(p.Value)).Interface())) {
         return fmt.Errorf("`value` should not be empty with `op`:'%s' operation", string(*p.Op))
     }
 

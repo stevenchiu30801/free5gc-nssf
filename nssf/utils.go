@@ -254,7 +254,7 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
         if amfConfig.NfId == nfId {
             for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
                 if reflect.DeepEqual(*supportedNssaiAvailabilityData.Tai, tai) == true {
-                    a.SupportedSnssaiList = append(a.SupportedSnssaiList, supportedNssaiAvailabilityData.SupportedSnssaiList...)
+                    a.SupportedSnssaiList = supportedNssaiAvailabilityData.SupportedSnssaiList
                     a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(tai)
 
                     // TODO: Sort the returned slice
@@ -273,14 +273,15 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
 // Get all authorized NSSAI availability data of the given NF ID from configuration
 func getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId string) ([]AuthorizedNssaiAvailabilityData, error) {
     var s []AuthorizedNssaiAvailabilityData
-    var a AuthorizedNssaiAvailabilityData
-    a.Tai = new(Tai)
 
     for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
             for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
+                var a AuthorizedNssaiAvailabilityData
+                a.Tai = new(Tai)
+
                 *a.Tai = *supportedNssaiAvailabilityData.Tai
-                a.SupportedSnssaiList = append(a.SupportedSnssaiList, supportedNssaiAvailabilityData.SupportedSnssaiList...)
+                a.SupportedSnssaiList = supportedNssaiAvailabilityData.SupportedSnssaiList
                 a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(*a.Tai)
 
                 s = append(s, a)

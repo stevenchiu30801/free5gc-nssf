@@ -31,10 +31,12 @@ func nssaiavailabilityPatch(nfId string,
         }
     }
 
+    // TODO: Check if returned HTTP status codes or problem details are proper when errors occur
+
     patch, err := jsonpatch.DecodePatch(patchDocument)
     if err != nil {
         *d = ProblemDetails {
-            Title: INVALID_REQUEST,
+            Title: MALFORMED_REQUEST,
             Status: http.StatusBadRequest,
             Detail: err.Error(),
         }
@@ -47,11 +49,11 @@ func nssaiavailabilityPatch(nfId string,
     if err != nil {
         *d = ProblemDetails {
             Title: INVALID_REQUEST,
-            Status: http.StatusBadRequest,
+            Status: http.StatusConflict,
             Detail: err.Error(),
         }
 
-        status = http.StatusBadRequest
+        status = http.StatusConflict
         return
     }
 
@@ -67,7 +69,10 @@ func nssaiavailabilityPatch(nfId string,
         return
     }
 
-    a.AuthorizedNssaiAvailabilityData, err = getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId)
+    // Return all authorized NSSAI availability information
+    a.AuthorizedNssaiAvailabilityData, _ = getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId)
+
+    // TODO: Return authorized NSSAI availability information of updated TAI only
 
     return http.StatusOK
 }
@@ -115,6 +120,10 @@ func nssaiavailabilityPut(nfId string,
                                                           amfConfig)
     }
 
+    // Return all authorized NSSAI availability information
+    // a.AuthorizedNssaiAvailabilityData, _ = getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId)
+
+    // Return authorized NSSAI availability information of updated TAI only
     for _, s := range n.SupportedNssaiAvailabilityData {
         authorizedNssaiAvailabilityData, err := getAuthorizedNssaiAvailabilityDataFromConfig(nfId, *s.Tai)
         if err == nil {
