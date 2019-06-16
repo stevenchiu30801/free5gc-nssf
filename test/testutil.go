@@ -36,9 +36,7 @@ type TestingNssaiavailability struct {
 
     NfId string
 
-    GenerateAddRequestBody func() NssaiAvailabilityInfo
-
-    GeneratePatchRequestBody func() PatchDocument
+    GeneratePutRequestBody func() NssaiAvailabilityInfo
 }
 
 func init() {

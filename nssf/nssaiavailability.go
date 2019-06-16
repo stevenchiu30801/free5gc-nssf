@@ -7,6 +7,7 @@
 package nssf
 
 import (
+    "bytes"
     "encoding/json"
     "net/http"
 
@@ -26,7 +27,19 @@ func nssaiavailabilityPatch(nfId string,
     var original []byte
     for amfIdx, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
-            original, _ = json.Marshal(factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData)
+            temp := factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData
+            const DUMMY_STRING string = "DUMMY"
+            for i := range temp {
+                for j := range temp[i].SupportedSnssaiList {
+                    if temp[i].SupportedSnssaiList[j].Sd == "" {
+                        temp[i].SupportedSnssaiList[j].Sd = DUMMY_STRING
+                    }
+                }
+            }
+
+            original, _ = json.Marshal(temp)
+            original = bytes.ReplaceAll(original, []byte(DUMMY_STRING), []byte(""))
+            // original, _ = json.Marshal(factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData)
             break
         }
     }
