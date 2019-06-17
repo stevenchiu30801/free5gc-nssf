@@ -10,6 +10,7 @@ import (
     "bytes"
     "encoding/json"
     "net/http"
+    "reflect"
 
     jsonpatch "github.com/evanphx/json-patch"
 
@@ -20,7 +21,7 @@ import (
 
 // NSSAIAvailability PATCH method
 func nssaiavailabilityPatch(nfId string,
-                            patchDocument []byte,
+                            p PatchDocument,
                             a *AuthorizedNssaiAvailabilityInfo,
                             d *ProblemDetails) (status int) {
     var amfIdx int
@@ -49,7 +50,19 @@ func nssaiavailabilityPatch(nfId string,
 
     // TODO: Check if returned HTTP status codes or problem details are proper when errors occur
 
-    patch, err := jsonpatch.DecodePatch(patchDocument)
+    // Provide JSON string with null or empty value in `Value` of `PatchItem`
+    for i, patchItem := range p {
+        if reflect.ValueOf(patchItem.Value).Kind() == reflect.Map {
+            _, exist := patchItem.Value.(map[string]interface{})["sst"]
+            _, notExist := patchItem.Value.(map[string]interface{})["sd"]
+            if exist && !notExist {
+                p[i].Value.(map[string]interface{})["sd"] = ""
+            }
+        }
+    }
+    patchJson, _ := json.Marshal(p)
+
+    patch, err := jsonpatch.DecodePatch(patchJson)
     if err != nil {
         *d = ProblemDetails {
             Title: MALFORMED_REQUEST,

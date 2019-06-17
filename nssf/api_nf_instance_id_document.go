@@ -12,7 +12,6 @@ package nssf
 import (
     // "bytes"
     "encoding/json"
-    "io/ioutil"
 	"net/http"
     "strings"
 
@@ -44,11 +43,8 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
     s := strings.Split(r.URL.Path, "/")
     nfId = s[len(s) - 1]
 
-    body, _ := ioutil.ReadAll(r.Body)
-
     // Parse request body
-    err := json.Unmarshal(body, &p)
-    // err := json.NewDecoder(bytes.NewReader(body)).Decode(&p)
+    err := json.NewDecoder(r.Body).Decode(&p)
     if err != nil {
         problemDetail := "[Request Body] " + err.Error()
         status = http.StatusBadRequest
@@ -87,7 +83,7 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
     //       If NF consumer is not authorized to update NSSAI availability, return ProblemDetails with code 403 Forbidden
 
     if isValidRequest == true {
-        status = nssaiavailabilityPatch(nfId, body, &a, &d)
+        status = nssaiavailabilityPatch(nfId, p, &a, &d)
     }
 
     // Set response

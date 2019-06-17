@@ -85,7 +85,7 @@ var testingNssaiavailability = test.TestingNssaiavailability {
     },
 }
 
-func generateAddRequest() []byte {
+func generateAddRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -99,10 +99,13 @@ func generateAddRequest() []byte {
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
-func generateCopyRequest() []byte {
+func generateCopyRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -113,10 +116,13 @@ func generateCopyRequest() []byte {
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
-func generateMoveRequest() []byte {
+func generateMoveRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -127,10 +133,13 @@ func generateMoveRequest() []byte {
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
-func generateRemoveRequest() []byte {
+func generateRemoveRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -140,27 +149,32 @@ func generateRemoveRequest() []byte {
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
-func generateReplaceRequest() []byte {
+func generateReplaceRequest() PatchDocument {
     const jsonRequest = `
         [
             {
                 "op": "replace",
                 "path": "/1/supportedSnssaiList/2",
                 "value": {
-                    "sst": 2,
-                    "sd": ""
+                    "sst": 2
                 }
             }
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
-func generateTestRequest() []byte {
+func generateTestRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -174,7 +188,10 @@ func generateTestRequest() []byte {
         ]
     `
 
-    return []byte(jsonRequest)
+    var p PatchDocument
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&p)
+
+    return p
 }
 
 func TestNssaiavailabilityTemplate(t *testing.T) {
@@ -195,7 +212,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
 
     subtests := []struct {
         name string
-        generateRequestBody func() []byte
+        generateRequestBody func() PatchDocument
         expectStatus int
         expectAuthorizedNssaiAvailabilityInfo *AuthorizedNssaiAvailabilityInfo
         expectProblemDetails *ProblemDetails
@@ -524,7 +541,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
     for _, subtest := range subtests {
         t.Run(subtest.name, func(t *testing.T) {
             var (
-                p []byte
+                p PatchDocument
                 status int
                 a AuthorizedNssaiAvailabilityInfo
                 d ProblemDetails
