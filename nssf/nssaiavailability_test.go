@@ -107,8 +107,8 @@ func generateCopyRequest() []byte {
         [
             {
                 "op": "copy",
-                "path": "/1/supportedSnssaiList/2",
-                "from": "/0/supportedSnssaiList/2"
+                "path": "/1/supportedSnssaiList/0",
+                "from": "/0/supportedSnssaiList/0"
             }
         ]
     `
@@ -148,9 +148,9 @@ func generateReplaceRequest() []byte {
         [
             {
                 "op": "replace",
-                "path": "/1/supportedSnssaiList/0",
+                "path": "/1/supportedSnssaiList/2",
                 "value": {
-                    "sst": 1,
+                    "sst": 2,
                     "sd": ""
                 }
             }
@@ -165,10 +165,10 @@ func generateTestRequest() []byte {
         [
             {
                 "op": "test",
-                "path": "/1/supportedSnssaiList/2",
+                "path": "/1/supportedSnssaiList/1",
                 "value": {
-                    "sst": 2,
-                    "sd": ""
+                    "sst": 1,
+                    "sd": "1"
                 }
             }
         ]
@@ -295,14 +295,14 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                         SupportedSnssaiList: []Snssai {
                             {
                                 Sst: 1,
+                            },
+                            {
+                                Sst: 1,
                                 Sd: "1",
                             },
                             {
                                 Sst: 1,
                                 Sd: "2",
-                            },
-                            {
-                                Sst: 2,
                             },
                         },
                     },
@@ -351,14 +351,14 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                         SupportedSnssaiList: []Snssai {
                             {
                                 Sst: 1,
+                            },
+                            {
+                                Sst: 1,
                                 Sd: "1",
                             },
                             {
                                 Sst: 1,
                                 Sd: "2",
-                            },
-                            {
-                                Sst: 2,
                             },
                         },
                     },
@@ -403,14 +403,14 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                         SupportedSnssaiList: []Snssai {
                             {
                                 Sst: 1,
+                            },
+                            {
+                                Sst: 1,
                                 Sd: "1",
                             },
                             {
                                 Sst: 1,
                                 Sd: "2",
-                            },
-                            {
-                                Sst: 2,
                             },
                         },
                     },
@@ -458,7 +458,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                             },
                             {
                                 Sst: 1,
-                                Sd: "2",
+                                Sd: "1",
                             },
                             {
                                 Sst: 2,
@@ -509,7 +509,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                             },
                             {
                                 Sst: 1,
-                                Sd: "2",
+                                Sd: "1",
                             },
                             {
                                 Sst: 2,

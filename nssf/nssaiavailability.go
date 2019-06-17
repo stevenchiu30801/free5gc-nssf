@@ -27,6 +27,8 @@ func nssaiavailabilityPatch(nfId string,
     var original []byte
     for amfIdx, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
+            // Since json-patch package does not have idea of optional field of datatype,
+            // provide with null or empty value instead of omitting the field
             temp := factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData
             const DUMMY_STRING string = "DUMMY"
             for i := range temp {
@@ -36,10 +38,11 @@ func nssaiavailabilityPatch(nfId string,
                     }
                 }
             }
-
             original, _ = json.Marshal(temp)
             original = bytes.ReplaceAll(original, []byte(DUMMY_STRING), []byte(""))
+
             // original, _ = json.Marshal(factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData)
+
             break
         }
     }
