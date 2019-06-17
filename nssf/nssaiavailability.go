@@ -9,6 +9,7 @@ package nssf
 import (
     "bytes"
     "encoding/json"
+    "fmt"
     "net/http"
     "reflect"
 
@@ -19,6 +20,30 @@ import (
     . "../model"
 )
 
+// NSSAIAvailability DELETE method
+func nssaiavailabilityDelete(nfId string, d *ProblemDetails) (status int) {
+    for i, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            factory.NssfConfig.Configuration.AmfList = append(
+                factory.NssfConfig.Configuration.AmfList[:i],
+                factory.NssfConfig.Configuration.AmfList[i + 1:]...)
+
+            status = http.StatusNoContent
+            return
+        }
+    }
+
+    problemDetail := fmt.Sprintf("AMF ID '%s' does not exist", nfId)
+    *d = ProblemDetails {
+        Title: UNSUPPORTED_RESOURCE,
+        Status: http.StatusNotFound,
+        Detail: problemDetail,
+    }
+
+    status = http.StatusNotFound
+    return
+}
+
 // NSSAIAvailability PATCH method
 func nssaiavailabilityPatch(nfId string,
                             p PatchDocument,
@@ -26,6 +51,7 @@ func nssaiavailabilityPatch(nfId string,
                             d *ProblemDetails) (status int) {
     var amfIdx int
     var original []byte
+    hitAmf := false
     for amfIdx, amfConfig := range factory.NssfConfig.Configuration.AmfList {
         if amfConfig.NfId == nfId {
             // Since json-patch package does not have idea of optional field of datatype,
@@ -44,8 +70,20 @@ func nssaiavailabilityPatch(nfId string,
 
             // original, _ = json.Marshal(factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData)
 
+            hitAmf = true
             break
         }
+    }
+    if hitAmf == false {
+        problemDetail := fmt.Sprintf("AMF ID '%s' does not exist", nfId)
+        *d = ProblemDetails {
+            Title: UNSUPPORTED_RESOURCE,
+            Status: http.StatusNotFound,
+            Detail: problemDetail,
+        }
+
+        status = http.StatusNotFound
+        return
     }
 
     // TODO: Check if returned HTTP status codes or problem details are proper when errors occur

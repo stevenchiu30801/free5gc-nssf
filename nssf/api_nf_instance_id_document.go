@@ -21,8 +21,35 @@ import (
 
 // NSSAIAvailabilityDelete - Deletes an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
 func NSSAIAvailabilityDelete(w http.ResponseWriter, r *http.Request) {
+
+    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityDelete")
+
+    var (
+        nfId string
+        status int
+        d ProblemDetails
+    )
+
+    // Parse nfId from URL path
+    s := strings.Split(r.URL.Path, "/")
+    nfId = s[len(s) - 1]
+
+    status = nssaiavailabilityDelete(nfId, &d)
+
+    // Set response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+
+	w.WriteHeader(status)
+    switch status {
+        case http.StatusNoContent:
+            flog.Nssaiavailability.Infof("Response code 204 No Content")
+        case http.StatusNotFound:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 404 Not Found")
+        default:
+            flog.Nssaiavailability.Warnf("Unknown response code")
+    }
 }
 
 // NSSAIAvailabilityPatch - Updates an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
@@ -102,6 +129,10 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
             json.NewEncoder(w).Encode(&d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 403 Forbidden")
+        case http.StatusNotFound:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 404 Not Found")
         case http.StatusConflict:
             json.NewEncoder(w).Encode(&d)
             flog.Nssaiavailability.Infof(d.Detail)

@@ -85,6 +85,15 @@ var testingNssaiavailability = test.TestingNssaiavailability {
     },
 }
 
+func checkAmfExist(nfId string) bool {
+    for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
+        if amfConfig.NfId == nfId {
+            return true
+        }
+    }
+    return false
+}
+
 func generateAddRequest() PatchDocument {
     const jsonRequest = `
         [
@@ -202,6 +211,47 @@ func TestNssaiavailabilityTemplate(t *testing.T) {
 
     d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
+}
+
+func TestNssaiavailabilityDelete(t *testing.T) {
+    factory.InitConfigFactory(testingNssaiavailability.ConfigFile)
+    if testingNssaiavailability.MuteLogInd == true {
+        flog.Nsselection.MuteLog()
+    }
+
+    subtests := []struct {
+        name string
+        expectStatus int
+        expectProblemDetails *ProblemDetails
+    }{
+        {
+            name: "Delete",
+            expectStatus: http.StatusNoContent,
+        },
+    }
+
+    for _, subtest := range subtests {
+        t.Run(subtest.name, func(t *testing.T) {
+            var (
+                status int
+                d ProblemDetails
+            )
+
+            status = nssaiavailabilityDelete(testingNssaiavailability.NfId, &d)
+
+            if status == http.StatusNoContent {
+                if checkAmfExist(testingNssaiavailability.NfId) == true {
+                    t.Errorf("AMF ID '%s' in configuration should be deleted, but still exists", testingNssaiavailability.NfId)
+                }
+            } else {
+                if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
+                    t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
+                }
+            }
+        })
+    }
 }
 
 func TestNssaiavailabilityPatch(t *testing.T) {
