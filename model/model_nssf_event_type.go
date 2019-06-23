@@ -9,5 +9,21 @@
 
 package model
 
-type NssfEventType struct {
+import (
+    "fmt"
+)
+
+type NssfEventType string
+
+// List of NssfEventType
+const (
+	SNSSAI_STATUS_CHANGE_REPORTNssfEventType NssfEventType = "SNSSAI_STATUS_CHANGE_REPORT"
+)
+
+func (n *NssfEventType) CheckIntegrity() error {
+    if *n != SNSSAI_STATUS_CHANGE_REPORTNssfEventType {
+        return fmt.Errorf("'%s' is unrecognized", string(*n))
+    }
+
+    return nil
 }
