@@ -17,7 +17,7 @@ type NssfEventSubscriptionCreatedData struct {
 
 	SubscriptionId string `json:"subscriptionId"`
 
-	Expiry time.Time `json:"expiry,omitempty"`
+	Expiry *time.Time `json:"expiry,omitempty"`
 
 	AuthorizedNssaiAvailabilityData []AuthorizedNssaiAvailabilityData `json:"authorizedNssaiAvailabilityData,omitempty"`
 }

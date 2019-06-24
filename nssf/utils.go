@@ -245,7 +245,7 @@ func getRestrictedSnssaiListFromConfig(tai Tai) []RestrictedSnssai {
 }
 
 // Get authorized NSSAI availability data of the given NF ID and TAI from configuration
-func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (AuthorizedNssaiAvailabilityData, error) {
+func authorizeOfAmfTaFromConfig(nfId string, tai Tai) (AuthorizedNssaiAvailabilityData, error) {
     var a AuthorizedNssaiAvailabilityData
     a.Tai = new(Tai)
     *a.Tai = tai
@@ -271,7 +271,7 @@ func getAuthorizedNssaiAvailabilityDataFromConfig(nfId string, tai Tai) (Authori
 }
 
 // Get all authorized NSSAI availability data of the given NF ID from configuration
-func getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId string) ([]AuthorizedNssaiAvailabilityData, error) {
+func authorizeOfAmfFromConfig(nfId string) ([]AuthorizedNssaiAvailabilityData, error) {
     var s []AuthorizedNssaiAvailabilityData
 
     for _, amfConfig := range factory.NssfConfig.Configuration.AmfList {
@@ -279,7 +279,6 @@ func getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId string) ([]AuthorizedN
             for _, supportedNssaiAvailabilityData := range amfConfig.SupportedNssaiAvailabilityData {
                 var a AuthorizedNssaiAvailabilityData
                 a.Tai = new(Tai)
-
                 *a.Tai = *supportedNssaiAvailabilityData.Tai
                 a.SupportedSnssaiList = supportedNssaiAvailabilityData.SupportedSnssaiList
                 a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(*a.Tai)
@@ -291,6 +290,26 @@ func getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId string) ([]AuthorizedN
     }
     err := fmt.Errorf("No AMF configuration of %s", nfId)
     return s, err
+}
+
+// Get authorized NSSAI availability data of the given TAI list from configuration
+func authorizeOfTaListFromConfig(taiList []Tai) ([]AuthorizedNssaiAvailabilityData) {
+    var s []AuthorizedNssaiAvailabilityData
+
+    for _, taConfig := range factory.NssfConfig.Configuration.TaList {
+        for _, tai := range taiList {
+            if reflect.DeepEqual(*taConfig.Tai, tai) == true {
+                var a AuthorizedNssaiAvailabilityData
+                a.Tai = new(Tai)
+                *a.Tai = tai
+                a.SupportedSnssaiList = taConfig.SupportedSnssaiList
+                a.RestrictedSnssaiList = getRestrictedSnssaiListFromConfig(tai)
+
+                s = append(s, a)
+            }
+        }
+    }
+    return s
 }
 
 // Get supported S-NSSAI list of the given NF ID and TAI from configuration

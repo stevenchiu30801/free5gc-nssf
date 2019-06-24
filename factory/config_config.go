@@ -16,7 +16,7 @@ type Config struct {
 
     Configuration *Configuration `yaml:"configuration"`
 
-    Subscription *Subscription `yaml:"subscription,omitempty"`
+    Subscriptions []Subscription `yaml:"subscriptions,omitempty"`
 }
 
 func (c *Config) CheckIntegrity() error {
@@ -38,10 +38,12 @@ func (c *Config) CheckIntegrity() error {
         }
     }
 
-    if c.Subscription != nil {
-        err := c.Subscription.checkIntegrity()
-        if err != nil {
-            return fmt.Errorf("`subscription`:%s", err.Error())
+    if c.Subscriptions != nil && len(c.Subscriptions) != 0 {
+        for i, subscription := range c.Subscriptions {
+            err := subscription.checkIntegrity()
+            if err != nil {
+                return fmt.Errorf("`subscriptions`[%d]:%s", i, err.Error())
+            }
         }
     }
 

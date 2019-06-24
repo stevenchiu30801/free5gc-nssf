@@ -10,16 +10,45 @@
 package model
 
 import (
+    "fmt"
 	"time"
 )
 
 type NssfEventSubscriptionCreateData struct {
 
-	NfNssaiAvailabilityUri string `json:"nfNssaiAvailabilityUri"`
+    NfNssaiAvailabilityUri string `json:"nfNssaiAvailabilityUri" yaml:"nfNssaiAvailabilityUri"`
 
-	TaiList []Tai `json:"taiList"`
+    TaiList []Tai `json:"taiList" yaml:"taiList"`
 
-	Event *NssfEventType `json:"event"`
+    Event *NssfEventType `json:"event" yaml:"event"`
 
-	Expiry time.Time `json:"expiry,omitempty"`
+    Expiry time.Time `json:"expiry,omitempty" yaml:"expiry,omitempty"`
+}
+
+func (n *NssfEventSubscriptionCreateData) CheckIntegrity() error {
+    if n.NfNssaiAvailabilityUri == "" {
+        return fmt.Errorf("`nfNssaiAvailabilityUri` should not be empty")
+    }
+
+    if n.TaiList == nil || len(n.TaiList) == 0 {
+        return fmt.Errorf("`taiList` should not be empty")
+    } else {
+        for i, tai := range n.TaiList {
+            err := tai.CheckIntegrity()
+            if err != nil {
+                return fmt.Errorf("`taiList`[%d]:%s", i, err.Error())
+            }
+        }
+    }
+
+    if n.Event == nil {
+        return fmt.Errorf("`event` should not be empty")
+    } else {
+        err := n.Event.CheckIntegrity()
+        if err != nil {
+            return fmt.Errorf("`event`:%s", err.Error())
+        }
+    }
+
+    return nil
 }

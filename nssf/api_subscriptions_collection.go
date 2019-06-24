@@ -10,11 +10,84 @@
 package nssf
 
 import (
+    "encoding/json"
 	"net/http"
+    "strings"
+
+    flog "../flog"
+    . "../model"
 )
 
 // NSSAIAvailabilityPost - Creates subscriptions for notification about updates to NSSAI availability information
 func NSSAIAvailabilityPost(w http.ResponseWriter, r *http.Request) {
+
+    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityPost")
+
+    var (
+        isValidRequest bool = true
+        status int
+        n NssfEventSubscriptionCreateData
+        c NssfEventSubscriptionCreatedData
+        d ProblemDetails
+    )
+
+    // Parse request body
+    err := json.NewDecoder(r.Body).Decode(&n)
+    if err != nil {
+        problemDetail := "[Request Body] " + err.Error()
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: MALFORMED_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+        }
+        isValidRequest = false
+    }
+
+    // Check data integrity
+    err = n.CheckIntegrity()
+    if err != nil {
+        problemDetail := "[Request Body] " + err.Error()
+        s := strings.Split(problemDetail, "`")
+        invalidParam := s[len(s) - 2]
+        status = http.StatusBadRequest
+        d = ProblemDetails {
+            Title: INVALID_REQUEST,
+            Status: http.StatusBadRequest,
+            Detail: problemDetail,
+            InvalidParams: []InvalidParam {
+                {
+                    Param: invalidParam,
+                    Reason: problemDetail,
+                },
+            },
+        }
+        isValidRequest = false
+    }
+
+    // TODO: If NF consumer is not authorized to update NSSAI availability, return ProblemDetails with code 403 Forbidden
+
+    if isValidRequest == true {
+        status = subscriptionPost(n, &c, &d)
+    }
+
+    // Set response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+
+	w.WriteHeader(status)
+    switch status {
+        case http.StatusCreated:
+            json.NewEncoder(w).Encode(&c)
+            flog.Nssaiavailability.Infof("Response code 201 Created")
+        case http.StatusBadRequest:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 400 Bad Request")
+        case http.StatusForbidden:
+            json.NewEncoder(w).Encode(&d)
+            flog.Nssaiavailability.Infof(d.Detail)
+            flog.Nssaiavailability.Infof("Response code 403 Forbidden")
+        default:
+            flog.Nssaiavailability.Warnf("Unknown response code")
+    }
 }

@@ -10,7 +10,6 @@
 package nssf
 
 import (
-    // "bytes"
     "encoding/json"
 	"net/http"
     "strings"

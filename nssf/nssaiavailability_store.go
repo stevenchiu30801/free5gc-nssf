@@ -137,7 +137,7 @@ func nssaiavailabilityPatch(nfId string,
     }
 
     // Return all authorized NSSAI availability information
-    a.AuthorizedNssaiAvailabilityData, _ = getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId)
+    a.AuthorizedNssaiAvailabilityData, _ = authorizeOfAmfFromConfig(nfId)
 
     // TODO: Return authorized NSSAI availability information of updated TAI only
 
@@ -188,11 +188,11 @@ func nssaiavailabilityPut(nfId string,
     }
 
     // Return all authorized NSSAI availability information
-    // a.AuthorizedNssaiAvailabilityData, _ = getAllAuthorizedNssaiAvailabilityDataFromConfig(nfId)
+    // a.AuthorizedNssaiAvailabilityData, _ = authorizeOfAmfFromConfig(nfId)
 
     // Return authorized NSSAI availability information of updated TAI only
     for _, s := range n.SupportedNssaiAvailabilityData {
-        authorizedNssaiAvailabilityData, err := getAuthorizedNssaiAvailabilityDataFromConfig(nfId, *s.Tai)
+        authorizedNssaiAvailabilityData, err := authorizeOfAmfTaFromConfig(nfId, *s.Tai)
         if err == nil {
             a.AuthorizedNssaiAvailabilityData = append(a.AuthorizedNssaiAvailabilityData, authorizedNssaiAvailabilityData)
         } else {
