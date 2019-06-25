@@ -29,6 +29,8 @@ func InitConfigFactory(f string) {
     content, err := ioutil.ReadFile(f)
     checkErr(err)
 
+    NssfConfig = Config{}
+
     err = yaml.Unmarshal([]byte(content), &NssfConfig)
     checkErr(err)
 

@@ -1,7 +1,7 @@
 /*
- * NSSF NS Selection
+ * NSSF NSSAI Availability
  *
- * NSSF Network Slice Selection Service
+ * NSSF NSSAI Availability Service
  */
 
 package nssf
@@ -21,68 +21,10 @@ import (
     test "../test"
 )
 
-var testingNssaiavailability = test.TestingNssaiavailability {
+var testingNssaiavailabilityStore = test.TestingNssaiavailability {
     ConfigFile: test.ConfigFileFromArgs,
     MuteLogInd: test.MuteLogIndFromArgs,
     NfId: "469de254-2fe5-4ca0-8381-af3f500af77c",
-    GeneratePutRequestBody: func() NssaiAvailabilityInfo {
-        const jsonRequest = `
-            {
-                "supportedNssaiAvailabilityData": [
-                    {
-                        "tai": {
-                            "plmnId": {
-                                "mcc": "466",
-                                "mnc": "92"
-                            },
-                            "tac": "33456"
-                        },
-                        "supportedSnssaiList": [
-                            {
-                                "sst": 1
-                            },
-                            {
-                                "sst": 1,
-                                "sd": "1"
-                            },
-                            {
-                                "sst": 1,
-                                "sd": "2"
-                            }
-                        ]
-                    },
-                    {
-                        "tai": {
-                            "plmnId": {
-                                "mcc": "466",
-                                "mnc": "92"
-                            },
-                            "tac": "33458"
-                        },
-                        "supportedSnssaiList": [
-                            {
-                                "sst": 1
-                            },
-                            {
-                                "sst": 1,
-                                "sd": "1"
-                            },
-                            {
-                                "sst": 1,
-                                "sd": "3"
-                            }
-                        ]
-                    }
-                ],
-                "supportedFeatures": ""
-            }
-        `
-
-        var n NssaiAvailabilityInfo
-        json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&n)
-
-        return n
-    },
 }
 
 func checkAmfExist(nfId string) bool {
@@ -94,7 +36,7 @@ func checkAmfExist(nfId string) bool {
     return false
 }
 
-func generateAddRequest() PatchDocument {
+func generatePatchAddRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -114,7 +56,7 @@ func generateAddRequest() PatchDocument {
     return p
 }
 
-func generateCopyRequest() PatchDocument {
+func generatePatchCopyRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -131,7 +73,7 @@ func generateCopyRequest() PatchDocument {
     return p
 }
 
-func generateMoveRequest() PatchDocument {
+func generatePatchMoveRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -148,7 +90,7 @@ func generateMoveRequest() PatchDocument {
     return p
 }
 
-func generateRemoveRequest() PatchDocument {
+func generatePatchRemoveRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -164,7 +106,7 @@ func generateRemoveRequest() PatchDocument {
     return p
 }
 
-func generateReplaceRequest() PatchDocument {
+func generatePatchReplaceRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -183,7 +125,7 @@ func generateReplaceRequest() PatchDocument {
     return p
 }
 
-func generateTestRequest() PatchDocument {
+func generatePatchTestRequest() PatchDocument {
     const jsonRequest = `
         [
             {
@@ -203,19 +145,78 @@ func generateTestRequest() PatchDocument {
     return p
 }
 
+func generatePutRequestBody() NssaiAvailabilityInfo {
+    const jsonRequest = `
+        {
+            "supportedNssaiAvailabilityData": [
+                {
+                    "tai": {
+                        "plmnId": {
+                            "mcc": "466",
+                            "mnc": "92"
+                        },
+                        "tac": "33456"
+                    },
+                    "supportedSnssaiList": [
+                        {
+                            "sst": 1
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "1"
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "2"
+                        }
+                    ]
+                },
+                {
+                    "tai": {
+                        "plmnId": {
+                            "mcc": "466",
+                            "mnc": "92"
+                        },
+                        "tac": "33458"
+                    },
+                    "supportedSnssaiList": [
+                        {
+                            "sst": 1
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "1"
+                        },
+                        {
+                            "sst": 1,
+                            "sd": "3"
+                        }
+                    ]
+                }
+            ],
+            "supportedFeatures": ""
+        }
+    `
+
+    var n NssaiAvailabilityInfo
+    json.NewDecoder(strings.NewReader(jsonRequest)).Decode(&n)
+
+    return n
+}
+
 func TestNssaiavailabilityTemplate(t *testing.T) {
     t.Skip()
 
     // Tests may have different configuration files
-    factory.InitConfigFactory(testingNssaiavailability.ConfigFile)
+    factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
 
     d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
 func TestNssaiavailabilityDelete(t *testing.T) {
-    factory.InitConfigFactory(testingNssaiavailability.ConfigFile)
-    if testingNssaiavailability.MuteLogInd == true {
+    factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
+    if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -237,11 +238,11 @@ func TestNssaiavailabilityDelete(t *testing.T) {
                 d ProblemDetails
             )
 
-            status = nssaiavailabilityDelete(testingNssaiavailability.NfId, &d)
+            status = nssaiavailabilityDelete(testingNssaiavailabilityStore.NfId, &d)
 
             if status == http.StatusNoContent {
-                if checkAmfExist(testingNssaiavailability.NfId) == true {
-                    t.Errorf("AMF ID '%s' in configuration should be deleted, but still exists", testingNssaiavailability.NfId)
+                if checkAmfExist(testingNssaiavailabilityStore.NfId) == true {
+                    t.Errorf("AMF ID '%s' in configuration should be deleted, but still exists", testingNssaiavailabilityStore.NfId)
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
@@ -255,8 +256,8 @@ func TestNssaiavailabilityDelete(t *testing.T) {
 }
 
 func TestNssaiavailabilityPatch(t *testing.T) {
-    factory.InitConfigFactory(testingNssaiavailability.ConfigFile)
-    if testingNssaiavailability.MuteLogInd == true {
+    factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
+    if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
@@ -269,7 +270,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
     }{
         {
             name: "Add",
-            generateRequestBody: generateAddRequest,
+            generateRequestBody: generatePatchAddRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -322,7 +323,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
         },
         {
             name: "Copy",
-            generateRequestBody: generateCopyRequest,
+            generateRequestBody: generatePatchCopyRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -378,7 +379,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
         },
         {
             name: "Move",
-            generateRequestBody: generateMoveRequest,
+            generateRequestBody: generatePatchMoveRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -434,7 +435,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
         },
         {
             name: "Remove",
-            generateRequestBody: generateRemoveRequest,
+            generateRequestBody: generatePatchRemoveRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -486,7 +487,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
         },
         {
             name: "Replace",
-            generateRequestBody: generateReplaceRequest,
+            generateRequestBody: generatePatchReplaceRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -537,7 +538,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
         },
         {
             name: "Test",
-            generateRequestBody: generateTestRequest,
+            generateRequestBody: generatePatchTestRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -601,7 +602,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
                 p = subtest.generateRequestBody()
             }
 
-            status = nssaiavailabilityPatch(testingNssaiavailability.NfId, p, &a, &d)
+            status = nssaiavailabilityPatch(testingNssaiavailabilityStore.NfId, p, &a, &d)
 
             if status == http.StatusOK {
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNssaiAvailabilityInfo) == false {
@@ -621,20 +622,21 @@ func TestNssaiavailabilityPatch(t *testing.T) {
 }
 
 func TestNssaiavailabilityPut(t *testing.T) {
-    factory.InitConfigFactory(testingNssaiavailability.ConfigFile)
-    if testingNssaiavailability.MuteLogInd == true {
+    factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
+    if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 
     subtests := []struct {
         name string
-        modifyRequestBody func(*NssaiAvailabilityInfo)
+        generateRequestBody func() NssaiAvailabilityInfo
         expectStatus int
         expectAuthorizedNssaiAvailabilityInfo *AuthorizedNssaiAvailabilityInfo
         expectProblemDetails *ProblemDetails
     }{
         {
             name: "Create and Replace",
+            generateRequestBody: generatePutRequestBody,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
@@ -705,18 +707,17 @@ func TestNssaiavailabilityPut(t *testing.T) {
     for _, subtest := range subtests {
         t.Run(subtest.name, func(t *testing.T) {
             var (
+                n NssaiAvailabilityInfo
                 status int
                 a AuthorizedNssaiAvailabilityInfo
                 d ProblemDetails
             )
 
-            n := testingNssaiavailability.GeneratePutRequestBody()
-
-            if subtest.modifyRequestBody != nil {
-                subtest.modifyRequestBody(&n)
+            if subtest.generateRequestBody != nil {
+                n = subtest.generateRequestBody()
             }
 
-            status = nssaiavailabilityPut(testingNssaiavailability.NfId, n, &a, &d)
+            status = nssaiavailabilityPut(testingNssaiavailabilityStore.NfId, n, &a, &d)
 
             if status == http.StatusOK {
                 if reflect.DeepEqual(a, *subtest.expectAuthorizedNssaiAvailabilityInfo) == false {

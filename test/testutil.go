@@ -36,7 +36,7 @@ type TestingNssaiavailability struct {
 
     NfId string
 
-    GeneratePutRequestBody func() NssaiAvailabilityInfo
+    SubscriptionId string
 }
 
 func init() {
