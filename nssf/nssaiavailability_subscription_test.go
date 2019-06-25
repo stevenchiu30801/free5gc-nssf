@@ -25,12 +25,22 @@ import (
 var testingSubscription = test.TestingNssaiavailability {
     ConfigFile: test.ConfigFileFromArgs,
     MuteLogInd: test.MuteLogIndFromArgs,
+    SubscriptionId: "3",
+}
+
+func checkSubscriptionExist(subscriptionId string) bool {
+    for _, subscription := range factory.NssfConfig.Subscriptions {
+        if subscription.SubscriptionId == subscriptionId {
+            return true
+        }
+    }
+    return false
 }
 
 func generatePostRequest() NssfEventSubscriptionCreateData {
     const jsonRequest = `
         {
-            "nfNssaiAvailabilityUri": "free5gc-amf.nctu.me:8080/nnssf-nssaiavailability/v1/nssai-availability/notify",
+            "nfNssaiAvailabilityUri": "free5gc-amf2.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify",
             "taiList": [
                 {
                     "plmnId": {
@@ -44,7 +54,7 @@ func generatePostRequest() NssfEventSubscriptionCreateData {
                         "mcc": "466",
                         "mnc": "92"
                     },
-                    "tac": "33457"
+                    "tac": "33458"
                 }
             ],
             "event": "SNSSAI_STATUS_CHANGE_REPORT",
@@ -86,7 +96,7 @@ func TestSubscriptionPost(t *testing.T) {
             generateRequestBody: generatePostRequest,
             expectStatus: http.StatusCreated,
             expectSubscriptionCreatedData: &NssfEventSubscriptionCreatedData {
-                SubscriptionId: "1",
+                SubscriptionId: "2",
                 Expiry: func() *time.Time { t, _ := time.Parse(time.RFC3339, "2019-06-24T16:35:31+08:00"); return &t }(),
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
                     {
@@ -120,7 +130,7 @@ func TestSubscriptionPost(t *testing.T) {
                                 Mcc: "466",
                                 Mnc: "92",
                             },
-                            Tac: "33457",
+                            Tac: "33458",
                         },
                         SupportedSnssaiList: []Snssai {
                             {
@@ -132,10 +142,24 @@ func TestSubscriptionPost(t *testing.T) {
                             },
                             {
                                 Sst: 1,
-                                Sd: "2",
+                                Sd: "3",
                             },
                             {
                                 Sst: 2,
+                            },
+                        },
+                        RestrictedSnssaiList: []RestrictedSnssai {
+                            {
+                                HomePlmnId: &PlmnId {
+                                    Mcc: "310",
+                                    Mnc: "560",
+                                },
+                                SNssaiList: []Snssai {
+                                    {
+                                        Sst: 1,
+                                        Sd: "3",
+                                    },
+                                },
                             },
                         },
                     },
@@ -164,6 +188,47 @@ func TestSubscriptionPost(t *testing.T) {
                     e, _ := json.Marshal(*subtest.expectSubscriptionCreatedData)
                     r, _ := json.Marshal(c)
                     t.Errorf("Incorrect NSSF event subscription created data:\nexpected\n%s\n, got\n%s", string(e), string(r))
+                }
+            } else {
+                if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {
+                    e, _ := json.Marshal(*subtest.expectProblemDetails)
+                    r, _ := json.Marshal(d)
+                    t.Errorf("Incorrect problem details:\nexpected\n%s\n, got\n%s", string(e), string(r))
+                }
+            }
+        })
+    }
+}
+
+func TestSubscriptionDelete(t *testing.T) {
+    factory.InitConfigFactory(testingSubscription.ConfigFile)
+    if testingSubscription.MuteLogInd == true {
+        flog.Nsselection.MuteLog()
+    }
+
+    subtests := []struct {
+        name string
+        expectStatus int
+        expectProblemDetails *ProblemDetails
+    }{
+        {
+            name: "Unsubscribe",
+            expectStatus: http.StatusNoContent,
+        },
+    }
+
+    for _, subtest := range subtests {
+        t.Run(subtest.name, func(t *testing.T) {
+            var (
+                status int
+                d ProblemDetails
+            )
+
+            status = subscriptionDelete(testingSubscription.SubscriptionId, &d)
+
+            if status == http.StatusNoContent {
+                if checkSubscriptionExist(testingSubscription.SubscriptionId) == true {
+                    t.Errorf("Subscription ID '%s' in configuration should be deleted, but still exists", testingSubscription.SubscriptionId)
                 }
             } else {
                 if reflect.DeepEqual(d, *subtest.expectProblemDetails) == false {

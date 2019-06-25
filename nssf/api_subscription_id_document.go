@@ -10,11 +10,43 @@
 package nssf
 
 import (
+    "encoding/json"
 	"net/http"
+    "strings"
+
+    flog "../flog"
+    . "../model"
 )
 
 // NSSAIAvailabilityUnsubscribe - Deletes an already existing NSSAI availability notification subscription
 func NSSAIAvailabilityUnsubscribe(w http.ResponseWriter, r *http.Request) {
+
+    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityDelete")
+
+    var (
+        subscriptionId string
+        status int
+        d ProblemDetails
+    )
+
+    // Parse subscriptionId from URL path
+    s := strings.Split(r.URL.Path, "/")
+    subscriptionId = s[len(s) - 1]
+
+    status = subscriptionDelete(subscriptionId, &d)
+
+    // Set response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+
+	w.WriteHeader(status)
+    switch status {
+    case http.StatusNoContent:
+        flog.Nssaiavailability.Infof("Response code 204 No Content")
+    case http.StatusNotFound:
+        json.NewEncoder(w).Encode(&d)
+        flog.Nssaiavailability.Infof(d.Detail)
+        flog.Nssaiavailability.Infof("Response code 404 Not Found")
+    default:
+        flog.Nssaiavailability.Warnf("Unknown reponse code")
+    }
 }

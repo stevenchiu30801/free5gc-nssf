@@ -19,6 +19,7 @@ import (
 )
 
 // Get available subscription ID from configuration
+// In this implementation, string converted from 32-bit integer is used as subscription ID
 func getUnusedSubscriptionId() (string, error) {
     var idx uint32 = 1
     for _, subscription := range factory.NssfConfig.Subscriptions {
@@ -66,5 +67,28 @@ func subscriptionPost(n NssfEventSubscriptionCreateData, c *NssfEventSubscriptio
     c.AuthorizedNssaiAvailabilityData = authorizeOfTaListFromConfig(subscription.SubscriptionData.TaiList)
 
     status = http.StatusCreated
+    return
+}
+
+func subscriptionDelete(subscriptionId string, d *ProblemDetails) (status int) {
+    for i, subscription := range factory.NssfConfig.Subscriptions {
+        if subscription.SubscriptionId == subscriptionId {
+            factory.NssfConfig.Subscriptions = append(factory.NssfConfig.Subscriptions[:i],
+                                                      factory.NssfConfig.Subscriptions[i + 1:]...)
+
+            status = http.StatusNoContent
+            return
+        }
+    }
+
+    // No specific subscription ID exists
+    problemDetail := fmt.Sprintf("Subscription ID '%s' is not available", subscriptionId)
+    *d = ProblemDetails {
+        Title: UNSUPPORTED_RESOURCE,
+        Status: http.StatusNotFound,
+        Detail: problemDetail,
+    }
+
+    status = http.StatusNotFound
     return
 }
