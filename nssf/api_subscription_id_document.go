@@ -21,7 +21,7 @@ import (
 // NSSAIAvailabilityUnsubscribe - Deletes an already existing NSSAI availability notification subscription
 func NSSAIAvailabilityUnsubscribe(w http.ResponseWriter, r *http.Request) {
 
-    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityDelete")
+    flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityUnsubscribe")
 
     var (
         subscriptionId string
