@@ -37,10 +37,10 @@ func checkSubscriptionExist(subscriptionId string) bool {
     return false
 }
 
-func generatePostRequest() NssfEventSubscriptionCreateData {
+func generateSubscriptionRequest() NssfEventSubscriptionCreateData {
     const jsonRequest = `
         {
-            "nfNssaiAvailabilityUri": "free5gc-amf2.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify",
+            "nfNssaiAvailabilityUri": "http://free5gc-amf2.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify",
             "taiList": [
                 {
                     "plmnId": {
@@ -81,7 +81,7 @@ func TestSubscriptionTemplate(t *testing.T) {
 func TestSubscriptionPost(t *testing.T) {
     factory.InitConfigFactory(testingSubscription.ConfigFile)
     if testingSubscription.MuteLogInd == true {
-        flog.Nsselection.MuteLog()
+        flog.Nssaiavailability.MuteLog()
     }
 
     subtests := []struct {
@@ -93,7 +93,7 @@ func TestSubscriptionPost(t *testing.T) {
     }{
         {
             name: "Subscribe",
-            generateRequestBody: generatePostRequest,
+            generateRequestBody: generateSubscriptionRequest,
             expectStatus: http.StatusCreated,
             expectSubscriptionCreatedData: &NssfEventSubscriptionCreatedData {
                 SubscriptionId: "2",
@@ -203,7 +203,7 @@ func TestSubscriptionPost(t *testing.T) {
 func TestSubscriptionDelete(t *testing.T) {
     factory.InitConfigFactory(testingSubscription.ConfigFile)
     if testingSubscription.MuteLogInd == true {
-        flog.Nsselection.MuteLog()
+        flog.Nssaiavailability.MuteLog()
     }
 
     subtests := []struct {

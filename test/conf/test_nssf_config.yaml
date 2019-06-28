@@ -308,7 +308,7 @@ configuration:
 subscriptions:
     - subscriptionId: "1"
       subscriptionData:
-        nfNssaiAvailabilityUri: "free5gc-amf1.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf1.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"
@@ -321,7 +321,7 @@ subscriptions:
         event: "SNSSAI_STATUS_CHANGE_REPORT"
     - subscriptionId: "3"
       subscriptionData:
-        nfNssaiAvailabilityUri: "free5gc-amf3.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf3.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"
@@ -335,7 +335,7 @@ subscriptions:
         expiry: "2020-06-24T16:35:31+08:00"
     - subscriptionId: "4"
       subscriptionData:
-        nfNssaiAvailabilityUri: "free5gc-amf4.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf4.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"

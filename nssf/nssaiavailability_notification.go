@@ -22,7 +22,7 @@ func notificationPost(url string, n NssfEventNotification) error {
 
     r, err := http.Post(url, "application/json; charset=UTF-8", bytes.NewReader(e))
     if err != nil {
-        return nil
+        return err
     }
 
     flog.Nssaiavailability.Infof("Request sent - NotificationPost")

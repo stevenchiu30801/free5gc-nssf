@@ -37,6 +37,8 @@ type TestingNssaiavailability struct {
     NfId string
 
     SubscriptionId string
+
+    NfNssaiAvailabilityUri string
 }
 
 func init() {

@@ -145,7 +145,7 @@ func generatePatchTestRequest() PatchDocument {
     return p
 }
 
-func generatePutRequestBody() NssaiAvailabilityInfo {
+func generatePutRequest() NssaiAvailabilityInfo {
     const jsonRequest = `
         {
             "supportedNssaiAvailabilityData": [
@@ -217,7 +217,7 @@ func TestNssaiavailabilityTemplate(t *testing.T) {
 func TestNssaiavailabilityDelete(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
-        flog.Nsselection.MuteLog()
+        flog.Nssaiavailability.MuteLog()
     }
 
     subtests := []struct {
@@ -258,7 +258,7 @@ func TestNssaiavailabilityDelete(t *testing.T) {
 func TestNssaiavailabilityPatch(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
-        flog.Nsselection.MuteLog()
+        flog.Nssaiavailability.MuteLog()
     }
 
     subtests := []struct {
@@ -624,7 +624,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
 func TestNssaiavailabilityPut(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
-        flog.Nsselection.MuteLog()
+        flog.Nssaiavailability.MuteLog()
     }
 
     subtests := []struct {
@@ -636,7 +636,7 @@ func TestNssaiavailabilityPut(t *testing.T) {
     }{
         {
             name: "Create and Replace",
-            generateRequestBody: generatePutRequestBody,
+            generateRequestBody: generatePutRequest,
             expectStatus: http.StatusOK,
             expectAuthorizedNssaiAvailabilityInfo: &AuthorizedNssaiAvailabilityInfo {
                 AuthorizedNssaiAvailabilityData: []AuthorizedNssaiAvailabilityData {
