@@ -12,7 +12,8 @@ package nssf
 import (
     "encoding/json"
 	"net/http"
-    "strings"
+
+    "github.com/gorilla/mux"
 
     flog "../flog"
     . "../model"
@@ -30,8 +31,8 @@ func NSSAIAvailabilityUnsubscribe(w http.ResponseWriter, r *http.Request) {
     )
 
     // Parse subscriptionId from URL path
-    s := strings.Split(r.URL.Path, "/")
-    subscriptionId = s[len(s) - 1]
+    vars := mux.Vars(r)
+    subscriptionId = vars["subscriptionId"]
 
     status = subscriptionDelete(subscriptionId, &d)
 

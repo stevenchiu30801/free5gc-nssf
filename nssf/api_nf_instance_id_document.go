@@ -14,6 +14,8 @@ import (
 	"net/http"
     "strings"
 
+    "github.com/gorilla/mux"
+
     flog "../flog"
     . "../model"
 )
@@ -30,8 +32,8 @@ func NSSAIAvailabilityDelete(w http.ResponseWriter, r *http.Request) {
     )
 
     // Parse nfId from URL path
-    s := strings.Split(r.URL.Path, "/")
-    nfId = s[len(s) - 1]
+    vars := mux.Vars(r)
+    nfId = vars["nfId"]
 
     status = nssaiavailabilityDelete(nfId, &d)
 
@@ -66,8 +68,8 @@ func NSSAIAvailabilityPatch(w http.ResponseWriter, r *http.Request) {
     )
 
     // Parse nfId from URL path
-    s := strings.Split(r.URL.Path, "/")
-    nfId = s[len(s) - 1]
+    vars := mux.Vars(r)
+    nfId = vars["nfId"]
 
     // Parse request body
     err := json.NewDecoder(r.Body).Decode(&p)
@@ -156,9 +158,8 @@ func NSSAIAvailabilityPut(w http.ResponseWriter, r *http.Request) {
     )
 
     // Parse nfId from URL path
-    s := strings.Split(r.URL.Path, "/")
-    nfId = s[len(s) - 1]
-    // flog.Nssaiavailability.Infof(nfId)
+    vars := mux.Vars(r)
+    nfId = vars["nfId"]
 
     // Parse request body
     err := json.NewDecoder(r.Body).Decode(&n)
