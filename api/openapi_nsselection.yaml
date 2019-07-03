@@ -1,0 +1,536 @@
+openapi: 3.0.0
+info:
+  description: NSSF Network Slice Selection Service
+  title: NSSF NS Selection
+  version: 1.0.0
+externalDocs:
+  description: 3GPP TS 29.531 V15.2.0; 5G System; Network Slice Selection Services; Stage 3
+  url: http://www.3gpp.org/ftp/Specs/archive/29_series/29.531/
+servers:
+- url: '{apiRoot}/nnssf-nsselection/v1'
+  variables:
+    apiRoot:
+      default: https://example.com
+      description: apiRoot as defined in subclause 4.4 of 3GPP TS 29.501
+security:
+- {}
+- oAuth2Clientcredentials:
+  - nnssf-nsselection
+paths:
+  /network-slice-information:
+    get:
+      operationId: NSSelectionGet
+      parameters:
+      - description: NF type of the NF service consumer
+        explode: true
+        in: query
+        name: nf-type
+        required: true
+        schema:
+          $ref: '#/components/schemas/NFType'
+        style: form
+      - description: NF Instance ID of the NF service consumer
+        explode: true
+        in: query
+        name: nf-id
+        required: true
+        schema:
+          $ref: '#/components/schemas/NfInstanceId'
+        style: form
+      - description: Requested network slice information during Registration procedure
+        explode: true
+        in: query
+        name: slice-info-request-for-registration
+        required: false
+        schema:
+          $ref: '#/components/schemas/SliceInfoForRegistration'
+        style: form
+      - description: Requested network slice information during PDU session establishment procedure
+        explode: true
+        in: query
+        name: slice-info-request-for-pdu-session
+        required: false
+        schema:
+          $ref: '#/components/schemas/SliceInfoForPDUSession'
+        style: form
+      - description: PLMN ID of the HPLMN
+        explode: true
+        in: query
+        name: home-plmn-id
+        required: false
+        schema:
+          $ref: ./TS29571_CommonData.yaml#/components/schemas/PlmnId
+        style: form
+      - description: TAI of the UE
+        explode: true
+        in: query
+        name: tai
+        required: false
+        schema:
+          $ref: ./TS29571_CommonData.yaml#/components/schemas/Tai
+        style: form
+      - description: Features required to be supported by the NFs in the target slice instance
+        explode: true
+        in: query
+        name: supported-features
+        required: false
+        schema:
+          $ref: '#/components/schemas/SupportedFeatures'
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizedNetworkSliceInfo'
+          description: OK (Successful Network Slice Selection)
+        400:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Bad request
+        401:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Unauthorized
+        403:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Forbidden
+        404:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Not Found
+        406:
+          description: 406 Not Acceptable
+        414:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: URI Too Long
+        429:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Too Many Requests
+        500:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Internal Server Error
+        503:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Service Unavailable
+        default:
+          description: Unexpected error
+      summary: Retrieve the Network Slice Selection Information
+      tags:
+      - Network Slice Information (Document)
+components:
+  schemas:
+    AuthorizedNetworkSliceInfo:
+      example:
+        configuredNssai:
+        - mappedHomeSnssai:
+            sd: sd
+            sst: 20
+          configuredSnssai:
+            sd: sd
+            sst: 20
+        - mappedHomeSnssai:
+            sd: sd
+            sst: 20
+          configuredSnssai:
+            sd: sd
+            sst: 20
+        supportedFeatures: supportedFeatures
+        rejectedNssaiInTa:
+        - sd: sd
+          sst: 20
+        - sd: sd
+          sst: 20
+        allowedNssaiList:
+        - allowedSnssaiList:
+          - mappedHomeSnssai:
+              sd: sd
+              sst: 20
+            allowedSnssai:
+              sd: sd
+              sst: 20
+            nsiInformationList:
+            - nsiId: nsiId
+              nrfId: nrfId
+            - nsiId: nsiId
+              nrfId: nrfId
+          - mappedHomeSnssai:
+              sd: sd
+              sst: 20
+            allowedSnssai:
+              sd: sd
+              sst: 20
+            nsiInformationList:
+            - nsiId: nsiId
+              nrfId: nrfId
+            - nsiId: nsiId
+              nrfId: nrfId
+        - allowedSnssaiList:
+          - mappedHomeSnssai:
+              sd: sd
+              sst: 20
+            allowedSnssai:
+              sd: sd
+              sst: 20
+            nsiInformationList:
+            - nsiId: nsiId
+              nrfId: nrfId
+            - nsiId: nsiId
+              nrfId: nrfId
+          - mappedHomeSnssai:
+              sd: sd
+              sst: 20
+            allowedSnssai:
+              sd: sd
+              sst: 20
+            nsiInformationList:
+            - nsiId: nsiId
+              nrfId: nrfId
+            - nsiId: nsiId
+              nrfId: nrfId
+        candidateAmfList:
+        - null
+        - null
+        nrfAmfSet: nrfAmfSet
+        rejectedNssaiInPlmn:
+        - sd: sd
+          sst: 20
+        - sd: sd
+          sst: 20
+        nsiInformation:
+          nsiId: nsiId
+          nrfId: nrfId
+        targetAmfSet: targetAmfSet
+      properties:
+        allowedNssaiList:
+          items:
+            $ref: '#/components/schemas/AllowedNssai'
+          minItems: 1
+          type: array
+        configuredNssai:
+          items:
+            $ref: '#/components/schemas/ConfiguredSnssai'
+          minItems: 1
+          type: array
+        targetAmfSet:
+          type: string
+        candidateAmfList:
+          items:
+            $ref: '#/components/schemas/NfInstanceId'
+          minItems: 1
+          type: array
+        rejectedNssaiInPlmn:
+          items:
+            $ref: '#/components/schemas/Snssai'
+          minItems: 1
+          type: array
+        rejectedNssaiInTa:
+          items:
+            $ref: '#/components/schemas/Snssai'
+          minItems: 1
+          type: array
+        nsiInformation:
+          $ref: '#/components/schemas/NsiInformation'
+        supportedFeatures:
+          pattern: ^[A-Fa-f0-9]*$
+          type: string
+        nrfAmfSet:
+          type: string
+      type: object
+    SubscribedSnssai:
+      properties:
+        subscribedSnssai:
+          $ref: '#/components/schemas/Snssai'
+        defaultIndication:
+          type: boolean
+      required:
+      - subscribedSnssai
+      type: object
+    AllowedSnssai:
+      example:
+        mappedHomeSnssai:
+          sd: sd
+          sst: 20
+        allowedSnssai:
+          sd: sd
+          sst: 20
+        nsiInformationList:
+        - nsiId: nsiId
+          nrfId: nrfId
+        - nsiId: nsiId
+          nrfId: nrfId
+      properties:
+        allowedSnssai:
+          $ref: '#/components/schemas/Snssai'
+        nsiInformationList:
+          items:
+            $ref: '#/components/schemas/NsiInformation'
+          minItems: 1
+          type: array
+        mappedHomeSnssai:
+          $ref: '#/components/schemas/Snssai'
+      required:
+      - allowedSnssai
+      type: object
+    AllowedNssai:
+      example:
+        allowedSnssaiList:
+        - mappedHomeSnssai:
+            sd: sd
+            sst: 20
+          allowedSnssai:
+            sd: sd
+            sst: 20
+          nsiInformationList:
+          - nsiId: nsiId
+            nrfId: nrfId
+          - nsiId: nsiId
+            nrfId: nrfId
+        - mappedHomeSnssai:
+            sd: sd
+            sst: 20
+          allowedSnssai:
+            sd: sd
+            sst: 20
+          nsiInformationList:
+          - nsiId: nsiId
+            nrfId: nrfId
+          - nsiId: nsiId
+            nrfId: nrfId
+      properties:
+        allowedSnssaiList:
+          items:
+            $ref: '#/components/schemas/AllowedSnssai'
+          minItems: 1
+          type: array
+        accessType:
+          $ref: '#/components/schemas/AccessType'
+      required:
+      - accessType
+      - allowedSnssaiList
+      type: object
+    NsiInformation:
+      example:
+        nsiId: nsiId
+        nrfId: nrfId
+      properties:
+        nrfId:
+          type: string
+        nsiId:
+          type: string
+      required:
+      - nrfId
+      type: object
+    MappingOfSnssai:
+      properties:
+        servingSnssai:
+          $ref: '#/components/schemas/Snssai'
+        homeSnssai:
+          $ref: '#/components/schemas/Snssai'
+      required:
+      - homeSnssai
+      - servingSnssai
+      type: object
+    SliceInfoForRegistration:
+      properties:
+        subscribedNssai:
+          items:
+            $ref: '#/components/schemas/SubscribedSnssai'
+          minItems: 1
+          type: array
+        allowedNssaiCurrentAccess:
+          $ref: '#/components/schemas/AllowedNssai'
+        allowedNssaiOtherAccess:
+          $ref: '#/components/schemas/AllowedNssai'
+        sNssaiForMapping:
+          items:
+            $ref: '#/components/schemas/Snssai'
+          minItems: 1
+          type: array
+        requestedNssai:
+          items:
+            $ref: '#/components/schemas/Snssai'
+          minItems: 1
+          type: array
+        defaultConfiguredSnssaiInd:
+          type: boolean
+        mappingOfNssai:
+          items:
+            $ref: '#/components/schemas/MappingOfSnssai'
+          minItems: 1
+          type: array
+        requestMapping:
+          type: boolean
+      type: object
+    SliceInfoForPDUSession:
+      properties:
+        sNssai:
+          $ref: '#/components/schemas/Snssai'
+        roamingIndication:
+          $ref: '#/components/schemas/RoamingIndication'
+        homeSnssai:
+          $ref: '#/components/schemas/Snssai'
+      required:
+      - roamingIndication
+      - sNssai
+      type: object
+    ConfiguredSnssai:
+      example:
+        mappedHomeSnssai:
+          sd: sd
+          sst: 20
+        configuredSnssai:
+          sd: sd
+          sst: 20
+      properties:
+        configuredSnssai:
+          $ref: '#/components/schemas/Snssai'
+        mappedHomeSnssai:
+          $ref: '#/components/schemas/Snssai'
+      required:
+      - configuredSnssai
+      type: object
+    RoamingIndication:
+      enum:
+      - NON_ROAMING
+      - LOCAL_BREAKOUT
+      - HOME_ROUTED_ROAMING
+      type: string
+    NsiId:
+      type: string
+    NFType:
+      enum:
+      - NRF
+      - UDM
+      - AMF
+      - SMF
+      - AUSF
+      - NEF
+      - PCF
+      - SMSF
+      - NSSF
+      - UDR
+      - LMF
+      - GMLC
+      - 5G_EIR
+      - SEPP
+      - UPF
+      - N3IWF
+      - AF
+      - UDSF
+      - BSF
+      - CHF
+      - NWDAF
+      type: string
+    NfInstanceId:
+      format: uuid
+      type: string
+    SupportedFeatures:
+      pattern: ^[A-Fa-f0-9]*$
+      type: string
+    ProblemDetails:
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          format: int32
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+        cause:
+          type: string
+        invalidParams:
+          items:
+            $ref: '#/components/schemas/InvalidParam'
+          minItems: 1
+          type: array
+      type: object
+    Uri:
+      type: string
+    InvalidParam:
+      properties:
+        param:
+          type: string
+        reason:
+          type: string
+      required:
+      - param
+      type: object
+    Snssai:
+      example:
+        sd: sd
+        sst: 20
+      properties:
+        sst:
+          format: int32
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: ^[A-Fa-f0-9]{6}$
+          type: string
+      required:
+      - sst
+      type: object
+    AccessType:
+      enum:
+      - 3GPP_ACCESS
+      - NON_3GPP_ACCESS
+      type: string
+    nullnftype:
+      enum:
+      - NRF
+      - UDM
+      - AMF
+      - SMF
+      - AUSF
+      - NEF
+      - PCF
+      - SMSF
+      - NSSF
+      - UDR
+      - LMF
+      - GMLC
+      - 5G_EIR
+      - SEPP
+      - UPF
+      - N3IWF
+      - AF
+      - UDSF
+      - BSF
+      - CHF
+      - NWDAF
+      type: string
+  securitySchemes:
+    oAuth2ClientCredentials:
+      flows:
+        clientCredentials:
+          scopes:
+            nnssf-nsselection: Access to the Nnssf_NSSelection API
+          tokenUrl: '{nrfApiRoot}/oauth2/token'
+      type: oauth2
