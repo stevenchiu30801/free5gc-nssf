@@ -17,11 +17,11 @@ type NssfEventType string
 
 // List of NssfEventType
 const (
-	SNSSAI_STATUS_CHANGE_REPORTNssfEventType NssfEventType = "SNSSAI_STATUS_CHANGE_REPORT"
+	NssfEventType_SNSSAI_STATUS_CHANGE_REPORT NssfEventType = "SNSSAI_STATUS_CHANGE_REPORT"
 )
 
 func (n *NssfEventType) CheckIntegrity() error {
-    if *n != SNSSAI_STATUS_CHANGE_REPORTNssfEventType {
+    if *n != NssfEventType_SNSSAI_STATUS_CHANGE_REPORT {
         return fmt.Errorf("'%s' is unrecognized", string(*n))
     }
 

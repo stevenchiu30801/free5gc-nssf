@@ -17,12 +17,12 @@ type AccessType string
 
 // List of AccessType
 const (
-	IS_3_GPP_ACCESS AccessType = "3GPP_ACCESS"
-	NON_3_GPP_ACCESS AccessType = "NON_3GPP_ACCESS"
+	AccessType__3_GPP_ACCESS AccessType = "3GPP_ACCESS"
+	AccessType_NON_3_GPP_ACCESS AccessType = "NON_3GPP_ACCESS"
 )
 
 func (a *AccessType) CheckIntegrity() error {
-    if *a != IS_3_GPP_ACCESS && *a != NON_3_GPP_ACCESS {
+    if *a != AccessType__3_GPP_ACCESS && *a != AccessType_NON_3_GPP_ACCESS {
         return fmt.Errorf("'%s' is unrecognized", string(*a))
     }
 

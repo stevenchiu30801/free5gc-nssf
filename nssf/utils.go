@@ -225,7 +225,7 @@ func getAccessTypeFromConfig(tai Tai) AccessType {
     }
     e, _ := json.Marshal(tai)
     flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
-    return IS_3_GPP_ACCESS
+    return AccessType__3_GPP_ACCESS
 }
 
 // Get restricted S-NSSAI list of the given TAI from configuration

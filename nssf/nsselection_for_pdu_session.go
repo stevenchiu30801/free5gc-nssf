@@ -64,7 +64,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
     }
 
     if p.HomePlmnId != nil {
-        if *p.SliceInfoRequestForPduSession.RoamingIndication == NON_ROAMING {
+        if *p.SliceInfoRequestForPduSession.RoamingIndication == RoamingIndication_NON_ROAMING {
             problemDetail := "`home-plmn-id` is provided, which contradicts `roamingIndication`:'NON_ROAMING'"
             *d = ProblemDetails {
                 Title: INVALID_REQUEST,
@@ -82,7 +82,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
             return
         }
     } else {
-        if *p.SliceInfoRequestForPduSession.RoamingIndication != NON_ROAMING {
+        if *p.SliceInfoRequestForPduSession.RoamingIndication != RoamingIndication_NON_ROAMING {
             problemDetail := fmt.Sprintf("`home-plmn-id` is not provided, which contradicts `roamingIndication`:'%s'",
                                          string(*p.SliceInfoRequestForPduSession.RoamingIndication))
             *d = ProblemDetails {

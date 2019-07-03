@@ -40,11 +40,11 @@ func (p *PatchItem) CheckIntegrity() error {
         return fmt.Errorf("`path` should not be empty")
     }
 
-    if (*p.Op == MOVEPatchOperation || *p.Op == COPYPatchOperation) && p.From == "" {
+    if (*p.Op == PatchOperation_MOVE || *p.Op == PatchOperation_COPY) && p.From == "" {
         return fmt.Errorf("`from` should not be empty with `op`:'%s' operation", string(*p.Op))
     }
 
-    if (*p.Op == ADDPatchOperation || *p.Op == REPLACEPatchOperation || *p.Op == TESTPatchOperation) &&
+    if (*p.Op == PatchOperation_ADD || *p.Op == PatchOperation_REPLACE || *p.Op == PatchOperation_TEST) &&
         (p.Value == nil || reflect.DeepEqual(p.Value, reflect.Zero(reflect.TypeOf(p.Value)).Interface())) {
         return fmt.Errorf("`value` should not be empty with `op`:'%s' operation", string(*p.Op))
     }

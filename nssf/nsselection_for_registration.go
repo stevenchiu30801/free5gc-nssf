@@ -67,7 +67,7 @@ func useDefaultSubscribedSnssai(p NsselectionQueryParameter, a *AuthorizedNetwor
             // Default Access Type is set to 3GPP Access if no TAI is provided
             // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
             //       UE's Access Type could not be identified
-            var accessType AccessType = IS_3_GPP_ACCESS
+            var accessType AccessType = AccessType__3_GPP_ACCESS
             if p.Tai != nil {
                 accessType = getAccessTypeFromConfig(*p.Tai)
             }
@@ -226,7 +226,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                     // Default Access Type is set to 3GPP Access if no TAI is provided
                     // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
                     //       UE's Access Type could not be identified
-                    var accessType AccessType = IS_3_GPP_ACCESS
+                    var accessType AccessType = AccessType__3_GPP_ACCESS
                     if p.Tai != nil {
                         accessType = getAccessTypeFromConfig(*p.Tai)
                     }
@@ -259,7 +259,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                     // Default Access Type is set to 3GPP Access if no TAI is provided
                     // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
                     //       UE's Access Type could not be identified
-                    var accessType AccessType = IS_3_GPP_ACCESS
+                    var accessType AccessType = AccessType__3_GPP_ACCESS
                     if p.Tai != nil {
                         accessType = getAccessTypeFromConfig(*p.Tai)
                     }
@@ -356,7 +356,7 @@ func nsselectionForRegistration(p NsselectionQueryParameter,
                     // Default Access Type is set to 3GPP Access if no TAI is provided
                     // TODO: Depend on operator implementation, it may also return S-NSSAIs in all valid Access Type if
                     //       UE's Access Type could not be identified
-                    var accessType AccessType = IS_3_GPP_ACCESS
+                    var accessType AccessType = AccessType__3_GPP_ACCESS
                     if p.Tai != nil {
                         accessType = getAccessTypeFromConfig(*p.Tai)
                     }

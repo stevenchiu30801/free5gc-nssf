@@ -17,33 +17,35 @@ type NfType string
 
 // List of NFType
 const (
-	NRF NfType = "NRF"
-	UDM NfType = "UDM"
-	AMF NfType = "AMF"
-	SMF NfType = "SMF"
-	AUSF NfType = "AUSF"
-	NEF NfType = "NEF"
-	PCF NfType = "PCF"
-	SMSF NfType = "SMSF"
-	NSSF NfType = "NSSF"
-	UDR NfType = "UDR"
-	LMF NfType = "LMF"
-	GMLC NfType = "GMLC"
-	_5_G_EIR NfType = "5G_EIR"
-	SEPP NfType = "SEPP"
-	UPF NfType = "UPF"
-	N3_IWF NfType = "N3IWF"
-	AF NfType = "AF"
-	UDSF NfType = "UDSF"
-	BSF NfType = "BSF"
-	CHF NfType = "CHF"
-	NWDAF NfType = "NWDAF"
+        NfType_NRF NfType = "NRF"
+        NfType_UDM NfType = "UDM"
+        NfType_AMF NfType = "AMF"
+        NfType_SMF NfType = "SMF"
+        NfType_AUSF NfType = "AUSF"
+        NfType_NEF NfType = "NEF"
+        NfType_PCF NfType = "PCF"
+        NfType_SMSF NfType = "SMSF"
+        NfType_NSSF NfType = "NSSF"
+        NfType_UDR NfType = "UDR"
+        NfType_LMF NfType = "LMF"
+        NfType_GMLC NfType = "GMLC"
+        NfType__5_G_EIR NfType = "5G_EIR"
+        NfType_SEPP NfType = "SEPP"
+        NfType_UPF NfType = "UPF"
+        NfType_N3_IWF NfType = "N3IWF"
+        NfType_AF NfType = "AF"
+        NfType_UDSF NfType = "UDSF"
+        NfType_BSF NfType = "BSF"
+        NfType_CHF NfType = "CHF"
+        NfType_NWDAF NfType = "NWDAF"
 )
 
 func (n NfType) CheckIntegrity() error {
-    if n != NRF && n != UDM && n != AMF && n != SMF && n != AUSF && n != NEF && n != PCF && n != SMSF && n != NSSF &&
-       n != UDR && n != LMF && n != GMLC && n != _5_G_EIR && n != SEPP && n != UPF && n != N3_IWF && n != AF &&
-       n != UDSF && n != BSF && n != CHF && n != NWDAF {
+    if n != NfType_NRF && n != NfType_UDM && n != NfType_AMF && n != NfType_SMF && n != NfType_AUSF &&
+       n != NfType_NEF && n != NfType_PCF && n != NfType_SMSF && n != NfType_NSSF && n != NfType_UDR &&
+       n != NfType_LMF && n != NfType_GMLC && n != NfType__5_G_EIR && n != NfType_SEPP && n != NfType_UPF &&
+       n != NfType_N3_IWF && n != NfType_AF && n != NfType_UDSF && n != NfType_BSF && n != NfType_CHF &&
+       n != NfType_NWDAF {
         return fmt.Errorf("'%s' is unrecognized", string(n))
     }
 

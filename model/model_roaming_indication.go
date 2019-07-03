@@ -17,13 +17,13 @@ type RoamingIndication string
 
 // List of RoamingIndication
 const (
-	NON_ROAMING RoamingIndication = "NON_ROAMING"
-	LOCAL_BREAKOUT RoamingIndication = "LOCAL_BREAKOUT"
-	HOME_ROUTED_ROAMING RoamingIndication = "HOME_ROUTED_ROAMING"
+	RoamingIndication_NON_ROAMING RoamingIndication = "NON_ROAMING"
+	RoamingIndication_LOCAL_BREAKOUT RoamingIndication = "LOCAL_BREAKOUT"
+	RoamingIndication_HOME_ROUTED_ROAMING RoamingIndication = "HOME_ROUTED_ROAMING"
 )
 
 func (r *RoamingIndication) CheckIntegrity() error {
-    if *r != NON_ROAMING && *r != LOCAL_BREAKOUT && *r != HOME_ROUTED_ROAMING {
+    if *r != RoamingIndication_NON_ROAMING && *r != RoamingIndication_LOCAL_BREAKOUT && *r != RoamingIndication_HOME_ROUTED_ROAMING {
         return fmt.Errorf("'%s' is unrecognized", string(*r))
     }
 

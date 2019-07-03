@@ -17,17 +17,17 @@ type PatchOperation string
 
 // List of PatchOperation
 const (
-	ADDPatchOperation PatchOperation = "add"
-	COPYPatchOperation PatchOperation = "copy"
-	MOVEPatchOperation PatchOperation = "move"
-	REMOVEPatchOperation PatchOperation = "remove"
-	REPLACEPatchOperation PatchOperation = "replace"
-	TESTPatchOperation PatchOperation = "test"
+    PatchOperation_ADD PatchOperation = "add"
+    PatchOperation_COPY PatchOperation = "copy"
+    PatchOperation_MOVE PatchOperation = "move"
+    PatchOperation_REMOVE PatchOperation = "remove"
+    PatchOperation_REPLACE PatchOperation = "replace"
+    PatchOperation_TEST PatchOperation = "test"
 )
 
 func (p *PatchOperation) CheckIntegrity() error {
-    if *p != ADDPatchOperation && *p != COPYPatchOperation && *p != MOVEPatchOperation && *p != REMOVEPatchOperation &&
-       *p != REPLACEPatchOperation && *p != TESTPatchOperation {
+    if *p != PatchOperation_ADD && *p != PatchOperation_COPY && *p != PatchOperation_MOVE &&
+       *p != PatchOperation_REMOVE && *p != PatchOperation_REPLACE && *p != PatchOperation_TEST {
            return fmt.Errorf("'%s' is unrecognized", string(*p))
     }
 
