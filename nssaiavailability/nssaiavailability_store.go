@@ -4,7 +4,7 @@
  * NSSF NSSAI Availability Service
  */
 
-package nssf
+package nssaiavailability
 
 import (
     "bytes"
@@ -15,9 +15,10 @@ import (
 
     jsonpatch "github.com/evanphx/json-patch"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
+    "../util"
 )
 
 // NSSAIAvailability DELETE method
@@ -35,7 +36,7 @@ func nssaiavailabilityDelete(nfId string, d *ProblemDetails) (status int) {
 
     problemDetail := fmt.Sprintf("AMF ID '%s' does not exist", nfId)
     *d = ProblemDetails {
-        Title: UNSUPPORTED_RESOURCE,
+        Title: util.UNSUPPORTED_RESOURCE,
         Status: http.StatusNotFound,
         Detail: problemDetail,
     }
@@ -77,7 +78,7 @@ func nssaiavailabilityPatch(nfId string,
     if hitAmf == false {
         problemDetail := fmt.Sprintf("AMF ID '%s' does not exist", nfId)
         *d = ProblemDetails {
-            Title: UNSUPPORTED_RESOURCE,
+            Title: util.UNSUPPORTED_RESOURCE,
             Status: http.StatusNotFound,
             Detail: problemDetail,
         }
@@ -103,7 +104,7 @@ func nssaiavailabilityPatch(nfId string,
     patch, err := jsonpatch.DecodePatch(patchJson)
     if err != nil {
         *d = ProblemDetails {
-            Title: MALFORMED_REQUEST,
+            Title: util.MALFORMED_REQUEST,
             Status: http.StatusBadRequest,
             Detail: err.Error(),
         }
@@ -115,7 +116,7 @@ func nssaiavailabilityPatch(nfId string,
     modified, err := patch.Apply(original)
     if err != nil {
         *d = ProblemDetails {
-            Title: INVALID_REQUEST,
+            Title: util.INVALID_REQUEST,
             Status: http.StatusConflict,
             Detail: err.Error(),
         }
@@ -127,7 +128,7 @@ func nssaiavailabilityPatch(nfId string,
     err = json.Unmarshal(modified, &factory.NssfConfig.Configuration.AmfList[amfIdx].SupportedNssaiAvailabilityData)
     if err != nil {
         *d = ProblemDetails {
-            Title: INVALID_REQUEST,
+            Title: util.INVALID_REQUEST,
             Status: http.StatusBadRequest,
             Detail: err.Error(),
         }
@@ -137,7 +138,7 @@ func nssaiavailabilityPatch(nfId string,
     }
 
     // Return all authorized NSSAI availability information
-    a.AuthorizedNssaiAvailabilityData, _ = authorizeOfAmfFromConfig(nfId)
+    a.AuthorizedNssaiAvailabilityData, _ = util.AuthorizeOfAmfFromConfig(nfId)
 
     // TODO: Return authorized NSSAI availability information of updated TAI only
 
@@ -150,9 +151,9 @@ func nssaiavailabilityPut(nfId string,
                           a *AuthorizedNssaiAvailabilityInfo,
                           d *ProblemDetails) (status int) {
     for _, s := range n.SupportedNssaiAvailabilityData {
-        if checkSupportedNssaiInPlmn(s.SupportedSnssaiList, *s.Tai.PlmnId) == false {
+        if util.CheckSupportedNssaiInPlmn(s.SupportedSnssaiList, *s.Tai.PlmnId) == false {
             *d = ProblemDetails {
-                Title: UNSUPPORTED_RESOURCE,
+                Title: util.UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
                 Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
                 Cause: "SNSSAI_NOT_SUPPORTED",
@@ -192,7 +193,7 @@ func nssaiavailabilityPut(nfId string,
 
     // Return authorized NSSAI availability information of updated TAI only
     for _, s := range n.SupportedNssaiAvailabilityData {
-        authorizedNssaiAvailabilityData, err := authorizeOfAmfTaFromConfig(nfId, *s.Tai)
+        authorizedNssaiAvailabilityData, err := util.AuthorizeOfAmfTaFromConfig(nfId, *s.Tai)
         if err == nil {
             a.AuthorizedNssaiAvailabilityData = append(a.AuthorizedNssaiAvailabilityData, authorizedNssaiAvailabilityData)
         } else {

@@ -24,11 +24,11 @@ Note: The OpenAPI Generator we used is the modified version of 4.0.0.
 The whole free5GC project was written in [Go Programming language](https://github.com/golang/go). Please install Go first.
 
 Install Go package.
-- [gorilla/mux](https://github.com/gorilla/mux)
+- [gin-gonic/gin](https://github.com/gin-gonic/gin)
 - [evanphx/json-patch](https://github.com/evanphx/json-patch)
 - [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 ```
-$ go get -u github.com/gorilla/mux \
+$ go get -u github.com/gin-gonic/gin \
   go get -u github.com/evanphx/json-patch \
   go get -u gopkg.in/yaml.v2
 ```

@@ -4,7 +4,7 @@
  * NSSF Network Slice Selection Service
  */
 
-package nssf
+package nsselection
 
 import (
     "encoding/json"
@@ -15,10 +15,10 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
-    test "../test"
+    "../test"
 )
 
 var testingNsselectionForPduSession = test.TestingNsselection {

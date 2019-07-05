@@ -4,7 +4,7 @@
  * NSSF Network Slice Selection Service
  */
 
-package nssf
+package util
 
 import (
     "encoding/json"
@@ -13,8 +13,8 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
 )
 
@@ -301,7 +301,7 @@ func TestAddAmfInformation(t *testing.T) {
         t.Run(subtest.name, func(t *testing.T) {
             a := *subtest.authorizedNetworkSliceInfo
 
-            addAmfInformation(*subtest.tai, &a)
+            AddAmfInformation(*subtest.tai, &a)
 
             a.Sort()
             if reflect.DeepEqual(a, *subtest.expectAuthorizedNetworkSliceInfo) != true {

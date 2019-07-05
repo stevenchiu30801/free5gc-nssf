@@ -4,7 +4,7 @@
  * NSSF NSSAI Availability Service
  */
 
-package nssf
+package nssaiavailability
 
 import (
     "bytes"
@@ -12,7 +12,7 @@ import (
     "fmt"
     "net/http"
 
-    flog "../flog"
+    "../flog"
     . "../model"
 )
 

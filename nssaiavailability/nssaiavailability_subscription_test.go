@@ -4,7 +4,7 @@
  * NSSF NSSAI Availability Service
  */
 
-package nssf
+package nssaiavailability
 
 import (
     "encoding/json"
@@ -16,10 +16,10 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
-    test "../test"
+    "../test"
 )
 
 var testingSubscription = test.TestingNssaiavailability {

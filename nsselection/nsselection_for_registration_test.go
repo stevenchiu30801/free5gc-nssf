@@ -4,7 +4,7 @@
  * NSSF Network Slice Selection Service
  */
 
-package nssf
+package nsselection
 
 import (
     "encoding/json"
@@ -15,10 +15,11 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
-    test "../test"
+    "../test"
+    "../util"
 )
 
 var testingNsselectionForRegistration = test.TestingNsselection {
@@ -318,7 +319,7 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
             modifyQueryParameter: setUnsupportedSnssai,
             expectStatus: http.StatusForbidden,
             expectProblemDetails: &ProblemDetails {
-                Title: UNSUPPORTED_RESOURCE,
+                Title: util.UNSUPPORTED_RESOURCE,
                 Status: http.StatusForbidden,
                 Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
                 Cause: "SNSSAI_NOT_SUPPORTED",

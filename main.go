@@ -10,18 +10,24 @@
 package main
 
 import (
-    "net/http"
+    "github.com/gin-gonic/gin"
 
-    factory "./factory"
-    flog "./flog"
-    nssf "./nssf"
+    "./factory"
+    "./flog"
+    "./nsselection"
+    "./nssaiavailability"
 )
 
 func main() {
     factory.InitConfigFactory("./conf/nssf_config.yaml")
     flog.System.Infof("Server started")
 
-    router := nssf.NewRouter()
+    // Running in "release" mode instead of "debug" mode
+    gin.SetMode(gin.ReleaseMode)
+    router := gin.Default()
 
-    flog.System.Fatal(http.ListenAndServe(":8080", router))
+    nsselection.AddService(router)
+    nssaiavailability.AddService(router)
+
+    flog.System.Fatal(router.Run(":8080"))
 }

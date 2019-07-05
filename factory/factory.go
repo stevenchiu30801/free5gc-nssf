@@ -12,7 +12,7 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    flog "../flog"
+    "../flog"
 )
 
 var NssfConfig Config

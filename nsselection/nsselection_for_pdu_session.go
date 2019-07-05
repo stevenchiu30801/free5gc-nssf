@@ -4,7 +4,7 @@
  * NSSF Network Slice Selection Service
  */
 
-package nssf
+package nsselection
 
 import (
     "fmt"
@@ -12,6 +12,7 @@ import (
     "net/http"
 
     . "../model"
+    "../util"
 )
 
 func selectNsiInformation(nsiInformationList []NsiInformation) NsiInformation {
@@ -30,7 +31,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
                               d *ProblemDetails) (status int) {
     if p.HomePlmnId != nil {
         // Check whether UE's Home PLMN is supported when UE is a roamer
-        if checkSupportedHplmn(*p.HomePlmnId) == false {
+        if util.CheckSupportedHplmn(*p.HomePlmnId) == false {
             a.RejectedNssaiInPlmn = append(a.RejectedNssaiInPlmn, *p.SliceInfoRequestForPduSession.SNssai)
 
             status = http.StatusOK
@@ -40,7 +41,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
 
     if p.Tai != nil {
         // Check whether UE's current TA is supported when UE provides TAI
-        if checkSupportedTa(*p.Tai) == false {
+        if util.CheckSupportedTa(*p.Tai) == false {
             a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, *p.SliceInfoRequestForPduSession.SNssai)
 
             status = http.StatusOK
@@ -48,12 +49,12 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         }
     }
 
-    if p.Tai != nil && checkSupportedSnssaiInPlmn(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai.PlmnId) == false {
+    if p.Tai != nil && util.CheckSupportedSnssaiInPlmn(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai.PlmnId) == false {
         // Return ProblemDetails indicating S-NSSAI is not supported
         // TODO: Based on TS 23.501 V15.2.0, if the Requested NSSAI includes an S-NSSAI that is not valid in the
         //       Serving PLMN, the NSSF may derive the Configured NSSAI for Serving PLMN
         *d = ProblemDetails {
-            Title: UNSUPPORTED_RESOURCE,
+            Title: util.UNSUPPORTED_RESOURCE,
             Status: http.StatusForbidden,
             Detail: "S-NSSAI in Requested NSSAI is not supported in PLMN",
             Cause: "SNSSAI_NOT_SUPPORTED",
@@ -67,7 +68,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         if *p.SliceInfoRequestForPduSession.RoamingIndication == RoamingIndication_NON_ROAMING {
             problemDetail := "`home-plmn-id` is provided, which contradicts `roamingIndication`:'NON_ROAMING'"
             *d = ProblemDetails {
-                Title: INVALID_REQUEST,
+                Title: util.INVALID_REQUEST,
                 Status: http.StatusBadRequest,
                 Detail: problemDetail,
                 InvalidParams: []InvalidParam {
@@ -86,7 +87,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
             problemDetail := fmt.Sprintf("`home-plmn-id` is not provided, which contradicts `roamingIndication`:'%s'",
                                          string(*p.SliceInfoRequestForPduSession.RoamingIndication))
             *d = ProblemDetails {
-                Title: INVALID_REQUEST,
+                Title: util.INVALID_REQUEST,
                 Status: http.StatusBadRequest,
                 Detail: problemDetail,
                 InvalidParams: []InvalidParam {
@@ -102,7 +103,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         }
     }
 
-    if p.Tai != nil && checkSupportedSnssaiInTa(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai) == false {
+    if p.Tai != nil && util.CheckSupportedSnssaiInTa(*p.SliceInfoRequestForPduSession.SNssai, *p.Tai) == false {
         // Requested S-NSSAI does not supported in UE's current TA
         // Add it to Rejected NSSAI in TA
         a.RejectedNssaiInTa = append(a.RejectedNssaiInTa, *p.SliceInfoRequestForPduSession.SNssai)
@@ -110,7 +111,7 @@ func nsselectionForPduSession(p NsselectionQueryParameter,
         return
     }
 
-    nsiInformationList := getNsiInformationListFromConfig(*p.SliceInfoRequestForPduSession.SNssai)
+    nsiInformationList := util.GetNsiInformationListFromConfig(*p.SliceInfoRequestForPduSession.SNssai)
 
     nsiInformation := selectNsiInformation(nsiInformationList)
 

@@ -4,7 +4,7 @@
  * NSSF NSSAI Availability Service
  */
 
-package nssf
+package nssaiavailability
 
 import (
     "fmt"
@@ -13,9 +13,10 @@ import (
     "strconv"
     "time"
 
-    factory "../factory"
-    flog "../flog"
+    "../factory"
+    "../flog"
     . "../model"
+    "../util"
 )
 
 // Get available subscription ID from configuration
@@ -37,14 +38,14 @@ func getUnusedSubscriptionId() (string, error) {
 }
 
 // NSSAIAvailability subscription POST method
-func subscriptionPost(n NssfEventSubscriptionCreateData, c *NssfEventSubscriptionCreatedData, d *ProblemDetails) (status int) {
+func subscriptionPost(n NssfEventSubscriptionCreateData, s *NssfEventSubscriptionCreatedData, d *ProblemDetails) (status int) {
     var subscription factory.Subscription
     tempId, err := getUnusedSubscriptionId()
     if err != nil {
         flog.Nssaiavailability.Warnf(err.Error())
 
         *d = ProblemDetails {
-            Title: UNSUPPORTED_RESOURCE,
+            Title: util.UNSUPPORTED_RESOURCE,
             Status: http.StatusNotFound,
             Detail: err.Error(),
         }
@@ -59,12 +60,12 @@ func subscriptionPost(n NssfEventSubscriptionCreateData, c *NssfEventSubscriptio
 
     factory.NssfConfig.Subscriptions = append(factory.NssfConfig.Subscriptions, subscription)
 
-    c.SubscriptionId = subscription.SubscriptionId
+    s.SubscriptionId = subscription.SubscriptionId
     if subscription.SubscriptionData.Expiry.IsZero() == false {
-        c.Expiry = new(time.Time)
-        *c.Expiry = subscription.SubscriptionData.Expiry
+        s.Expiry = new(time.Time)
+        *s.Expiry = subscription.SubscriptionData.Expiry
     }
-    c.AuthorizedNssaiAvailabilityData = authorizeOfTaListFromConfig(subscription.SubscriptionData.TaiList)
+    s.AuthorizedNssaiAvailabilityData = util.AuthorizeOfTaListFromConfig(subscription.SubscriptionData.TaiList)
 
     status = http.StatusCreated
     return
@@ -84,7 +85,7 @@ func subscriptionDelete(subscriptionId string, d *ProblemDetails) (status int) {
     // No specific subscription ID exists
     problemDetail := fmt.Sprintf("Subscription ID '%s' is not available", subscriptionId)
     *d = ProblemDetails {
-        Title: UNSUPPORTED_RESOURCE,
+        Title: util.UNSUPPORTED_RESOURCE,
         Status: http.StatusNotFound,
         Detail: problemDetail,
     }
