@@ -10,6 +10,7 @@ import (
     "fmt"
 	"log"
     "os"
+    "time"
 )
 
 // TODO: Use a base log function and log structs for each level to remove duplicate code
@@ -25,6 +26,7 @@ type ServiceLogger struct {
     warnLogger *log.Logger
     errorLogger *log.Logger
     mute bool
+    flag int
 }
 
 // Service logger type
@@ -59,6 +61,10 @@ func getEscapeCode(style int, color int) string {
     return fmt.Sprintf("%s[%d;%dm", Escape, style, color)
 }
 
+func (s *ServiceLogger) getLogPrefix(level string) string {
+    return fmt.Sprintf("[SYS] %s |%5s|%32s | ", time.Now().Format("2006/01/02 - 15:04:05"), level, s.serviceName)
+}
+
 func reset() string {
     return fmt.Sprintf("%s[%dm", Escape, NoEffect)
 }
@@ -77,17 +83,19 @@ func (s *ServiceLogger) InitLogger(service string, colorInd bool) {
         s.serviceName = service
     }
     s.mute = false
+    s.flag = 0
+    // s.flag = log.Ldate|log.Ltime
 
     if colorInd == true {
-        s.debugLogger = log.New(os.Stdout, getEscapeCode(logStyle, debugColor), log.Ldate|log.Ltime)
-        s.infoLogger = log.New(os.Stdout, getEscapeCode(logStyle, infoColor), log.Ldate|log.Ltime)
-        s.warnLogger = log.New(os.Stdout, getEscapeCode(logStyle, warnColor), log.Ldate|log.Ltime)
-        s.errorLogger = log.New(os.Stdout, getEscapeCode(logStyle, errorColor), log.Ldate|log.Ltime)
+        s.debugLogger = log.New(os.Stdout, getEscapeCode(logStyle, debugColor), s.flag)
+        s.infoLogger = log.New(os.Stdout, getEscapeCode(logStyle, infoColor), s.flag)
+        s.warnLogger = log.New(os.Stdout, getEscapeCode(logStyle, warnColor), s.flag)
+        s.errorLogger = log.New(os.Stdout, getEscapeCode(logStyle, errorColor), s.flag)
     } else {
-        s.debugLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        s.infoLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        s.warnLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-        s.errorLogger = log.New(os.Stdout, "", log.Ldate|log.Ltime)
+        s.debugLogger = log.New(os.Stdout, "", s.flag)
+        s.infoLogger = log.New(os.Stdout, "", s.flag)
+        s.warnLogger = log.New(os.Stdout, "", s.flag)
+        s.errorLogger = log.New(os.Stdout, "", s.flag)
     }
 }
 
@@ -107,7 +115,7 @@ func (s *ServiceLogger) Debugf(format string, v ...interface{}) {
     if s.mute == true {
         return
     }
-    format = "- " + s.serviceName + " - DEBUG - " + format + reset()
+    format = s.getLogPrefix("DEBUG") + format + reset()
     s.debugLogger.Printf(format, v...)
 }
 
@@ -119,7 +127,7 @@ func (s *ServiceLogger) Infof(format string, v ...interface{}) {
     if s.mute == true {
         return
     }
-    format = "- " + s.serviceName + " - INFO - " + format + reset()
+    format = s.getLogPrefix("INFO") + format + reset()
     s.infoLogger.Printf(format, v...)
 }
 
@@ -131,7 +139,7 @@ func (s *ServiceLogger) Warnf(format string, v ...interface{}) {
     if s.mute == true {
         return
     }
-    format = "- " + s.serviceName + " - WARN - " + format + reset()
+    format = s.getLogPrefix("WARN") + format + reset()
     s.warnLogger.Printf(format, v...)
 }
 
@@ -143,7 +151,7 @@ func (s *ServiceLogger) Errorf(format string, v ...interface{}) {
     if s.mute == true {
         return
     }
-    format = "- " + s.serviceName + " - ERROR - " + format + reset()
+    format = s.getLogPrefix("ERROR") + format + reset()
     s.errorLogger.Printf(format, v...)
 }
 

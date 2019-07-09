@@ -40,12 +40,12 @@ Configure NSSF in `conf/nssf_config.yaml`.
 Build.
 ```
 $ cd free5gc-nssf
-$ go build main.go
+$ go build nssf.go
 ```
 
 Run.
 ```
-$ ./main
+$ ./nssf
 ```
 
 Now NSSF resource is available to access through HTTP method. Examples of resource URI are placed under directory `example`.

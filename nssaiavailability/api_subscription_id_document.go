@@ -29,13 +29,14 @@ func NSSAIAvailabilityUnsubscribe(c *gin.Context) {
         d ProblemDetails
     )
 
-    // Parse subscriptionId from URL path
+    // Due to conflict of route matching, 'subscriptions' in the route is replaced with the existing wildcard ':nfId'
     nfId := c.Param("nfId")
     if nfId != "subscriptions" {
         c.JSON(http.StatusNotFound, gin.H{})
         flog.Nssaiavailability.Infof("404 Not Found")
         return
     }
+    // Parse subscriptionId from URL path
     subscriptionId = c.Param("subscriptionId")
 
     status = subscriptionDelete(subscriptionId, &d)

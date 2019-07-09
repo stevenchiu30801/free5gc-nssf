@@ -20,7 +20,7 @@ import (
     "../factory"
     "../flog"
     . "../model"
-    test "../test"
+    "../test"
 )
 
 var testingNotification = test.TestingNssaiavailability {
