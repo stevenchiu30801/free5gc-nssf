@@ -7,10 +7,10 @@ package nssf_service
 import (
     "github.com/gin-gonic/gin"
 
-    "../factory"
-    "../flog"
-    "../nsselection"
-    "../nssaiavailability"
+    "free5gc-nssf/factory"
+    "free5gc-nssf/flog"
+    "free5gc-nssf/nsselection"
+    "free5gc-nssf/nssaiavailability"
 )
 
 type Nssf struct {

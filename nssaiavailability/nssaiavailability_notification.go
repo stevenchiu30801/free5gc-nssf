@@ -12,8 +12,8 @@ import (
     "fmt"
     "net/http"
 
-    "../flog"
-    . "../model"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
 )
 
 func notificationPost(url string, n NssfEventNotification) error {

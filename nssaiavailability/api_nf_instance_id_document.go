@@ -15,9 +15,9 @@ import (
 
     "github.com/gin-gonic/gin"
 
-    "../flog"
-    . "../model"
-    "../util"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/util"
 )
 
 // NSSAIAvailabilityDelete - Deletes an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)

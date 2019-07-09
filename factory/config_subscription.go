@@ -9,7 +9,7 @@ package factory
 import (
     "fmt"
 
-    . "../model"
+    . "free5gc-nssf/model"
 )
 
 type Subscription struct {

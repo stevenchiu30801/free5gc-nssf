@@ -12,7 +12,7 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    "../flog"
+    "free5gc-nssf/flog"
 )
 
 var NssfConfig Config

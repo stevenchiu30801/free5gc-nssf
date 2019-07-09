@@ -10,7 +10,7 @@
 package main
 
 import (
-    "./nssf_service"
+    "free5gc-nssf/nssf_service"
 )
 
 func main() {

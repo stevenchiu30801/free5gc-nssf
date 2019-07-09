@@ -9,13 +9,20 @@ package test
 import (
     "flag"
 
-    . "../model"
+    . "free5gc-nssf/model"
 )
 
 var (
     ConfigFileFromArgs string
     MuteLogIndFromArgs bool
 )
+
+type TestingUtil struct {
+
+    ConfigFile string
+
+    MuteLogInd bool
+}
 
 type TestingNsselection struct {
 

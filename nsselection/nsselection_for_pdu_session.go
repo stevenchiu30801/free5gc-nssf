@@ -11,8 +11,8 @@ import (
     "math/rand"
     "net/http"
 
-    . "../model"
-    "../util"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/util"
 )
 
 func selectNsiInformation(nsiInformationList []NsiInformation) NsiInformation {

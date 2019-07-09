@@ -9,9 +9,9 @@ package nsselection
 import (
     "net/http"
 
-    "../flog"
-    . "../model"
-    "../util"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/util"
 )
 
 // Set Allowed NSSAI with Subscribed S-NSSAI(s) which are marked as default S-NSSAI(s)

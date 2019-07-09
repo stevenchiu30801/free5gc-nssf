@@ -13,28 +13,29 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    "../factory"
-    "../flog"
-    . "../model"
+    "free5gc-nssf/factory"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/test"
 )
 
-const (
-    utilsConfig string = "../test/conf/test_nssf_config.yaml"
-    utilsMuteLog bool = false
-)
+var testingUtil = test.TestingUtil {
+    ConfigFile: test.ConfigFileFromArgs,
+    MuteLogInd: test.MuteLogIndFromArgs,
+}
 
 func TestPluginTemplate(t *testing.T) {
     t.Skip()
 
-    factory.InitConfigFactory(utilsConfig)
+    factory.InitConfigFactory(testingUtil.ConfigFile)
 
     d, _ := yaml.Marshal(*factory.NssfConfig.Info)
     t.Logf("%s", string(d))
 }
 
 func TestAddAmfInformation(t *testing.T) {
-    factory.InitConfigFactory(utilsConfig)
-    if utilsMuteLog == true {
+    factory.InitConfigFactory(testingUtil.ConfigFile)
+    if testingUtil.MuteLogInd == true {
         flog.Nsselection.MuteLog()
     }
 

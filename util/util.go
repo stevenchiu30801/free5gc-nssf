@@ -11,9 +11,9 @@ import (
     "fmt"
     "reflect"
 
-    "../factory"
-    "../flog"
-    . "../model"
+    "free5gc-nssf/factory"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
 )
 
 // Title in Problem Details for NSSF HTTP APIs

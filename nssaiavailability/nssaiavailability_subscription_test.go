@@ -16,10 +16,10 @@ import (
 
     "gopkg.in/yaml.v2"
 
-    "../factory"
-    "../flog"
-    . "../model"
-    "../test"
+    "free5gc-nssf/factory"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/test"
 )
 
 var testingSubscription = test.TestingNssaiavailability {

@@ -14,8 +14,8 @@ import (
 
     "github.com/gin-gonic/gin"
 
-    "../flog"
-    . "../model"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
 )
 
 // NSSAIAvailabilityUnsubscribe - Deletes an already existing NSSAI availability notification subscription

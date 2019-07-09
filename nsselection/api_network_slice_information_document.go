@@ -17,9 +17,9 @@ import (
 
     "github.com/gin-gonic/gin"
 
-    "../flog"
-    . "../model"
-    "../util"
+    "free5gc-nssf/flog"
+    . "free5gc-nssf/model"
+    "free5gc-nssf/util"
 )
 
 // Parse NSSelectionGet query parameter
