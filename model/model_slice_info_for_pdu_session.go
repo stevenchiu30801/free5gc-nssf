@@ -17,7 +17,7 @@ type SliceInfoForPduSession struct {
 
 	SNssai *Snssai `json:"sNssai"`
 
-	RoamingIndication *RoamingIndication `json:"roamingIndication"`
+	RoamingIndication RoamingIndication `json:"roamingIndication"`
 
 	HomeSnssai *Snssai `json:"homeSnssai,omitempty"`
 }
@@ -32,7 +32,7 @@ func (s *SliceInfoForPduSession) CheckIntegrity() error {
         }
     }
 
-    if s.RoamingIndication == nil || *s.RoamingIndication == "" {
+    if s.RoamingIndication == RoamingIndication("") {
         return fmt.Errorf("`roamingIndication` should not be empty")
     } else {
         err := s.RoamingIndication.CheckIntegrity()
@@ -41,7 +41,7 @@ func (s *SliceInfoForPduSession) CheckIntegrity() error {
         }
     }
 
-    if *s.RoamingIndication == RoamingIndication_HOME_ROUTED_ROAMING && s.HomeSnssai == nil {
+    if s.RoamingIndication == RoamingIndication_HOME_ROUTED_ROAMING && s.HomeSnssai == nil {
         return fmt.Errorf("`homeSnssai` should be included in home routed roaming scenario")
     } else if s.HomeSnssai != nil {
         err := s.HomeSnssai.CheckIntegrity()

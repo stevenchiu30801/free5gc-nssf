@@ -18,7 +18,7 @@ type AllowedNssai struct {
 
 	AllowedSnssaiList []AllowedSnssai `json:"allowedSnssaiList"`
 
-	AccessType *AccessType `json:"accessType"`
+	AccessType AccessType `json:"accessType"`
 }
 
 func (a *AllowedNssai) CheckIntegrity() error {
@@ -34,7 +34,7 @@ func (a *AllowedNssai) CheckIntegrity() error {
         }
     }
 
-    if a.AccessType == nil || *a.AccessType == AccessType("") {
+    if a.AccessType == AccessType("") {
         return fmt.Errorf("`accessType` should not be empty")
     } else {
         err := a.AccessType.CheckIntegrity()
@@ -59,7 +59,7 @@ func (a ByAccessType) Swap(i, j int) {
 func (a ByAccessType) Less(i, j int) bool {
     // Only 3GPP Access and Non 3GPP Access could be in Allowed NSSAI list
     // Sort it into 3GPP Access first and Non 3GPP Access last
-    if *a[i].AccessType == AccessType__3_GPP_ACCESS {
+    if a[i].AccessType == AccessType__3_GPP_ACCESS {
         return true
     }
     return false

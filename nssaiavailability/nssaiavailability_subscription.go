@@ -63,7 +63,7 @@ func subscriptionPost(n NssfEventSubscriptionCreateData, s *NssfEventSubscriptio
     s.SubscriptionId = subscription.SubscriptionId
     if subscription.SubscriptionData.Expiry.IsZero() == false {
         s.Expiry = new(time.Time)
-        *s.Expiry = subscription.SubscriptionData.Expiry
+        *s.Expiry = *subscription.SubscriptionData.Expiry
     }
     s.AuthorizedNssaiAvailabilityData = util.AuthorizeOfTaListFromConfig(subscription.SubscriptionData.TaiList)
 

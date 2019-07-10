@@ -20,9 +20,9 @@ type NssfEventSubscriptionCreateData struct {
 
     TaiList []Tai `json:"taiList" yaml:"taiList"`
 
-    Event *NssfEventType `json:"event" yaml:"event"`
+    Event NssfEventType `json:"event" yaml:"event"`
 
-    Expiry time.Time `json:"expiry,omitempty" yaml:"expiry,omitempty"`
+    Expiry *time.Time `json:"expiry,omitempty" yaml:"expiry,omitempty"`
 }
 
 func (n *NssfEventSubscriptionCreateData) CheckIntegrity() error {
@@ -41,7 +41,7 @@ func (n *NssfEventSubscriptionCreateData) CheckIntegrity() error {
         }
     }
 
-    if n.Event == nil {
+    if n.Event == NssfEventType("") {
         return fmt.Errorf("`event` should not be empty")
     } else {
         err := n.Event.CheckIntegrity()

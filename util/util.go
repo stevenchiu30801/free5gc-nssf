@@ -349,7 +349,7 @@ func FindMappingWithHomeSnssai(snssai Snssai, mappings []MappingOfSnssai) (Mappi
 func AddAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *AuthorizedNetworkSliceInfo) {
     hitAllowedNssai := false
     for i := range a.AllowedNssaiList {
-        if *a.AllowedNssaiList[i].AccessType == accessType {
+        if a.AllowedNssaiList[i].AccessType == accessType {
             hitAllowedNssai = true
             if len(a.AllowedNssaiList[i].AllowedSnssaiList) == 8 {
                 flog.Nsselection.Infof("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
@@ -363,7 +363,7 @@ func AddAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
     if hitAllowedNssai == false {
         var allowedNssaiElement AllowedNssai
         allowedNssaiElement.AllowedSnssaiList = append(allowedNssaiElement.AllowedSnssaiList, allowedSnssai)
-        allowedNssaiElement.AccessType = &accessType
+        allowedNssaiElement.AccessType = accessType
 
         a.AllowedNssaiList = append(a.AllowedNssaiList, allowedNssaiElement)
     }
