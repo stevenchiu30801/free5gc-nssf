@@ -1,7 +1,5 @@
 /*
- * NSSF NS Selection
- *
- * NSSF Network Slice Selection Service
+ * NSSF Configuration Factory
  */
 
 package factory

@@ -1,7 +1,5 @@
 /*
- * NSSF NS Selection
- *
- * NSsf Network Slice Selection Service
+ * NSSF Testing Utility
  */
 
 package test
