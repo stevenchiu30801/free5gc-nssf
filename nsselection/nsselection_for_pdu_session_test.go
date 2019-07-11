@@ -89,15 +89,15 @@ var testingNsselectionForPduSession = test.TestingNsselection {
 }
 
 func setNonRoaming(p *NsselectionQueryParameter) {
-    *p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_NON_ROAMING
+    p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_NON_ROAMING
 }
 
 func setLocalBreakout(p *NsselectionQueryParameter) {
-    *p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_LOCAL_BREAKOUT
+    p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_LOCAL_BREAKOUT
 }
 
 func setHomeRoutedRoaming(p *NsselectionQueryParameter) {
-    *p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_HOME_ROUTED_ROAMING
+    p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_HOME_ROUTED_ROAMING
 }
 
 func checkAuthorizedNetworkSliceInfo(target AuthorizedNetworkSliceInfo, expectList []AuthorizedNetworkSliceInfo) bool {
