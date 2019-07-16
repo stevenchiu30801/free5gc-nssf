@@ -284,6 +284,7 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
     factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
     if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -406,6 +407,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
     factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
     if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -597,6 +599,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
     factory.InitConfigFactory(testingNsselectionForRegistration.ConfigFile)
     if testingNsselectionForRegistration.MuteLogInd == true {
         flog.Nsselection.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {

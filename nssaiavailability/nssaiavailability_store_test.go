@@ -218,6 +218,7 @@ func TestNssaiavailabilityDelete(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nssaiavailability.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -259,6 +260,7 @@ func TestNssaiavailabilityPatch(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nssaiavailability.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -625,6 +627,7 @@ func TestNssaiavailabilityPut(t *testing.T) {
     factory.InitConfigFactory(testingNssaiavailabilityStore.ConfigFile)
     if testingNssaiavailabilityStore.MuteLogInd == true {
         flog.Nssaiavailability.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {

@@ -124,6 +124,7 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
     factory.InitConfigFactory(testingNsselectionForPduSession.ConfigFile)
     if testingNsselectionForPduSession.MuteLogInd == true {
         flog.Nsselection.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -195,6 +196,7 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
     factory.InitConfigFactory(testingNsselectionForPduSession.ConfigFile)
     if testingNsselectionForPduSession.MuteLogInd == true {
         flog.Nsselection.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {

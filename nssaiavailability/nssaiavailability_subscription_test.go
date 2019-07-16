@@ -82,6 +82,7 @@ func TestSubscriptionPost(t *testing.T) {
     factory.InitConfigFactory(testingSubscription.ConfigFile)
     if testingSubscription.MuteLogInd == true {
         flog.Nssaiavailability.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {
@@ -204,6 +205,7 @@ func TestSubscriptionDelete(t *testing.T) {
     factory.InitConfigFactory(testingSubscription.ConfigFile)
     if testingSubscription.MuteLogInd == true {
         flog.Nssaiavailability.MuteLog()
+        flog.Util.MuteLog()
     }
 
     subtests := []struct {

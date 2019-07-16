@@ -42,7 +42,7 @@ func CheckSupportedHplmn(homePlmnId PlmnId) bool {
             return true
         }
     }
-    flog.Nsselection.Warnf("No Home PLMN %+v in NSSF configuration", homePlmnId)
+    flog.Util.Warnf("No Home PLMN %+v in NSSF configuration", homePlmnId)
     return false
 }
 
@@ -54,7 +54,7 @@ func CheckSupportedTa(tai Tai) bool {
         }
     }
     e, _ := json.Marshal(tai)
-    flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
+    flog.Util.Warnf("No TA %s in NSSF configuration", e)
     return false
 }
 
@@ -74,7 +74,7 @@ func CheckSupportedSnssaiInPlmn(snssai Snssai, plmnId PlmnId) bool {
             return false
         }
     }
-    flog.Nsselection.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
+    flog.Util.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
     return false
 }
 
@@ -104,7 +104,7 @@ func CheckSupportedNssaiInPlmn(nssai []Snssai, plmnId PlmnId) bool {
             return true
         }
     }
-    flog.Nsselection.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
+    flog.Util.Warnf("No supported S-NSSAI list of PLMNID %+v in NSSF configuration", plmnId)
     return false
 }
 
@@ -157,7 +157,7 @@ func CheckSupportedSnssaiInAmfTa(snssai Snssai, nfId string, tai Tai) bool {
         }
     }
 
-    flog.Nsselection.Warnf("No AMF %s in NSSF configuration", nfId)
+    flog.Util.Warnf("No AMF %s in NSSF configuration", nfId)
     return false
 }
 
@@ -222,7 +222,7 @@ func GetAccessTypeFromConfig(tai Tai) AccessType {
         }
     }
     e, _ := json.Marshal(tai)
-    flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
+    flog.Util.Warnf("No TA %s in NSSF configuration", e)
     return AccessType__3_GPP_ACCESS
 }
 
@@ -238,7 +238,7 @@ func GetRestrictedSnssaiListFromConfig(tai Tai) []RestrictedSnssai {
         }
     }
     e, _ := json.Marshal(tai)
-    flog.Nsselection.Warnf("No TA %s in NSSF configuration", e)
+    flog.Util.Warnf("No TA %s in NSSF configuration", e)
     return nil
 }
 
@@ -352,7 +352,7 @@ func AddAllowedSnssai(allowedSnssai AllowedSnssai, accessType AccessType, a *Aut
         if a.AllowedNssaiList[i].AccessType == accessType {
             hitAllowedNssai = true
             if len(a.AllowedNssaiList[i].AllowedSnssaiList) == 8 {
-                flog.Nsselection.Infof("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
+                flog.Util.Infof("Unable to add a new Allowed S-NSSAI since already eight S-NSSAIs in Allowed NSSAI")
             } else {
                 a.AllowedNssaiList[i].AllowedSnssaiList = append(a.AllowedNssaiList[i].AllowedSnssaiList, allowedSnssai)
             }
@@ -445,6 +445,6 @@ func AddAmfInformation(tai Tai, a *AuthorizedNetworkSliceInfo) {
     }
 
     if hitAmf != true {
-        flog.Nsselection.Warnf("No candidate AMF or AMF Set can serve the UE")
+        flog.Util.Warnf("No candidate AMF or AMF Set can serve the UE")
     }
 }

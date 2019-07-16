@@ -33,6 +33,7 @@ var (
     System ServiceLogger
     Nsselection ServiceLogger
     Nssaiavailability ServiceLogger
+    Util ServiceLogger
 )
 
 // Service name
@@ -40,6 +41,7 @@ const (
     SYSTEM_SERVICE string = "Nnssf-System"
     NSSELECTION_SERVICE string = "Nnssf-Nsselection"
     NSSAIAVAILABILITY_SERVICE string = "Nnssf-Nssaiavailability"
+    UTIL_SERVICE string = "Nnssf-Util"
 )
 
 // Log style and color
@@ -72,6 +74,7 @@ func init() {
     System.InitLogger(SYSTEM_SERVICE, true)
     Nsselection.InitLogger(NSSELECTION_SERVICE, true)
     Nssaiavailability.InitLogger(NSSAIAVAILABILITY_SERVICE, true)
+    Util.InitLogger(UTIL_SERVICE, true)
 }
 
 func (s *ServiceLogger) InitLogger(service string, colorInd bool) {
