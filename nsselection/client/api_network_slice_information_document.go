@@ -11,13 +11,14 @@ package client
 
 import (
 	"context"
-	"io/ioutil"
+    "io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/antihax/optional"
 
+    . "free5gc-nssf/model"
     "free5gc-nssf/util/client"
 )
 
@@ -110,7 +111,7 @@ func (a *NetworkSliceInformationDocumentApiService) NSSelectionGet(ctx context.C
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHTTPResponse, err

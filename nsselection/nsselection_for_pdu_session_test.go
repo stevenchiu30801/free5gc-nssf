@@ -100,16 +100,6 @@ func setHomeRoutedRoaming(p *NsselectionQueryParameter) {
     p.SliceInfoRequestForPduSession.RoamingIndication = RoamingIndication_HOME_ROUTED_ROAMING
 }
 
-func checkAuthorizedNetworkSliceInfo(target AuthorizedNetworkSliceInfo, expectList []AuthorizedNetworkSliceInfo) bool {
-    target.Sort()
-    for _, expectElement := range expectList {
-        if reflect.DeepEqual(target, expectElement) == true {
-            return true
-        }
-    }
-    return false
-}
-
 func TestNsselectionForPduSessionTemplate(t *testing.T) {
     t.Skip()
 
@@ -176,7 +166,7 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
             }
 
             if status == http.StatusOK {
-                if checkAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
+                if test.CheckAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                     r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
@@ -269,7 +259,7 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             }
 
             if status == http.StatusOK {
-                if checkAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
+                if test.CheckAuthorizedNetworkSliceInfo(a, subtest.expectAuthorizedNetworkSliceInfo) == false {
                     e, _ := json.Marshal(subtest.expectAuthorizedNetworkSliceInfo)
                     r, _ := json.Marshal(a)
                     t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
