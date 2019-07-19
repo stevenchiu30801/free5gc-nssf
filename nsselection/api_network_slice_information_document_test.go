@@ -33,11 +33,15 @@ func TestNSSelectionGet(t *testing.T) {
         flog.Util.MuteLog()
     }
 
+    router := NewRouter()
+    srv := &http.Server {
+        Addr: ":8080",
+        Handler: router,
+    }
+
     go func() {
-        router := NewRouter()
-        err := router.Run(":8080")
-        if err != nil {
-            t.Errorf(err.Error())
+        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+            t.Fatal(err)
         }
     }()
 
@@ -247,7 +251,6 @@ func TestNSSelectionGet(t *testing.T) {
         },
     }
 
-
     for _, subtest := range subtests {
         t.Run(subtest.name, func(t *testing.T) {
             var (
@@ -271,5 +274,10 @@ func TestNSSelectionGet(t *testing.T) {
                 t.Errorf("Incorrect authorized network slice info:\nexpected\n%s\n, got\n%s", string(e), string(r))
             }
         })
+    }
+
+    err := srv.Shutdown(context.Background())
+    if err != nil {
+        t.Fatal(err)
     }
 }

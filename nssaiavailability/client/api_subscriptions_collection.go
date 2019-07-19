@@ -16,6 +16,7 @@ import (
 	"net/url"
 	"strings"
 
+    . "free5gc-nssf/model"
     "free5gc-nssf/util/client"
 )
 
@@ -78,7 +79,7 @@ func (a *SubscriptionsCollectionApiService) NSSAIAvailabilityPost(ctx context.Co
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHTTPResponse, err

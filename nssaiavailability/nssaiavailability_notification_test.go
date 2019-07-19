@@ -125,7 +125,7 @@ func TestNotificationPost(t *testing.T) {
             // Run the server in a goroutine
             go func() {
                 if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-                    flog.Nssaiavailability.Fatal(err)
+                    t.Fatal(err)
                 }
             }()
 

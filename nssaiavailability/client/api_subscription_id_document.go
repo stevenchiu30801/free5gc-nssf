@@ -17,6 +17,7 @@ import (
 	"strings"
 	"fmt"
 
+    . "free5gc-nssf/model"
     "free5gc-nssf/util/client"
 )
 
@@ -76,7 +77,7 @@ func (a *SubscriptionIDDocumentApiService) NSSAIAvailabilityUnsubscribe(ctx cont
 		return localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarHTTPResponse, err

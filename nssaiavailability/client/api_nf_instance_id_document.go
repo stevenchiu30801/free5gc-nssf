@@ -17,6 +17,7 @@ import (
 	"strings"
 	"fmt"
 
+    . "free5gc-nssf/model"
     "free5gc-nssf/util/client"
 )
 
@@ -76,7 +77,7 @@ func (a *NFInstanceIDDocumentApiService) NSSAIAvailabilityDelete(ctx context.Con
 		return localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarHTTPResponse, err
@@ -203,7 +204,7 @@ func (a *NFInstanceIDDocumentApiService) NSSAIAvailabilityPatch(ctx context.Cont
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHTTPResponse, err
@@ -370,7 +371,7 @@ func (a *NFInstanceIDDocumentApiService) NSSAIAvailabilityPut(ctx context.Contex
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
-	localVarBody, err := ioclient.ReadAll(localVarHTTPResponse.Body)
+	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
 		return localVarReturnValue, localVarHTTPResponse, err
