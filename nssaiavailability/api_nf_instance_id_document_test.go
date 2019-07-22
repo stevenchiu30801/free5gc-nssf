@@ -205,7 +205,7 @@ func TestNSSAIAvailabilityPatch(t *testing.T) {
             }
 
             if reflect.DeepEqual(a, *subtest.expectAuthorizedNssaiAvailabilityInfo) == false {
-                e, _ := json.Marshal(subtest.expectAuthorizedNssaiAvailabilityInfo)
+                e, _ := json.Marshal(*subtest.expectAuthorizedNssaiAvailabilityInfo)
                 r, _ := json.Marshal(a)
                 t.Errorf("Incorrect authorized nssai availability info:\nexpected\n%s\n, got\n%s", string(e), string(r))
             }
@@ -385,7 +385,7 @@ func TestNSSAIAvailabilityPut(t *testing.T) {
             }
 
             if reflect.DeepEqual(a, *subtest.expectAuthorizedNssaiAvailabilityInfo) == false {
-                e, _ := json.Marshal(subtest.expectAuthorizedNssaiAvailabilityInfo)
+                e, _ := json.Marshal(*subtest.expectAuthorizedNssaiAvailabilityInfo)
                 r, _ := json.Marshal(a)
                 t.Errorf("Incorrect authorized nssai availability info:\nexpected\n%s\n, got\n%s", string(e), string(r))
             }
