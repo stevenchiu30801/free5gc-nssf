@@ -11,6 +11,7 @@ import (
     "free5gc-nssf/flog"
     "free5gc-nssf/nsselection"
     "free5gc-nssf/nssaiavailability"
+    "free5gc-nssf/util/http2"
 )
 
 type Nssf struct {
@@ -32,5 +33,8 @@ func (n *Nssf) Start() {
     nsselection.AddService(router)
     nssaiavailability.AddService(router)
 
-    flog.System.Fatal(router.Run(":8080"))
+    server, err := http2.NewServer(":8080", "nssfsslkey.log", router)
+    if err == nil && server != nil {
+        flog.System.Fatal(server.ListenAndServeTLS("support/tls/nssf.pem", "support/tls/nssf.key"))
+    }
 }

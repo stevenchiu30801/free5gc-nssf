@@ -10,7 +10,10 @@
 package client
 
 import (
+    "crypto/tls"
     "net/http"
+
+    "golang.org/x/net/http2"
 )
 
 // APIClient manages communication with the NSSF NS Selection API v1.0.0
@@ -32,6 +35,11 @@ type service struct {
 func NewAPIClient(cfg *Configuration) *APIClient {
     if cfg.httpClient == nil {
         cfg.httpClient = http.DefaultClient
+        cfg.httpClient.Transport = &http2.Transport {
+            TLSClientConfig: &tls.Config {
+                InsecureSkipVerify: true,
+            },
+        }
     }
 
     c := &APIClient{}
