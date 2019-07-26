@@ -26,6 +26,7 @@ type APIClient struct {
 	NFInstanceIDDocumentApi *NFInstanceIDDocumentApiService
 	SubscriptionIDDocumentApi *SubscriptionIDDocumentApiService
 	SubscriptionsCollectionApi *SubscriptionsCollectionApiService
+    NotificationApi *NotificationApiService
 }
 
 type service struct {
@@ -52,6 +53,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
     c.NFInstanceIDDocumentApi = (*NFInstanceIDDocumentApiService)(&c.common)
     c.SubscriptionIDDocumentApi = (*SubscriptionIDDocumentApiService)(&c.common)
     c.SubscriptionsCollectionApi = (*SubscriptionsCollectionApiService)(&c.common)
+    c.NotificationApi = (*NotificationApiService)(&c.common)
 
     return c
 }

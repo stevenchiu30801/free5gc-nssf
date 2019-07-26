@@ -18,6 +18,7 @@ import (
     . "free5gc-nssf/model"
     "free5gc-nssf/nssaiavailability/client"
     "free5gc-nssf/test"
+    "free5gc-nssf/util/http2"
 )
 
 var testingNssaiavailabilityStoreApi = test.TestingNssaiavailability {
@@ -33,19 +34,20 @@ func TestNSSAIAvailabilityDelete(t *testing.T) {
     }
 
     router := NewRouter()
-    srv := &http.Server {
-        Addr: ":8080",
-        Handler: router,
+    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    if err != nil {
+        t.Fatal(err)
     }
 
     go func() {
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+        err := srv.ListenAndServeTLS("../support/tls/nssf.pem", "../support/tls/nssf.key")
+        if err != nil && err != http.ErrServerClosed {
             t.Fatal(err)
         }
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("http://localhost:8080")
+    configuration.SetBasePath("https://localhost:8080")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -78,7 +80,7 @@ func TestNSSAIAvailabilityDelete(t *testing.T) {
         })
     }
 
-    err := srv.Shutdown(context.Background())
+    err = srv.Shutdown(context.Background())
     if err != nil {
         t.Fatal(err)
     }
@@ -92,19 +94,20 @@ func TestNSSAIAvailabilityPatch(t *testing.T) {
     }
 
     router := NewRouter()
-    srv := &http.Server {
-        Addr: ":8080",
-        Handler: router,
+    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    if err != nil {
+        t.Fatal(err)
     }
 
     go func() {
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+        err := srv.ListenAndServeTLS("../support/tls/nssf.pem", "../support/tls/nssf.key")
+        if err != nil && err != http.ErrServerClosed {
             t.Fatal(err)
         }
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("http://localhost:8080")
+    configuration.SetBasePath("https://localhost:8080")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -212,7 +215,7 @@ func TestNSSAIAvailabilityPatch(t *testing.T) {
         })
     }
 
-    err := srv.Shutdown(context.Background())
+    err = srv.Shutdown(context.Background())
     if err != nil {
         t.Fatal(err)
     }
@@ -226,19 +229,20 @@ func TestNSSAIAvailabilityPut(t *testing.T) {
     }
 
     router := NewRouter()
-    srv := &http.Server {
-        Addr: ":8080",
-        Handler: router,
+    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    if err != nil {
+        t.Fatal(err)
     }
 
     go func() {
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+        err := srv.ListenAndServeTLS("../support/tls/nssf.pem", "../support/tls/nssf.key")
+        if err != nil && err != http.ErrServerClosed {
             t.Fatal(err)
         }
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("http://localhost:8080")
+    configuration.SetBasePath("https://localhost:8080")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -392,7 +396,7 @@ func TestNSSAIAvailabilityPut(t *testing.T) {
         })
     }
 
-    err := srv.Shutdown(context.Background())
+    err = srv.Shutdown(context.Background())
     if err != nil {
         t.Fatal(err)
     }

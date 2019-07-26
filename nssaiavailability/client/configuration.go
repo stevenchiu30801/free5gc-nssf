@@ -42,6 +42,10 @@ func (c *Configuration) SetBasePath(apiRoot string) {
     c.basePath = url
 }
 
+func (c *Configuration) SetBasePathNoGroup(basePath string) {
+    c.basePath = basePath
+}
+
 func (c *Configuration) BasePath() string {
     return c.basePath
 }

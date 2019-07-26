@@ -19,6 +19,7 @@ import (
     . "free5gc-nssf/model"
     "free5gc-nssf/nsselection/client"
     "free5gc-nssf/test"
+    "free5gc-nssf/util/http2"
 )
 
 var testingNsselectionApi = test.TestingNsselection {
@@ -34,19 +35,20 @@ func TestNSSelectionGet(t *testing.T) {
     }
 
     router := NewRouter()
-    srv := &http.Server {
-        Addr: ":8080",
-        Handler: router,
+    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    if err != nil {
+        t.Fatal(err)
     }
 
     go func() {
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+        err := srv.ListenAndServeTLS("../support/tls/nssf.pem", "../support/tls/nssf.key")
+        if err != nil && err != http.ErrServerClosed {
             t.Fatal(err)
         }
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("http://localhost:8080")
+    configuration.SetBasePath("https://localhost:8080")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -276,7 +278,7 @@ func TestNSSelectionGet(t *testing.T) {
         })
     }
 
-    err := srv.Shutdown(context.Background())
+    err = srv.Shutdown(context.Background())
     if err != nil {
         t.Fatal(err)
     }
