@@ -1,7 +1,7 @@
 info:
   version: 1.0.0
   description: NSSF initial local configuration
-  host: free5gc-nssf.nctu.me:8080
+  host: free5gc-nssf.nctu.me:29531
   servingPlmnIdList:
     - mcc: 466
       mnc: 92
@@ -26,38 +26,38 @@ configuration:
     - snssai:
         sst: 1
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-10.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 10
     - snssai:
         sst: 1
         sd: 1
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 11
     - snssai:
         sst: 1
         sd: 2
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-12-1.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 12
-        - nrfId: http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-12-2.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 12
     - snssai:
         sst: 1
         sd: 3
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-13.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-13.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 13
     - snssai:
         sst: 2
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-20.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-20.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 20
     - snssai:
         sst: 2
         sd: 1
       nsiInformationList:
-        - nrfId: http://free5gc-nrf-21.nctu.me:8080/nnrf-nfm/v1/nf-instances
+        - nrfId: http://free5gc-nrf-21.nctu.me:29510/nnrf-nfm/v1/nf-instances
           nsiId: 21
   amfSetList:
     - amfSetId: 1
@@ -308,7 +308,7 @@ configuration:
 subscriptions:
     - subscriptionId: "1"
       subscriptionData:
-        nfNssaiAvailabilityUri: "http://free5gc-amf1.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf1.nctu.me:29518/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"
@@ -321,7 +321,7 @@ subscriptions:
         event: "SNSSAI_STATUS_CHANGE_REPORT"
     - subscriptionId: "3"
       subscriptionData:
-        nfNssaiAvailabilityUri: "http://free5gc-amf3.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf3.nctu.me:29518/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"
@@ -335,7 +335,7 @@ subscriptions:
         expiry: "2020-06-24T16:35:31+08:00"
     - subscriptionId: "4"
       subscriptionData:
-        nfNssaiAvailabilityUri: "http://free5gc-amf4.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify"
+        nfNssaiAvailabilityUri: "http://free5gc-amf4.nctu.me:29518/namf-nssaiavailability/v1/nssai-availability/notify"
         taiList:
           - plmnId:
               mcc: "466"

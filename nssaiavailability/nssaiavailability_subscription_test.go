@@ -40,7 +40,7 @@ func checkSubscriptionExist(subscriptionId string) bool {
 func generateSubscriptionRequest() NssfEventSubscriptionCreateData {
     const jsonRequest = `
         {
-            "nfNssaiAvailabilityUri": "http://free5gc-amf2.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify",
+            "nfNssaiAvailabilityUri": "http://free5gc-amf2.nctu.me:29518/namf-nssaiavailability/v1/nssai-availability/notify",
             "taiList": [
                 {
                     "plmnId": {

@@ -34,7 +34,7 @@ func TestNSSAIAvailabilityDelete(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
@@ -47,7 +47,7 @@ func TestNSSAIAvailabilityDelete(t *testing.T) {
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("https://localhost:8080")
+    configuration.SetBasePath("https://localhost:29531")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -94,7 +94,7 @@ func TestNSSAIAvailabilityPatch(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
@@ -107,7 +107,7 @@ func TestNSSAIAvailabilityPatch(t *testing.T) {
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("https://localhost:8080")
+    configuration.SetBasePath("https://localhost:29531")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -229,7 +229,7 @@ func TestNSSAIAvailabilityPut(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
@@ -242,7 +242,7 @@ func TestNSSAIAvailabilityPut(t *testing.T) {
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("https://localhost:8080")
+    configuration.SetBasePath("https://localhost:29531")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {

@@ -35,7 +35,7 @@ func TestNSSAIAvailabilityPost(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
@@ -48,7 +48,7 @@ func TestNSSAIAvailabilityPost(t *testing.T) {
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("https://localhost:8080")
+    configuration.SetBasePath("https://localhost:29531")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -60,7 +60,7 @@ func TestNSSAIAvailabilityPost(t *testing.T) {
         {
             name: "Post",
             nssfEventSubscriptionCreateData: &NssfEventSubscriptionCreateData {
-                NfNssaiAvailabilityUri: "http://free5gc-amf2.nctu.me:8080/namf-nssaiavailability/v1/nssai-availability/notify",
+                NfNssaiAvailabilityUri: "http://free5gc-amf2.nctu.me:29531/namf-nssaiavailability/v1/nssai-availability/notify",
                 TaiList: []Tai {
                     {
                         PlmnId: &PlmnId {

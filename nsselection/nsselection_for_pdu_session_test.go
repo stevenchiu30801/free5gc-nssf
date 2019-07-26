@@ -131,13 +131,13 @@ func TestNsselectionForPduSessionNonRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
@@ -203,13 +203,13 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
@@ -223,13 +223,13 @@ func TestNsselectionForPduSessionRoaming(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },

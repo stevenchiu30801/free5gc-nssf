@@ -55,7 +55,7 @@ var testingNsselectionForRegistration = test.TestingNsselection {
                                 },
                                 "nsiInformationList": [
                                     {
-                                        "nrfId": "http://free5gc-nrf.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        "nrfId": "http://free5gc-nrf.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         "nsiId": "1"
                                     }
                                 ]
@@ -124,7 +124,7 @@ var testingNsselectionForRegistration = test.TestingNsselection {
                                 },
                                 "nsiInformationList": [
                                     {
-                                        "nrfId": "http://free5gc-nrf.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        "nrfId": "http://free5gc-nrf.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         "nsiId": "1"
                                     }
                                 ],
@@ -340,7 +340,7 @@ func TestNsselectionForRegistrationGeneral(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "10",
                                     },
                                 },
@@ -431,7 +431,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "10",
                                     },
                                 },
@@ -443,7 +443,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },
@@ -470,7 +470,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },
@@ -526,7 +526,7 @@ func TestNsselectionForRegistrationNonRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },
@@ -644,7 +644,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-10.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-10.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "10",
                                     },
                                 },
@@ -656,7 +656,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },
@@ -687,7 +687,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },
@@ -751,7 +751,7 @@ func TestNsselectionForRegistrationRoaming(t *testing.T) {
                                 },
                                 NsiInformationList: []NsiInformation {
                                     {
-                                        NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                        NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                         NsiId: "11",
                                     },
                                 },

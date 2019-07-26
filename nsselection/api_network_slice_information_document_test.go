@@ -35,7 +35,7 @@ func TestNSSelectionGet(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":8080", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
@@ -48,7 +48,7 @@ func TestNSSelectionGet(t *testing.T) {
     }()
 
     configuration := client.NewConfiguration()
-    configuration.SetBasePath("https://localhost:8080")
+    configuration.SetBasePath("https://localhost:29531")
     apiClient := client.NewAPIClient(configuration)
 
     subtests := []struct {
@@ -154,7 +154,7 @@ func TestNSSelectionGet(t *testing.T) {
                                     },
                                     NsiInformationList: []NsiInformation {
                                         {
-                                            NrfId: "http://free5gc-nrf-11.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                                            NrfId: "http://free5gc-nrf-11.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                                             NsiId: "11",
                                         },
                                     },
@@ -238,13 +238,13 @@ func TestNSSelectionGet(t *testing.T) {
             expectAuthorizedNetworkSliceInfo: []AuthorizedNetworkSliceInfo {
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-1.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-1.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },
                 {
                     NsiInformation: &NsiInformation {
-                        NrfId: "http://free5gc-nrf-12-2.nctu.me:8080/nnrf-nfm/v1/nf-instances",
+                        NrfId: "http://free5gc-nrf-12-2.nctu.me:29510/nnrf-nfm/v1/nf-instances",
                         NsiId: "12",
                     },
                 },

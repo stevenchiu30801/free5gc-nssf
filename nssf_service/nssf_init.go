@@ -33,7 +33,7 @@ func (n *Nssf) Start() {
     nsselection.AddService(router)
     nssaiavailability.AddService(router)
 
-    server, err := http2.NewServer(":8080", "nssfsslkey.log", router)
+    server, err := http2.NewServer(":29531", "nssfsslkey.log", router)
     if err == nil && server != nil {
         flog.System.Fatal(server.ListenAndServeTLS("support/tls/nssf.pem", "support/tls/nssf.key"))
     }

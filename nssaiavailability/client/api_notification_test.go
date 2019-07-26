@@ -24,7 +24,7 @@ import (
 var testingNotification = test.TestingNssaiavailability{
 	ConfigFile:             test.ConfigFileFromArgs,
     MuteLogInd:             test.MuteLogIndFromArgs,
-	NfNssaiAvailabilityUri: "https://localhost:8080/notification",
+	NfNssaiAvailabilityUri: "https://localhost:29518/notification",
 }
 
 func generateNotificationRequest() NssfEventNotification {
@@ -87,7 +87,7 @@ func TestNotificationPost(t *testing.T) {
 		c.JSON(http.StatusNoContent, gin.H{})
 	})
 
-	srv, err := http2.NewServer(":8080", "../../nssfsslkey.log", router)
+	srv, err := http2.NewServer(":29518", "../../nssfsslkey.log", router)
 	if err != nil {
 		t.Fatal(err)
 	}
