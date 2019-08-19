@@ -9,8 +9,8 @@ import (
 
     "free5gc-nssf/factory"
     "free5gc-nssf/flog"
-    "free5gc-nssf/nsselection"
-    "free5gc-nssf/nssaiavailability"
+    nsselection_api "free5gc-nssf/nsselection/api"
+    nssaiavailability_api "free5gc-nssf/nssaiavailability/api"
     "free5gc-nssf/util/http2"
 )
 
@@ -30,8 +30,8 @@ func (n *Nssf) Start() {
     gin.SetMode(gin.ReleaseMode)
     router := gin.Default()
 
-    nsselection.AddService(router)
-    nssaiavailability.AddService(router)
+    nsselection_api.AddService(router)
+    nssaiavailability_api.AddService(router)
 
     server, err := http2.NewServer(":29531", "nssfsslkey.log", router)
     if err == nil && server != nil {

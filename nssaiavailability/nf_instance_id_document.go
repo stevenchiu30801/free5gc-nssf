@@ -17,11 +17,12 @@ import (
 
     "free5gc-nssf/flog"
     . "free5gc-nssf/model"
+    "free5gc-nssf/nssf_handler/nssf_message"
     "free5gc-nssf/util"
 )
 
 // NSSAIAvailabilityDelete - Deletes an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
-func NSSAIAvailabilityDelete(c *gin.Context) {
+func NSSAIAvailabilityDelete(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityDelete")
 
@@ -39,10 +40,11 @@ func NSSAIAvailabilityDelete(c *gin.Context) {
     // Set response
     switch status {
         case http.StatusNoContent:
-            c.JSON(status, gin.H{})
+            var arg interface{}
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, arg)
             flog.Nssaiavailability.Infof("Response code 204 No Content")
         case http.StatusNotFound:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 404 Not Found")
         default:
@@ -51,7 +53,7 @@ func NSSAIAvailabilityDelete(c *gin.Context) {
 }
 
 // NSSAIAvailabilityPatch - Updates an already existing S-NSSAIs per TA provided by the NF service consumer (e.g AMF)
-func NSSAIAvailabilityPatch(c *gin.Context) {
+func NSSAIAvailabilityPatch(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityPatch")
 
@@ -121,22 +123,22 @@ func NSSAIAvailabilityPatch(c *gin.Context) {
     // Set response
     switch status {
         case http.StatusOK:
-            c.JSON(status, a)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, a)
             flog.Nssaiavailability.Infof("Response code 200 OK")
         case http.StatusBadRequest:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 400 Bad Request")
         case http.StatusForbidden:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 403 Forbidden")
         case http.StatusNotFound:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 404 Not Found")
         case http.StatusConflict:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 409 Conflict")
         default:
@@ -145,7 +147,7 @@ func NSSAIAvailabilityPatch(c *gin.Context) {
 }
 
 // NSSAIAvailabilityPut - Updates/replaces the NSSF with the S-NSSAIs the NF service consumer (e.g AMF) supports per TA
-func NSSAIAvailabilityPut(c *gin.Context) {
+func NSSAIAvailabilityPut(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityPut")
 
@@ -215,14 +217,14 @@ func NSSAIAvailabilityPut(c *gin.Context) {
     // Set response
     switch status {
         case http.StatusOK:
-            c.JSON(status, a)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, a)
             flog.Nssaiavailability.Infof("Response code 200 OK")
         case http.StatusBadRequest:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 400 Bad Request")
         case http.StatusForbidden:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 403 Forbidden")
         default:

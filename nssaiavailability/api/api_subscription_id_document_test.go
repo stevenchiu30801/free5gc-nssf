@@ -4,7 +4,7 @@
  * NSSF NSSAI Availability Service
  */
 
-package nssaiavailability
+package api
 
 import (
     "context"
@@ -14,12 +14,13 @@ import (
     "free5gc-nssf/factory"
     "free5gc-nssf/flog"
     "free5gc-nssf/nssaiavailability/client"
+    "free5gc-nssf/nssf_handler"
     "free5gc-nssf/test"
     "free5gc-nssf/util/http2"
 )
 
 var testingNssaiavailabilityUnsubscribeApi = test.TestingNssaiavailability {
-    ConfigFile: test.ConfigFileFromArgs,
+    ConfigFile: "../" + test.ConfigFileFromArgs,
     MuteLogInd: test.MuteLogIndFromArgs,
 }
 
@@ -31,13 +32,15 @@ func TestNSSAIAvailabilityUnsubscribe(t *testing.T) {
     }
 
     router := NewRouter()
-    srv, err := http2.NewServer(":29531", "../nssfsslkey.log", router)
+    srv, err := http2.NewServer(":29531", "../../nssfsslkey.log", router)
     if err != nil {
         t.Fatal(err)
     }
 
+    go nssf_handler.Handle()
+
     go func() {
-        err := srv.ListenAndServeTLS("../support/tls/nssf.pem", "../support/tls/nssf.key")
+        err := srv.ListenAndServeTLS("../../support/tls/nssf.pem", "../../support/tls/nssf.key")
         if err != nil && err != http.ErrServerClosed {
             t.Fatal(err)
         }

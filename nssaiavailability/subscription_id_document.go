@@ -16,10 +16,11 @@ import (
 
     "free5gc-nssf/flog"
     . "free5gc-nssf/model"
+    "free5gc-nssf/nssf_handler/nssf_message"
 )
 
 // NSSAIAvailabilityUnsubscribe - Deletes an already existing NSSAI availability notification subscription
-func NSSAIAvailabilityUnsubscribe(c *gin.Context) {
+func NSSAIAvailabilityUnsubscribe(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityUnsubscribe")
 
@@ -29,13 +30,6 @@ func NSSAIAvailabilityUnsubscribe(c *gin.Context) {
         d ProblemDetails
     )
 
-    // Due to conflict of route matching, 'subscriptions' in the route is replaced with the existing wildcard ':nfId'
-    nfId := c.Param("nfId")
-    if nfId != "subscriptions" {
-        c.JSON(http.StatusNotFound, gin.H{})
-        flog.Nssaiavailability.Infof("404 Not Found")
-        return
-    }
     // Parse subscriptionId from URL path
     subscriptionId = c.Param("subscriptionId")
 
@@ -44,10 +38,11 @@ func NSSAIAvailabilityUnsubscribe(c *gin.Context) {
     // Set response
     switch status {
     case http.StatusNoContent:
-        c.JSON(status, gin.H{})
+        var arg interface{}
+        nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, arg)
         flog.Nssaiavailability.Infof("Response code 204 No Content")
     case http.StatusNotFound:
-        c.JSON(status, d)
+        nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
         flog.Nssaiavailability.Infof(d.Detail)
         flog.Nssaiavailability.Infof("Response code 404 Not Found")
     default:

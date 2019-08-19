@@ -19,6 +19,7 @@ import (
 
     "free5gc-nssf/flog"
     . "free5gc-nssf/model"
+    "free5gc-nssf/nssf_handler/nssf_message"
     "free5gc-nssf/util"
 )
 
@@ -83,7 +84,7 @@ func checkNfServiceConsumer(nfType NfType) error {
 }
 
 // NSSelectionGet - Retrieve the Network Slice Selection Information
-func NSSelectionGet(c *gin.Context) {
+func NSSelectionGet(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nsselection.Infof("Request received - NSSelectionGet")
 
@@ -167,14 +168,14 @@ func NSSelectionGet(c *gin.Context) {
     // Set response
     switch status {
         case http.StatusOK:
-            c.JSON(status, a)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, a)
             flog.Nsselection.Infof("Response code 200 OK")
         case http.StatusBadRequest:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nsselection.Infof(d.Detail)
             flog.Nsselection.Infof("Response code 400 Bad Request")
         case http.StatusForbidden:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nsselection.Infof(d.Detail)
             flog.Nsselection.Infof("Response code 403 Forbidden")
         default:

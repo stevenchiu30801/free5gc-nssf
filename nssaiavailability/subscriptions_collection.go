@@ -17,11 +17,12 @@ import (
 
     "free5gc-nssf/flog"
     . "free5gc-nssf/model"
+    "free5gc-nssf/nssf_handler/nssf_message"
     "free5gc-nssf/util"
 )
 
 // NSSAIAvailabilityPost - Creates subscriptions for notification about updates to NSSAI availability information
-func NSSAIAvailabilityPost(c *gin.Context) {
+func NSSAIAvailabilityPost(httpChannel chan nssf_message.HttpResponseMessage, c *gin.Context) {
 
     flog.Nssaiavailability.Infof("Request received - NSSAIAvailabilityPost")
 
@@ -76,14 +77,14 @@ func NSSAIAvailabilityPost(c *gin.Context) {
     // Set response
     switch status {
         case http.StatusCreated:
-            c.JSON(status, s)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageResponse, s)
             flog.Nssaiavailability.Infof("Response code 201 Created")
         case http.StatusBadRequest:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 400 Bad Request")
         case http.StatusForbidden:
-            c.JSON(status, d)
+            nssf_message.SendHttpResponseMessage(httpChannel, nssf_message.HttpResponseMessageProblemDetails, d)
             flog.Nssaiavailability.Infof(d.Detail)
             flog.Nssaiavailability.Infof("Response code 403 Forbidden")
         default:
