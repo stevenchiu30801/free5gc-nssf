@@ -1,3 +1,5 @@
+**NOTICE: Currently this repository has been out of maintenance. See free5GC website for the latest source code.**
+
 # 5G NSSF in free5GC
 
 <img src="https://github.com/stevenchiu30801/free5gc-nssf/raw/master/logo/HDfree5gc.webp">
